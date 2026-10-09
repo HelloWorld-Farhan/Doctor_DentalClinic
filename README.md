@@ -22,14 +22,23 @@ An advanced, responsive, and modern clinical management web application designed
 - **Interactive Calendar Widget**: Month selector with active day highlights.
 
 ### 3. 👥 Patient Directory & Treatment Flow (`/dashboard/patients`)
-- **Power BI Demographics Banner**: Live sync telemetry tracking active patient volume, preventive care ratios, insurance verification percentages, and flagged medical alerts.
+- **Power BI Demographics Banner**: Live sync telemetry tracking active patient volume (2,482), preventive care ratios, insurance verification percentages, and flagged medical alerts.
 - **Patient Table**: Comprehensive records with patient ID, age, gender, last visit, primary procedure, medical alert tags, and insurance status.
-- **Portaled "Add New Patient" Modal**:
-  - Structured 3-step clinical form:
-    1. **Personal & Contact Info**: First/Last name, DOB, gender, phone, email.
-    2. **Clinical Care & Medical Alerts**: Procedure selector, custom allergy input, and **interactive one-click alert chips** (`Latex Allergy`, `Penicillin`, `Hypertension`, `Diabetic`, `None Reported`).
-    3. **Insurance Provider & Billing**: Provider selector (`Delta Dental`, `MetLife`, `Cigna`, `Guardian`, `Self-Pay`) and policy subscriber ID.
-  - **Portaled to `document.body`**: Ensures full-screen backdrop coverage with zero header clipping.
+- **Portaled "Edit Patient Record" Modal**:
+  - Clicking the pencil edit icon opens the modal pre-filled with the exact selected patient's demographics, contact info, clinical procedure, medical alerts, and insurance details.
+  - Allows live editing with one-click allergy chips and updates the clinical table in real time with toast confirmation.
+- **Interactive Dental Chart & Odontogram Modal (Tooth Icon)**:
+  - Clicking the tooth icon opens an adult 32-tooth odontogram (Universal Numbering System 1–32).
+  - Segregated by **Maxillary Arch (Upper Teeth 1–16)** and **Mandibular Arch (Lower Teeth 17–32)**.
+  - Interactive status toggles for each tooth: `Healthy (Sound)`, `Crown / Bridge`, `Root Canal Treated`, `Dental Implant`, `Caries / Watch`, and `Extracted / Missing`.
+  - Clinical findings notes view with Print & Export Chart capability.
+- **Working Dynamic Pagination (Pages 1 to 62)**:
+  - Supports navigation across pages `1`, `2`, `3`, `...`, `62`, `Previous`, and `Next`.
+  - Accurately shifts patient records per page (e.g., `Showing 1-4`, `Showing 5-8`, `Showing 9-12`, up to `Showing 2445-2482 of 2,482 patients`).
+- **Interactive Filter & Sort Popovers**:
+  - **Filter Popover**: Multi-criteria filtering by Medical Alerts (Latex, Penicillin, Hypertension), Insurance Providers (Delta Dental, MetLife, Cigna, Guardian, Pending), and Clinical Procedures.
+  - **Sort Popover**: Instant sorting by Name (A→Z, Z→A), Age (Youngest/Oldest), and Patient ID with active checkmark indicators.
+- **Portaled "Add New Patient" Modal**: Structured 3-step clinical form portaled to `document.body` with zero header clipping.
 - **Patient History Drawer**: Slide-out timeline detailing past endodontic treatments, periodontal probing depths, and radiographs.
 
 ### 4. ⭐ Doctor Reviews & Advanced Feedback (`/dashboard/reviews`)
