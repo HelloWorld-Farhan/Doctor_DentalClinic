@@ -17,6 +17,7 @@ export interface AppointmentItem {
   dateDay?: number;
   month?: number; // 0-indexed: 8 = Sep, 9 = Oct, 10 = Nov
   year?: number;
+  notes?: string;
 }
 
 const MONTH_NAMES = [
@@ -539,6 +540,18 @@ export default function Appointments() {
   const [newChair, setNewChair] = useState("Chair 01");
   const [newTime, setNewTime] = useState("01:30 PM - 02:15 PM");
 
+  // Edit Appointment Modal State
+  const [editingAppointment, setEditingAppointment] = useState<AppointmentItem | null>(null);
+  const [editName, setEditName] = useState("");
+  const [editProc, setEditProc] = useState("Routine Cleaning");
+  const [editChair, setEditChair] = useState("Chair 01");
+  const [editTime, setEditTime] = useState("09:00 AM - 09:45 AM");
+  const [editStatus, setEditStatus] = useState<'Confirmed' | 'In Progress' | 'Completed' | 'Cancelled'>('Confirmed');
+  const [editNotes, setEditNotes] = useState("");
+
+  // Delete Confirmation Modal State
+  const [appointmentToDelete, setAppointmentToDelete] = useState<AppointmentItem | null>(null);
+
   const showToast = (msg: string) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 3200);
@@ -645,6 +658,73 @@ export default function Appointments() {
     setIsNewAppointmentOpen(false);
     setNewName("");
     showToast(`Appointment scheduled for ${newApt.name} on ${SHORT_MONTH_NAMES[currentMonth]} ${selectedDate}, ${currentYear}!`);
+  };
+
+  const handleOpenEditModal = (apt: AppointmentItem) => {
+    setEditingAppointment(apt);
+    setEditName(apt.name);
+    setEditProc(apt.proc);
+    setEditChair(apt.chair);
+    setEditTime(apt.time);
+    setEditStatus(apt.status);
+    setEditNotes(apt.notes || "");
+  };
+
+  const handleSaveEditAppointment = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingAppointment || !editName.trim()) return;
+
+    const initials = editName.trim().split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2) || "PT";
+    
+    let statusColor = "bg-primary-fixed text-on-primary-fixed";
+    if (editStatus === "In Progress") statusColor = "bg-tertiary-container text-on-tertiary-container";
+    if (editStatus === "Completed") statusColor = "bg-surface-container-high text-on-surface-variant";
+    if (editStatus === "Cancelled") statusColor = "bg-error-container text-on-error-container";
+
+    setAppointments(prev => prev.map(a => {
+      if (a.id === editingAppointment.id) {
+        return {
+          ...a,
+          name: editName.trim(),
+          initials,
+          proc: editProc,
+          chair: editChair,
+          time: editTime,
+          status: editStatus,
+          statusColor,
+          notes: editNotes.trim()
+        };
+      }
+      return a;
+    }));
+
+    showToast(`Appointment for ${editName.trim()} updated successfully!`);
+    setEditingAppointment(null);
+  };
+
+  const handleConfirmDelete = () => {
+    if (!appointmentToDelete) return;
+    const name = appointmentToDelete.name;
+    setAppointments(prev => prev.filter(a => a.id !== appointmentToDelete.id));
+    setAppointmentToDelete(null);
+    showToast(`Appointment for ${name} removed from schedule.`);
+  };
+
+  const handleMarkCancelledFromModal = () => {
+    if (!appointmentToDelete) return;
+    const name = appointmentToDelete.name;
+    setAppointments(prev => prev.map(a => {
+      if (a.id === appointmentToDelete.id) {
+        return {
+          ...a,
+          status: 'Cancelled',
+          statusColor: 'bg-error-container text-on-error-container'
+        };
+      }
+      return a;
+    }));
+    setAppointmentToDelete(null);
+    showToast(`Appointment for ${name} marked as Cancelled.`);
   };
 
   const handleCancelAppointment = (id: string, name: string) => {
@@ -824,22 +904,22 @@ export default function Appointments() {
                 </div>
               ) : (
                 <div className="overflow-x-auto">
-                  <table className="w-full text-left border-collapse min-w-max">
+                  <table className="w-full text-left border-collapse min-w-[680px]">
                     <thead>
                       <tr className="text-xs font-semibold text-on-surface-variant border-b border-surface-container-highest">
-                        <th className="py-2.5 px-6">Time Slot</th>
+                        <th className="py-2.5 px-5">Time Slot</th>
                         <th className="py-2.5 px-4">Patient Details</th>
                         <th className="py-2.5 px-4">Procedure</th>
                         <th className="py-2.5 px-4">Chair</th>
                         <th className="py-2.5 px-4">Status</th>
-                        <th className="py-2.5 px-6 text-right">Actions</th>
+                        <th className="py-2.5 px-5 text-right">Actions</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-surface-container-high/60 text-sm text-on-surface">
                       {visibleAppointments.map((apt) => (
                         <tr key={apt.id} className="hover:bg-surface-container transition-colors">
-                          <td className="py-3.5 px-6 font-bold text-xs">{apt.time}</td>
-                          <td className="py-3.5 px-4">
+                          <td className="py-3 px-5 font-bold text-xs">{apt.time}</td>
+                          <td className="py-3 px-4">
                             <div className="flex items-center gap-3">
                               <div className={`w-8 h-8 rounded-full ${apt.initialsBg} flex items-center justify-center font-bold text-xs shrink-0 shadow-xs`}>
                                 {apt.initials}
@@ -850,30 +930,32 @@ export default function Appointments() {
                               </div>
                             </div>
                           </td>
-                          <td className="py-3.5 px-4">
+                          <td className="py-3 px-4">
                             <span className="px-2.5 py-1 bg-surface-container-high rounded-md text-xs font-bold">{apt.proc}</span>
                           </td>
-                          <td className="py-3.5 px-4 text-on-surface-variant font-medium text-xs">{apt.chair}</td>
-                          <td className="py-3.5 px-4">
+                          <td className="py-3 px-4 text-on-surface-variant font-medium text-xs">{apt.chair}</td>
+                          <td className="py-3 px-4">
                             <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold ${apt.statusColor}`}>
                               {apt.status}
                             </span>
                           </td>
-                          <td className="py-3.5 px-6 text-right space-x-2">
-                            <button 
-                              onClick={() => showToast(`Reschedule requested for ${apt.name}`)}
-                              className="p-1 text-on-surface-variant hover:text-primary transition-colors cursor-pointer" 
-                              title="Reschedule"
-                            >
-                              <span className="material-symbols-outlined text-[18px]">edit_calendar</span>
-                            </button>
-                            <button 
-                              onClick={() => handleCancelAppointment(apt.id, apt.name)}
-                              className="p-1 text-on-surface-variant hover:text-error transition-colors cursor-pointer" 
-                              title="Cancel"
-                            >
-                              <span className="material-symbols-outlined text-[18px]">cancel</span>
-                            </button>
+                          <td className="py-3 px-5 text-right whitespace-nowrap">
+                            <div className="inline-flex items-center justify-end gap-1">
+                              <button 
+                                onClick={() => handleOpenEditModal(apt)}
+                                className="p-1.5 text-on-surface-variant hover:text-primary hover:bg-primary/10 rounded-lg transition-colors cursor-pointer group" 
+                                title={`Edit appointment for ${apt.name}`}
+                              >
+                                <span className="material-symbols-outlined text-[19px] group-hover:scale-110 transition-transform">edit_calendar</span>
+                              </button>
+                              <button 
+                                onClick={() => setAppointmentToDelete(apt)}
+                                className="p-1.5 text-on-surface-variant hover:text-error hover:bg-error-container/30 rounded-lg transition-colors cursor-pointer group" 
+                                title={`Delete appointment for ${apt.name}`}
+                              >
+                                <span className="material-symbols-outlined text-[19px] group-hover:scale-110 transition-transform">delete</span>
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       ))}
@@ -1448,6 +1530,294 @@ export default function Appointments() {
                 </motion.button>
               </div>
             </form>
+          </motion.div>
+        </div>,
+        document.body
+      )}
+
+      {/* ========================================================================= */}
+      {/* 3. EDIT APPOINTMENT MODAL (Portaled to document.body)                     */}
+      {/* ========================================================================= */}
+      {editingAppointment && typeof document !== 'undefined' && createPortal(
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+          {/* Fullscreen Backdrop Blur */}
+          <motion.div 
+            initial={{ opacity: 0 }} 
+            animate={{ opacity: 1 }} 
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/60 backdrop-blur-md"
+            onClick={() => setEditingAppointment(null)}
+          />
+
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95, y: 15 }} 
+            animate={{ opacity: 1, scale: 1, y: 0 }} 
+            exit={{ opacity: 0, scale: 0.95, y: 0 }} 
+            transition={{ type: "spring", damping: 25, stiffness: 300 }}
+            className="relative bg-surface-container-lowest w-full max-w-xl rounded-2xl shadow-2xl border border-surface-container-high overflow-hidden flex flex-col z-10 my-auto"
+          >
+            {/* Header */}
+            <div className="p-6 border-b border-surface-container-low flex justify-between items-center bg-surface-container-lowest">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shadow-xs">
+                  <span className="material-symbols-outlined text-[24px]">edit_calendar</span>
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold text-on-surface">Edit Appointment</h2>
+                  <p className="text-xs text-outline">
+                    Updating record for <span className="font-semibold text-on-surface">{editingAppointment.name}</span> ({editingAppointment.patientId})
+                  </p>
+                </div>
+              </div>
+              <button 
+                onClick={() => setEditingAppointment(null)} 
+                className="p-2 text-outline hover:text-on-surface hover:bg-surface-container-low rounded-xl transition-colors cursor-pointer"
+              >
+                <span className="material-symbols-outlined text-[20px]">close</span>
+              </button>
+            </div>
+
+            {/* Form Body */}
+            <form onSubmit={handleSaveEditAppointment} className="p-6 space-y-4 max-h-[75vh] overflow-y-auto">
+              <div className="space-y-1">
+                <label className="text-xs font-semibold uppercase tracking-wider text-outline">Patient Full Name</label>
+                <div className="relative">
+                  <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[18px] text-outline pointer-events-none">person</span>
+                  <input 
+                    required
+                    value={editName}
+                    onChange={(e) => setEditName(e.target.value)}
+                    type="text" 
+                    placeholder="e.g. Jonathan Chopra" 
+                    className="w-full pl-10 pr-3 py-2.5 bg-surface-container-low rounded-xl border border-surface-container-high focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-xs font-medium" 
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="text-xs font-semibold uppercase tracking-wider text-outline">Procedure Type</label>
+                  <div className="relative">
+                    <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[18px] text-outline pointer-events-none">dentistry</span>
+                    <select 
+                      value={editProc}
+                      onChange={(e) => setEditProc(e.target.value)}
+                      className="w-full pl-10 pr-8 py-2.5 bg-surface-container-low rounded-xl border border-surface-container-high focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-xs font-medium appearance-none cursor-pointer"
+                    >
+                      <option>Routine Cleaning</option>
+                      <option>Root Canal Therapy</option>
+                      <option>Crown Fitting</option>
+                      <option>Teeth Whitening</option>
+                      <option>Wisdom Tooth Extraction</option>
+                      <option>Dental Implants</option>
+                      <option>Orthodontic Adjustment</option>
+                      <option>Composite Restoration</option>
+                      <option>Periodontal Scaling</option>
+                    </select>
+                    <span className="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-[18px] text-outline pointer-events-none">expand_more</span>
+                  </div>
+                </div>
+                <div className="space-y-1">
+                  <label className="text-xs font-semibold uppercase tracking-wider text-outline">Chair Operatory</label>
+                  <div className="relative">
+                    <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[18px] text-outline pointer-events-none">airline_seat_recline_extra</span>
+                    <select 
+                      value={editChair}
+                      onChange={(e) => setEditChair(e.target.value)}
+                      className="w-full pl-10 pr-8 py-2.5 bg-surface-container-low rounded-xl border border-surface-container-high focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-xs font-medium appearance-none cursor-pointer"
+                    >
+                      <option>Chair 01</option>
+                      <option>Chair 02</option>
+                      <option>Chair 03</option>
+                      <option>Chair 04</option>
+                      <option>Surgical Suite</option>
+                    </select>
+                    <span className="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-[18px] text-outline pointer-events-none">expand_more</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="text-xs font-semibold uppercase tracking-wider text-outline">Time Slot</label>
+                  <div className="relative">
+                    <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[18px] text-outline pointer-events-none">schedule</span>
+                    <select 
+                      value={editTime}
+                      onChange={(e) => setEditTime(e.target.value)}
+                      className="w-full pl-10 pr-8 py-2.5 bg-surface-container-low rounded-xl border border-surface-container-high focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-xs font-medium appearance-none cursor-pointer"
+                    >
+                      <option>09:00 AM - 09:45 AM</option>
+                      <option>10:00 AM - 10:30 AM</option>
+                      <option>11:00 AM - 11:45 AM</option>
+                      <option>12:00 PM - 12:45 PM</option>
+                      <option>01:30 PM - 02:15 PM</option>
+                      <option>02:30 PM - 03:15 PM</option>
+                      <option>03:30 PM - 04:15 PM</option>
+                      <option>04:30 PM - 05:15 PM</option>
+                    </select>
+                    <span className="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-[18px] text-outline pointer-events-none">expand_more</span>
+                  </div>
+                </div>
+                <div className="space-y-1">
+                  <label className="text-xs font-semibold uppercase tracking-wider text-outline">Status</label>
+                  <div className="relative">
+                    <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[18px] text-outline pointer-events-none">flag</span>
+                    <select 
+                      value={editStatus}
+                      onChange={(e) => setEditStatus(e.target.value as any)}
+                      className="w-full pl-10 pr-8 py-2.5 bg-surface-container-low rounded-xl border border-surface-container-high focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-xs font-medium appearance-none cursor-pointer"
+                    >
+                      <option value="Confirmed">Confirmed</option>
+                      <option value="In Progress">In Progress</option>
+                      <option value="Completed">Completed</option>
+                      <option value="Cancelled">Cancelled</option>
+                    </select>
+                    <span className="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-[18px] text-outline pointer-events-none">expand_more</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-semibold uppercase tracking-wider text-outline">Clinical Notes / Reason</label>
+                <textarea 
+                  value={editNotes}
+                  onChange={(e) => setEditNotes(e.target.value)}
+                  rows={3}
+                  placeholder="Add chairside preparation notes, procedure instructions, or medical alerts..." 
+                  className="w-full p-3 bg-surface-container-low rounded-xl border border-surface-container-high focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-xs font-medium resize-none leading-relaxed" 
+                />
+              </div>
+
+              {/* Footer */}
+              <div className="pt-4 border-t border-surface-container-low flex flex-wrap items-center justify-between gap-3">
+                <button 
+                  type="button" 
+                  onClick={() => {
+                    const apt = editingAppointment;
+                    setEditingAppointment(null);
+                    setAppointmentToDelete(apt);
+                  }}
+                  className="flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-error hover:bg-error-container/30 rounded-xl transition-colors cursor-pointer"
+                >
+                  <span className="material-symbols-outlined text-[16px]">delete</span>
+                  Delete Appointment
+                </button>
+                
+                <div className="flex items-center gap-2 ml-auto">
+                  <button 
+                    type="button" 
+                    onClick={() => setEditingAppointment(null)} 
+                    className="px-5 py-2.5 rounded-xl font-medium text-xs text-outline hover:text-on-surface hover:bg-surface-container-low transition-colors cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <motion.button 
+                    whileHover={{ scale: 1.02 }} 
+                    whileTap={{ scale: 0.98 }} 
+                    type="submit" 
+                    className="px-5 py-2.5 rounded-xl font-semibold text-xs bg-primary text-on-primary shadow-xs hover:bg-primary-container transition-colors cursor-pointer flex items-center gap-1.5"
+                  >
+                    <span className="material-symbols-outlined text-[16px]">check</span>
+                    Save Changes
+                  </motion.button>
+                </div>
+              </div>
+            </form>
+          </motion.div>
+        </div>,
+        document.body
+      )}
+
+      {/* ========================================================================= */}
+      {/* 4. DELETE APPOINTMENT CONFIRMATION MODAL (Portaled to document.body)       */}
+      {/* ========================================================================= */}
+      {appointmentToDelete && typeof document !== 'undefined' && createPortal(
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+          {/* Fullscreen Backdrop Blur */}
+          <motion.div 
+            initial={{ opacity: 0 }} 
+            animate={{ opacity: 1 }} 
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/60 backdrop-blur-md"
+            onClick={() => setAppointmentToDelete(null)}
+          />
+
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95, y: 15 }} 
+            animate={{ opacity: 1, scale: 1, y: 0 }} 
+            exit={{ opacity: 0, scale: 0.95, y: 0 }} 
+            transition={{ type: "spring", damping: 25, stiffness: 300 }}
+            className="relative bg-surface-container-lowest w-full max-w-md rounded-2xl shadow-2xl border border-surface-container-high overflow-hidden flex flex-col z-10 my-auto"
+          >
+            <div className="p-6 text-center">
+              {/* Warning Icon Badge */}
+              <div className="w-14 h-14 rounded-2xl bg-error-container/40 text-error mx-auto flex items-center justify-center mb-4 ring-8 ring-error-container/10">
+                <span className="material-symbols-outlined text-[28px]">delete_forever</span>
+              </div>
+
+              <h3 className="text-xl font-bold text-on-surface mb-1.5">Delete Appointment?</h3>
+              <p className="text-xs text-on-surface-variant leading-relaxed max-w-sm mx-auto mb-5">
+                Are you sure you want to permanently delete the appointment for <span className="font-bold text-on-surface">{appointmentToDelete.name}</span>? This action will remove the record from the clinical schedule.
+              </p>
+
+              {/* Appointment Snapshot Card */}
+              <div className="p-3.5 bg-surface-container-low rounded-xl border border-surface-container-high text-left space-y-2 mb-6">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2.5">
+                    <div className={`w-7 h-7 rounded-full ${appointmentToDelete.initialsBg} flex items-center justify-center font-bold text-[11px]`}>
+                      {appointmentToDelete.initials}
+                    </div>
+                    <div>
+                      <span className="text-xs font-bold text-on-surface block leading-tight">{appointmentToDelete.name}</span>
+                      <span className="text-[10px] text-on-surface-variant">ID: {appointmentToDelete.patientId}</span>
+                    </div>
+                  </div>
+                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${appointmentToDelete.statusColor}`}>
+                    {appointmentToDelete.status}
+                  </span>
+                </div>
+
+                <div className="pt-2 border-t border-surface-container-high/60 grid grid-cols-2 gap-2 text-[11px]">
+                  <div>
+                    <span className="text-outline text-[10px] block font-medium">PROCEDURE</span>
+                    <span className="font-bold text-on-surface">{appointmentToDelete.proc}</span>
+                  </div>
+                  <div>
+                    <span className="text-outline text-[10px] block font-medium">CHAIR & TIME</span>
+                    <span className="font-bold text-on-surface">{appointmentToDelete.chair} • {appointmentToDelete.time}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex flex-col sm:flex-row items-center justify-end gap-2.5">
+                <button 
+                  type="button" 
+                  onClick={() => setAppointmentToDelete(null)}
+                  className="w-full sm:w-auto px-4 py-2.5 rounded-xl border border-surface-container-high text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low transition-colors font-semibold text-xs cursor-pointer"
+                >
+                  Cancel
+                </button>
+                
+                <button 
+                  type="button" 
+                  onClick={handleMarkCancelledFromModal}
+                  className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-amber-500/10 text-amber-700 hover:bg-amber-500/20 font-bold text-xs border border-amber-500/30 transition-colors cursor-pointer"
+                >
+                  Mark as Cancelled
+                </button>
+
+                <button 
+                  type="button" 
+                  onClick={handleConfirmDelete}
+                  className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-error hover:bg-error/90 text-white font-bold text-xs shadow-md shadow-error/20 flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+                >
+                  <span className="material-symbols-outlined text-[16px]">delete</span>
+                  Delete
+                </button>
+              </div>
+            </div>
           </motion.div>
         </div>,
         document.body
