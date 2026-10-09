@@ -33,7 +33,7 @@ export default function ForgotPassword() {
 
   // Resend countdown timer
   useEffect(() => {
-    let timer: NodeJS.Timeout;
+    let timer: ReturnType<typeof setInterval>;
     if (step === 'otp' && resendSeconds > 0) {
       timer = setInterval(() => {
         setResendSeconds((prev) => prev - 1);

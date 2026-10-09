@@ -104,12 +104,15 @@ export default function Settings() {
     return localStorage.getItem('dental_clinic_logo') || DEFAULT_LOGO;
   });
 
-  // Watch URL params for tab & deep section links
+const generateEquipmentId = () => Date.now().toString();
+const getAuditDateStamp = () => new Date().toISOString().split('T')[0];
+
+// Watch URL params for tab & deep section links
   useEffect(() => {
     const tabParam = searchParams.get('tab') as Tab | null;
     const validTabs: Tab[] = ['profile', 'security', 'notifications', 'powerbi', 'equipment', 'voice'];
     if (tabParam && validTabs.includes(tabParam)) {
-      setActiveTab(tabParam);
+      setActiveTab((prev) => (prev !== tabParam ? tabParam : prev));
     }
 
     const sectionParam = searchParams.get('section');
@@ -249,7 +252,7 @@ export default function Settings() {
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `hipaa_audit_trail_${new Date().toISOString().split('T')[0]}.csv`);
+    link.setAttribute("download", `hipaa_audit_trail_${getAuditDateStamp()}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -261,7 +264,7 @@ export default function Settings() {
     if (!newEqName.trim()) return;
 
     const newEquipment: EquipmentItem = {
-      id: Date.now().toString(),
+      id: generateEquipmentId(),
       name: newEqName,
       category: newEqCategory,
       location: newEqLocation,
@@ -1164,7 +1167,7 @@ export default function Settings() {
                         <input 
                           type="checkbox" 
                           checked={noiseFilter} 
-                          onChange={(e) => setNoiseFilter(e.target.value)}
+                          onChange={(e) => setNoiseFilter(e.target.checked)}
                           className="w-4 h-4 text-primary rounded focus:ring-primary accent-primary cursor-pointer" 
                         />
                       </div>
