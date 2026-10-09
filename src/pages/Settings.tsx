@@ -93,9 +93,9 @@ export default function Settings() {
   const logoFileInputRef = useRef<HTMLInputElement>(null);
 
   // Clinic profile form state
-  const [clinicName, setClinicName] = useState('Dental Clinic Pro Advanced Dental Studio');
+  const [clinicName, setClinicName] = useState('Smile Clinic Advanced Dental Studio');
   const [npiNumber, setNpiNumber] = useState('1295847392');
-  const [contactEmail, setContactEmail] = useState('admin@dentalclinicpro.net');
+  const [contactEmail, setContactEmail] = useState('admin@smileclinic.net');
   const [phone, setPhone] = useState('+1 (555) 382-9900');
   const [address, setAddress] = useState('742 Evergreen Terrace, Suite 400, Springfield, OR 97477');
   
@@ -218,9 +218,9 @@ const getAuditDateStamp = () => new Date().toISOString().split('T')[0];
   };
 
   const handleResetDefaults = () => {
-    setClinicName('Dental Clinic Pro Advanced Dental Studio');
+    setClinicName('Smile Clinic Advanced Dental Studio');
     setNpiNumber('1295847392');
-    setContactEmail('admin@dentalclinicpro.net');
+    setContactEmail('admin@smileclinic.net');
     setPhone('+1 (555) 382-9900');
     setMfaEnabled(true);
     setAuditLogging(true);

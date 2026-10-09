@@ -47,7 +47,7 @@ export default function Login() {
               )}
             </div>
             <div>
-              <span className="text-base font-bold text-primary block leading-tight">Dental Clinic Pro</span>
+              <span className="text-base font-bold text-primary block leading-tight">Smile Clinic</span>
               <span className="text-[10px] font-semibold text-on-surface-variant uppercase tracking-wider">Doctor Portal</span>
             </div>
           </div>
@@ -234,7 +234,7 @@ export default function Login() {
               <span className="material-symbols-outlined text-[24px] text-primary-fixed">dentistry</span>
             </div>
             <div>
-              <span className="text-xl font-bold tracking-tight block leading-tight">Dental Clinic Pro</span>
+              <span className="text-xl font-bold tracking-tight block leading-tight">Smile Clinic</span>
               <span className="text-[11px] text-primary-fixed font-medium uppercase tracking-wider">Next-Gen Doctor Suite</span>
             </div>
           </div>
@@ -325,7 +325,7 @@ export default function Login() {
 
         {/* Footer */}
         <div className="relative z-10 flex items-center justify-between text-primary-fixed-dim text-xs">
-          <span>© 2026 Dental Clinic Pro Inc.</span>
+          <span>© 2026 Smile Clinic Inc.</span>
           <span className="flex items-center gap-1">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
             Cloud Core 99.98% SLA

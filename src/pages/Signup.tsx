@@ -40,7 +40,7 @@ export default function Signup() {
               )}
             </div>
             <div>
-              <span className="text-xl font-bold tracking-tight block leading-tight">Dental Clinic Pro</span>
+              <span className="text-xl font-bold tracking-tight block leading-tight">Smile Clinic</span>
               <span className="text-[11px] text-primary-fixed font-medium uppercase tracking-wider">Clinician Onboarding</span>
             </div>
           </div>
@@ -95,7 +95,7 @@ export default function Signup() {
         
         {/* Footer */}
         <div className="relative z-10 flex items-center justify-between text-primary-fixed-dim text-xs">
-          <span>© 2026 Dental Clinic Pro Inc.</span>
+          <span>© 2026 Smile Clinic Inc.</span>
           <span className="flex items-center gap-1">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
             HIPAA Tier 4 Certified
@@ -116,7 +116,7 @@ export default function Signup() {
             <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
               <span className="material-symbols-outlined text-[20px]">dentistry</span>
             </div>
-            <span className="font-bold text-sm text-primary">Dental Clinic Pro</span>
+            <span className="font-bold text-sm text-primary">Smile Clinic</span>
           </div>
           <button 
             type="button" 

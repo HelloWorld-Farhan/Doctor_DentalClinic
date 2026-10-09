@@ -706,7 +706,7 @@ export default function Dashboard() {
             <div className="flex items-center justify-between mb-3">
               <span className="text-xs font-bold text-primary-fixed uppercase tracking-wider flex items-center gap-1.5">
                 <span className="material-symbols-outlined text-[16px]">mic</span>
-                {isVoiceEnabled ? 'AI Voice Active • Operatory 01' : 'Dental Clinic Pro Tip'}
+                {isVoiceEnabled ? 'AI Voice Active • Operatory 01' : 'Smile Clinic Pro Tip'}
               </span>
               {isVoiceEnabled && (
                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>

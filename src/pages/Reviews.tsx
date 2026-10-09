@@ -162,7 +162,7 @@ const INITIAL_REVIEWS: ReviewItem[] = [
     text: "Brought my 7-year-old son for his first cavity fillings. Dr. Sharma used child-friendly explanations and was so patient that my son didn't shed a single tear! Outstanding pediatric bedside manner.", 
     completed: "Sep 24, 2023",
     hasReply: true,
-    replyText: "Thank you Jessica! Your son was such a brave dental champion today. Give him a high five from the whole Dental Clinic Pro team!",
+    replyText: "Thank you Jessica! Your son was such a brave dental champion today. Give him a high five from the whole Smile Clinic team!",
     replyDate: "Sep 25, 2023"
   },
   { 
