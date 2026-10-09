@@ -3,6 +3,7 @@ import { AnimatePresence } from 'framer-motion';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Signup from './pages/Signup';
+import ForgotPassword from './pages/ForgotPassword';
 import Layout from './components/Layout';
 import Appointments from './pages/Appointments';
 import Patients from './pages/Patients';
@@ -18,6 +19,7 @@ function AnimatedRoutes() {
         {/* Auth Routes */}
         <Route path="/" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
         
         {/* Dashboard Routes with Layout */}
         <Route path="/dashboard" element={<Layout />}>

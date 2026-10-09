@@ -6,7 +6,7 @@
   html {
     scrollbar-gutter: stable;
     overflow-x: hidden;
-    overflow-y: scroll;
+    overflow-y: auto;
   }
   body {
     margin: 0;
