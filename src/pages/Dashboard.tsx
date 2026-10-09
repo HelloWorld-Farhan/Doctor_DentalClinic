@@ -383,6 +383,203 @@ export default function Dashboard() {
         </div>
       </div>
 
+      {/* ========================================================================= */}
+      {/* FEATURED: PROPNEX AI VOICE AGENT (INBOUND & OUTBOUND CALLING HUB)          */}
+      {/* ========================================================================= */}
+      <motion.div 
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary via-[#02444c] to-[#01272c] text-on-primary p-6 lg:p-8 shadow-xl border border-white/15"
+      >
+        {/* Ambient Gradient Glows & Watermarks */}
+        <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-400/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-cyan-400/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute right-6 -bottom-6 opacity-5 pointer-events-none select-none">
+          <span className="material-symbols-outlined text-[260px]">support_agent</span>
+        </div>
+
+        <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+          {/* Left Column (7 cols): Hero & Calling Capabilities */}
+          <div className="lg:col-span-7 space-y-4">
+            {/* Live Indicator Pills */}
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 backdrop-blur-md border border-white/20 text-xs font-bold text-white shadow-xs">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400"></span>
+                </span>
+                PropNex AI Voice Agent Online
+              </span>
+              <span className="text-[11px] font-semibold text-primary-fixed-dim bg-black/25 px-2.5 py-0.5 rounded-full border border-white/10 flex items-center gap-1">
+                <span className="material-symbols-outlined text-[13px] text-emerald-400">bolt</span>
+                380ms Latency • HIPAA Tier 4
+              </span>
+              <span className="text-[11px] font-semibold text-primary-fixed-dim bg-black/25 px-2.5 py-0.5 rounded-full border border-white/10 flex items-center gap-1">
+                <span className="material-symbols-outlined text-[13px] text-cyan-300">phone_in_talk</span>
+                24/7 Inbound & Outbound Calling
+              </span>
+            </div>
+
+            {/* Title & Description */}
+            <div>
+              <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white mb-2 leading-tight">
+                Autonomous Dental Voice Agent & Receptionist Suite
+              </h2>
+              <p className="text-xs sm:text-sm text-white/85 leading-relaxed max-w-2xl font-normal">
+                PropNex AI delivers autonomous 24/7 inbound patient intake and automated outbound recall campaigns. The agent screens dental emergencies, books directly into operatory chairs, and verifies insurance with human-grade conversational intelligence.
+              </p>
+            </div>
+
+            {/* Inbound vs Outbound Calling Features */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+              {/* Inbound Calling Box */}
+              <div className="p-3.5 bg-white/10 backdrop-blur-md rounded-2xl border border-white/15 flex items-start gap-3 hover:bg-white/15 transition-colors">
+                <div className="w-10 h-10 rounded-xl bg-emerald-400/20 text-emerald-300 flex items-center justify-center shrink-0 border border-emerald-400/30 shadow-xs">
+                  <span className="material-symbols-outlined text-[22px]">call_received</span>
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-white flex items-center gap-1.5">
+                    Inbound Calling Hub
+                    <span className="text-[9px] px-1.5 py-0.2 bg-emerald-400/20 text-emerald-300 rounded font-bold">24/7 LIVE</span>
+                  </div>
+                  <div className="text-[11px] text-white/80 leading-snug mt-0.5 font-normal">
+                    Instant call answering, direct chair booking, emergency triage & copay screening.
+                  </div>
+                </div>
+              </div>
+
+              {/* Outbound Calling Box */}
+              <div className="p-3.5 bg-white/10 backdrop-blur-md rounded-2xl border border-white/15 flex items-start gap-3 hover:bg-white/15 transition-colors">
+                <div className="w-10 h-10 rounded-xl bg-cyan-400/20 text-cyan-300 flex items-center justify-center shrink-0 border border-cyan-400/30 shadow-xs">
+                  <span className="material-symbols-outlined text-[22px]">call_made</span>
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-white flex items-center gap-1.5">
+                    Outbound Campaigns
+                    <span className="text-[9px] px-1.5 py-0.2 bg-cyan-400/20 text-cyan-300 rounded font-bold">AUTONOMOUS</span>
+                  </div>
+                  <div className="text-[11px] text-white/80 leading-snug mt-0.5 font-normal">
+                    Automated 6-month hygiene recalls, 24h post-op check-ins & no-show reduction.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Action Buttons & Direct Redirection Link */}
+            <div className="flex flex-wrap items-center gap-3 pt-2">
+              <a
+                href="https://propnexai.com/auth/sign-in"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-5 py-3 rounded-xl bg-white text-primary hover:bg-slate-50 font-bold text-xs shadow-lg shadow-black/20 flex items-center gap-2 cursor-pointer transition-all transform hover:scale-[1.02] active:scale-[0.98] group"
+              >
+                <span className="material-symbols-outlined text-[18px] text-primary">rocket_launch</span>
+                <span>Launch PropNex AI Voice Dashboard</span>
+                <span className="material-symbols-outlined text-[16px] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform text-primary/70">open_in_new</span>
+              </a>
+
+              <button
+                type="button"
+                onClick={() => setIsVoiceConfigOpen(true)}
+                className="px-4 py-3 rounded-xl bg-white/15 hover:bg-white/20 text-white font-semibold text-xs border border-white/25 backdrop-blur-md transition-all flex items-center gap-2 cursor-pointer"
+              >
+                <span className="material-symbols-outlined text-[18px]">graphic_eq</span>
+                <span>Voice Simulator & Setup</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Right Column (5 cols): Live Telemetry Glass Card & Audio Wave */}
+          <div className="lg:col-span-5 bg-black/30 backdrop-blur-md p-5 rounded-2xl border border-white/15 flex flex-col justify-between space-y-4 shadow-inner">
+            {/* Agent Header */}
+            <div className="flex items-center justify-between pb-3 border-b border-white/10">
+              <div className="flex items-center gap-3">
+                <div className="relative">
+                  <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-cyan-400 to-emerald-400 p-0.5 shadow-md">
+                    <div className="w-full h-full bg-[#01353c] rounded-[14px] flex items-center justify-center text-white">
+                      <span className="material-symbols-outlined text-[24px]">support_agent</span>
+                    </div>
+                  </div>
+                  <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-400 rounded-full ring-2 ring-primary"></span>
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-white flex items-center gap-1.5">
+                    Aria • Dental AI Receptionist
+                  </div>
+                  <div className="text-[10px] text-white/70">PropNex Neural Voice Engine v4.2</div>
+                </div>
+              </div>
+              
+              {/* Equalizer Wave Bars */}
+              <div className="flex items-center gap-1 bg-white/10 px-2.5 py-1.5 rounded-lg border border-white/10">
+                <span className="w-1 h-3 bg-emerald-400 rounded-full animate-pulse"></span>
+                <span className="w-1 h-5 bg-cyan-300 rounded-full animate-pulse delay-75"></span>
+                <span className="w-1 h-4 bg-emerald-400 rounded-full animate-pulse delay-150"></span>
+                <span className="w-1 h-6 bg-cyan-300 rounded-full animate-pulse delay-100"></span>
+                <span className="w-1 h-3 bg-emerald-400 rounded-full animate-pulse delay-200"></span>
+              </div>
+            </div>
+
+            {/* Live Telemetry Grid */}
+            <div className="grid grid-cols-2 gap-2.5 text-xs">
+              <div className="p-3 bg-white/5 rounded-xl border border-white/10">
+                <div className="text-[10px] text-white/70 font-semibold uppercase tracking-wider flex items-center gap-1">
+                  <span className="material-symbols-outlined text-[13px] text-emerald-400">call_received</span>
+                  Inbound Handled
+                </div>
+                <div className="text-lg font-bold text-white mt-1">142 Calls</div>
+                <div className="text-[10px] text-emerald-300 font-medium">99.4% Zero-wait resolution</div>
+              </div>
+
+              <div className="p-3 bg-white/5 rounded-xl border border-white/10">
+                <div className="text-[10px] text-white/70 font-semibold uppercase tracking-wider flex items-center gap-1">
+                  <span className="material-symbols-outlined text-[13px] text-cyan-300">call_made</span>
+                  Outbound Recalls
+                </div>
+                <div className="text-lg font-bold text-white mt-1">89 Patients</div>
+                <div className="text-[10px] text-cyan-300 font-medium">74% Re-booked into chairs</div>
+              </div>
+
+              <div className="p-3 bg-white/5 rounded-xl border border-white/10">
+                <div className="text-[10px] text-white/70 font-semibold uppercase tracking-wider flex items-center gap-1">
+                  <span className="material-symbols-outlined text-[13px] text-amber-300">speed</span>
+                  Speech Latency
+                </div>
+                <div className="text-lg font-bold text-white mt-1">~380 ms</div>
+                <div className="text-[10px] text-white/70 font-medium">Ultra-low human tempo</div>
+              </div>
+
+              <div className="p-3 bg-white/5 rounded-xl border border-white/10">
+                <div className="text-[10px] text-white/70 font-semibold uppercase tracking-wider flex items-center gap-1">
+                  <span className="material-symbols-outlined text-[13px] text-purple-300">verified</span>
+                  Staff Time Saved
+                </div>
+                <div className="text-lg font-bold text-white mt-1">18.5 hrs</div>
+                <div className="text-[10px] text-white/70 font-medium">This week across clinic</div>
+              </div>
+            </div>
+
+            {/* Quick Redirect Link Strip */}
+            <div className="pt-2 border-t border-white/10 flex items-center justify-between text-[11px] text-white/80">
+              <span className="flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                SIP Trunking Online
+              </span>
+              <a
+                href="https://propnexai.com/auth/sign-in"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-cyan-300 hover:text-white font-semibold underline flex items-center gap-0.5 transition-colors cursor-pointer"
+              >
+                <span>propnexai.com</span>
+                <span className="material-symbols-outlined text-[13px]">north_east</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+
       {/* KPI Bento Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
@@ -696,41 +893,63 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* 3. AI VOICE-TO-TEXT CHARTING CARD */}
-        <div className="bg-primary text-on-primary rounded-2xl shadow-md p-8 flex flex-col justify-between relative overflow-hidden">
+        {/* 3. PROPNEX AI VOICE & TELEPHONY CALLING CARD */}
+        <div className="bg-gradient-to-br from-primary to-[#01353c] text-on-primary rounded-2xl shadow-md p-6 sm:p-7 flex flex-col justify-between relative overflow-hidden border border-white/10">
           <div className="absolute right-0 bottom-0 opacity-10 translate-x-4 translate-y-4 pointer-events-none">
-            <span className="material-symbols-outlined text-[180px]">dentistry</span>
+            <span className="material-symbols-outlined text-[180px]">support_agent</span>
           </div>
           
-          <div className="z-10">
-            <div className="flex items-center justify-between mb-3">
+          <div className="z-10 space-y-3">
+            <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-primary-fixed uppercase tracking-wider flex items-center gap-1.5">
-                <span className="material-symbols-outlined text-[16px]">mic</span>
-                {isVoiceEnabled ? 'AI Voice Active • Operatory 01' : 'Smile Clinic Pro Tip'}
+                <span className="material-symbols-outlined text-[16px] text-emerald-400">phone_in_talk</span>
+                PropNex AI Calling Suite
               </span>
-              {isVoiceEnabled && (
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
-              )}
+              <span className="flex items-center gap-1.5 text-[10px] font-semibold text-emerald-300 bg-white/10 px-2 py-0.5 rounded-full border border-white/15">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                Inbound & Outbound Live
+              </span>
             </div>
 
-            <h3 className="text-2xl font-bold text-on-primary mb-3 leading-tight">Streamline Charting with Voice</h3>
-            <p className="text-xs text-on-primary/90 leading-relaxed font-medium">
-              {isVoiceEnabled 
-                ? "Voice dictation is connected and streaming hands-free periodontal probe depths and restorative findings."
-                : "Enable automated voice-to-text periodontal charting in the settings menu to save up to 4 minutes per patient consultation."
-              }
+            <h3 className="text-xl font-bold text-on-primary leading-tight">Autonomous Dental Voice Agent</h3>
+            <p className="text-xs text-on-primary/85 leading-relaxed font-medium">
+              Seamlessly handles 24/7 patient call triage, chair bookings, emergency screenings, and automated 6-month hygiene recall campaigns.
             </p>
+
+            {/* Inbound & Outbound Micro Badges */}
+            <div className="grid grid-cols-2 gap-2 pt-1">
+              <div className="p-2 bg-white/10 rounded-xl border border-white/15 text-left">
+                <span className="text-[10px] text-white/70 font-semibold block uppercase">INBOUND CALLS</span>
+                <span className="text-xs font-bold text-white">142 Handled</span>
+                <span className="text-[10px] text-emerald-300 block">0s Hold Time</span>
+              </div>
+              <div className="p-2 bg-white/10 rounded-xl border border-white/15 text-left">
+                <span className="text-[10px] text-white/70 font-semibold block uppercase">OUTBOUND RECALLS</span>
+                <span className="text-xs font-bold text-white">89 Dispatched</span>
+                <span className="text-[10px] text-cyan-300 block">74% Re-booked</span>
+              </div>
+            </div>
           </div>
 
-          <div className="mt-6 z-10">
-            <button 
-              onClick={() => setIsVoiceConfigOpen(true)}
-              className="px-5 py-3 bg-surface-container-lowest text-primary rounded-xl text-xs font-bold hover:bg-surface-bright transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer w-full sm:w-auto"
+          <div className="mt-5 z-10 flex flex-col sm:flex-row items-center gap-2 pt-1 border-t border-white/10">
+            <a 
+              href="https://propnexai.com/auth/sign-in"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full sm:flex-1 px-4 py-2.5 bg-white text-primary rounded-xl text-xs font-bold hover:bg-slate-50 transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer group"
             >
-              <span className="material-symbols-outlined text-[18px]">
-                {isVoiceEnabled ? 'tune' : 'auto_awesome'}
-              </span>
-              {isVoiceEnabled ? 'Voice Active • Configure' : 'Enable Feature'}
+              <span className="material-symbols-outlined text-[16px] text-primary">rocket_launch</span>
+              <span>Launch PropNex AI</span>
+              <span className="material-symbols-outlined text-[14px] group-hover:translate-x-0.5 transition-transform text-primary/70">open_in_new</span>
+            </a>
+
+            <button 
+              type="button"
+              onClick={() => setIsVoiceConfigOpen(true)}
+              className="w-full sm:w-auto px-3.5 py-2.5 bg-white/15 hover:bg-white/20 text-white rounded-xl text-xs font-semibold border border-white/20 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+            >
+              <span className="material-symbols-outlined text-[16px]">tune</span>
+              <span>Setup</span>
             </button>
           </div>
         </div>
@@ -902,6 +1121,28 @@ export default function Dashboard() {
                     {testAudioOutput}
                   </div>
                 )}
+              </div>
+
+              {/* PropNex AI Inbound & Outbound Calling Cloud Integration */}
+              <div className="p-4 bg-gradient-to-r from-primary/10 to-emerald-500/10 rounded-2xl border border-primary/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-primary text-white flex items-center justify-center shrink-0 shadow-xs">
+                    <span className="material-symbols-outlined text-[20px]">phone_in_talk</span>
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-bold text-on-surface">PropNex AI Telephony & Calling Portal</h4>
+                    <p className="text-[11px] text-on-surface-variant">Manage live 24/7 inbound patient intake, SIP trunk routing & automated outbound recall campaigns.</p>
+                  </div>
+                </div>
+                <a
+                  href="https://propnexai.com/auth/sign-in"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-4 py-2 bg-primary text-on-primary hover:bg-primary-container rounded-xl text-xs font-bold flex items-center gap-1.5 shrink-0 transition-all shadow-xs cursor-pointer"
+                >
+                  <span>Sign In to PropNex AI</span>
+                  <span className="material-symbols-outlined text-[14px]">open_in_new</span>
+                </a>
               </div>
             </div>
 
