@@ -18,6 +18,165 @@ export interface EquipmentStatusItem {
   operatory: string;
 }
 
+export interface TodayScheduleItem {
+  time: string;
+  timeSlot: string;
+  name: string;
+  id: string;
+  initials: string;
+  proc: string;
+  tooth: string;
+  operatory: string;
+  doctor: string;
+  anesthesia: string;
+  status: 'In Progress' | 'Confirmed' | 'Completed';
+  statusColor: string;
+  avatarColor: string;
+  ageGender: string;
+  phone: string;
+  email: string;
+  medicalAlert: string;
+  alertLevel: 'normal' | 'medium' | 'high';
+  insurance: string;
+  vitals: {
+    bp: string;
+    pulse: string;
+    spo2: string;
+    painLevel: string;
+  };
+  clinicalNotes: string;
+  nextAction: string;
+  prescriptions: string;
+}
+
+const INITIAL_TODAY_SCHEDULE: TodayScheduleItem[] = [
+  {
+    time: "09:00 AM",
+    timeSlot: "09:00 AM - 09:45 AM",
+    name: "Neha Gupta",
+    id: "#40921",
+    initials: "NG",
+    proc: "Root Canal Therapy",
+    tooth: "Tooth #19 (Lower Left First Molar)",
+    operatory: "Operatory 01 — Dental Chair A",
+    doctor: "Dr. Sarah Sharma, DDS",
+    anesthesia: "2% Lidocaine with 1:100,000 Epinephrine (1.7 ml administered)",
+    status: "In Progress",
+    statusColor: "bg-primary text-on-primary",
+    avatarColor: "bg-primary/10 text-primary",
+    ageGender: "28 yrs • Female",
+    phone: "+1 (555) 382-4910",
+    email: "neha.gupta@example.com",
+    medicalAlert: "Severe Penicillin Allergy • Pre-medicated with Clindamycin 600mg",
+    alertLevel: "high",
+    insurance: "Delta Dental Premier • Pre-authorized (#AUTH-84920)",
+    vitals: { bp: "118/76 mmHg", pulse: "72 bpm", spo2: "99%", painLevel: "2 / 10" },
+    clinicalNotes: "Rubber dam isolation verified. Working length confirmed with Apex Locator: MB 21mm, ML 21mm, Distal 22mm. Biomechanical prep completed to size #30.04. Calcium hydroxide paste placed.",
+    nextAction: "Obturation with gutta-percha & permanent resin core restoration in 10 days.",
+    prescriptions: "Amoxicillin contraindicated. Rx: Clindamycin 300mg QID x 7 days, Ibuprofen 600mg PRN pain."
+  },
+  {
+    time: "10:15 AM",
+    timeSlot: "10:15 AM - 11:00 AM",
+    name: "Mark Singh",
+    id: "#40922",
+    initials: "MS",
+    proc: "Routine Cleaning & Exam",
+    tooth: "Full Dentition Prophylaxis (All Quadrants)",
+    operatory: "Operatory 02 — Hygiene Bay",
+    doctor: "Dr. Sarah Sharma, DDS • Hygienist Lisa Wong",
+    anesthesia: "None • Topical 20% Benzocaine Gel applied to sulcus",
+    status: "Confirmed",
+    statusColor: "bg-surface-container-high text-on-surface",
+    avatarColor: "bg-tertiary-fixed text-on-tertiary-fixed",
+    ageGender: "34 yrs • Male",
+    phone: "+1 (555) 791-3042",
+    email: "mark.singh@example.com",
+    medicalAlert: "No Known Drug Allergies (NKDA) • Mild Gingival Bleeding",
+    alertLevel: "normal",
+    insurance: "MetLife Dental PPO • Policy #ML-99214 (100% Preventive)",
+    vitals: { bp: "122/80 mmHg", pulse: "68 bpm", spo2: "98%", painLevel: "0 / 10" },
+    clinicalNotes: "Full mouth ultrasonic Cavitron scaling completed. Fine hand scaling on lingual lower anteriors. Applied 5% Sodium Fluoride varnish. 4-bitewing radiographs captured with zero recurrent caries.",
+    nextAction: "6-month periodontal maintenance recall scheduled for April 2027.",
+    prescriptions: "Prescription chlorhexidine gluconate 0.12% oral rinse BID x 14 days."
+  },
+  {
+    time: "11:30 AM",
+    timeSlot: "11:30 AM - 12:15 PM",
+    name: "Alice Ross",
+    id: "#40925",
+    initials: "AR",
+    proc: "Orthodontic Adjustment",
+    tooth: "Maxillary & Mandibular Fixed Brackets (Roth 0.022)",
+    operatory: "Operatory 03 — Orthodontic Bay",
+    doctor: "Dr. Sarah Sharma, DDS",
+    anesthesia: "None required",
+    status: "Confirmed",
+    statusColor: "bg-surface-container-high text-on-surface",
+    avatarColor: "bg-secondary-container text-on-secondary-container",
+    ageGender: "22 yrs • Female",
+    phone: "+1 (555) 843-1992",
+    email: "alice.ross@example.com",
+    medicalAlert: "Latex Allergy (Confirmed) — Non-Latex Gloves & Elastics Only",
+    alertLevel: "medium",
+    insurance: "Cigna Dental Care • Lifetime Ortho Coverage ($2,500 max)",
+    vitals: { bp: "114/72 mmHg", pulse: "74 bpm", spo2: "99%", painLevel: "1 / 10" },
+    clinicalNotes: "Upper archwire stepped up from 0.014 to 0.016 x 0.022 Rectangular NiTi. Lower archwire cinched. Power chain placed from #6 to #11 to consolidate anterior spacing. Good oral hygiene maintained.",
+    nextAction: "4-week follow-up for torque verification and Class II elastic check.",
+    prescriptions: "Orthodontic relief wax provided for comfort."
+  },
+  {
+    time: "01:30 PM",
+    timeSlot: "01:30 PM - 02:30 PM",
+    name: "Robert King",
+    id: "#40930",
+    initials: "RK",
+    proc: "Teeth Whitening Session",
+    tooth: "Anterior Aesthetic Zone (#6 - #11, #22 - #27)",
+    operatory: "Operatory 04 — Aesthetic Suite",
+    doctor: "Dr. Sarah Sharma, DDS",
+    anesthesia: "None • Potassium Nitrate desensitizing pre-treatment",
+    status: "Completed",
+    statusColor: "bg-emerald-100 text-emerald-800",
+    avatarColor: "bg-surface-container-high text-on-surface",
+    ageGender: "45 yrs • Male",
+    phone: "+1 (555) 629-8401",
+    email: "robert.king@example.com",
+    medicalAlert: "Mild Enamel Micro-crack on Tooth #8 • No Allergies",
+    alertLevel: "normal",
+    insurance: "Self-Pay / Patient Financing ($450 Paid in Full)",
+    vitals: { bp: "126/82 mmHg", pulse: "70 bpm", spo2: "98%", painLevel: "0 / 10" },
+    clinicalNotes: "In-office 38% Hydrogen Peroxide light-cured whitening completed in three 15-minute passes. Gingival barrier placed with zero tissue blanching. Starting shade A3.5 -> Final shade B1 (6 shades brighter).",
+    nextAction: "Post-whitening review in 2 weeks. Custom take-home maintenance trays delivered.",
+    prescriptions: "Relief ACP oral care gel for 48-hour post-bleaching sensitivity."
+  },
+  {
+    time: "03:00 PM",
+    timeSlot: "03:00 PM - 03:45 PM",
+    name: "Anjali Lane",
+    id: "#40935",
+    initials: "AL",
+    proc: "Emergency Crown Fix",
+    tooth: "Tooth #14 (Upper Left First Molar PFM Crown)",
+    operatory: "Operatory 01 — Urgent Operatory",
+    doctor: "Dr. Sarah Sharma, DDS",
+    anesthesia: "Local Infiltration: 4% Articaine with 1:100,000 Epinephrine (1.2 ml)",
+    status: "Confirmed",
+    statusColor: "bg-surface-container-high text-on-surface",
+    avatarColor: "bg-error-container text-on-error-container",
+    ageGender: "41 yrs • Female",
+    phone: "+1 (555) 914-7260",
+    email: "anjali.lane@example.com",
+    medicalAlert: "Hypertension (Managed on Lisinopril 10mg) • Monitored BP",
+    alertLevel: "medium",
+    insurance: "Guardian Dental Gold • Pre-approved Emergency Copay: $35",
+    vitals: { bp: "132/84 mmHg", pulse: "78 bpm", spo2: "97%", painLevel: "3 / 10" },
+    clinicalNotes: "Patient arrived with dislodged porcelain-fused-to-metal crown. Tooth prep examined under loupes: core build-up intact with no secondary caries. Internal surface sandblasted with 50um alumina. Recemented with RelyX Luting Plus resin-modified glass ionomer. Occlusion checked with 21um articulating paper.",
+    nextAction: "Check margin stability and gingival response at 3-week post-op.",
+    prescriptions: "Warm salt water rinses TID. PRN Ibuprofen 400mg."
+  }
+];
+
 const INITIAL_NOTES: QuickNote[] = [
   { 
     id: '1', 
@@ -47,6 +206,41 @@ export default function Dashboard() {
   const [isNewPatientOpen, setIsNewPatientOpen] = useState(false);
   const [isVoiceConfigOpen, setIsVoiceConfigOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  // Today's Patient Schedule State & Detailed Popup
+  const [todaySchedule, setTodaySchedule] = useState<TodayScheduleItem[]>(INITIAL_TODAY_SCHEDULE);
+  const [selectedSchedulePatient, setSelectedSchedulePatient] = useState<TodayScheduleItem | null>(null);
+
+  const handleUpdateScheduleStatus = (patientId: string, newStatus: 'In Progress' | 'Confirmed' | 'Completed') => {
+    const statusColorMap = {
+      'In Progress': 'bg-primary text-on-primary',
+      'Confirmed': 'bg-surface-container-high text-on-surface',
+      'Completed': 'bg-emerald-100 text-emerald-800'
+    };
+
+    setTodaySchedule(prev => prev.map(item => {
+      if (item.id === patientId) {
+        const updated: TodayScheduleItem = {
+          ...item,
+          status: newStatus,
+          statusColor: statusColorMap[newStatus]
+        };
+        if (selectedSchedulePatient?.id === patientId) {
+          setSelectedSchedulePatient(updated);
+        }
+        return updated;
+      }
+      return item;
+    }));
+
+    showToast(`Appointment status updated to "${newStatus}"!`);
+  };
+
+  const handleCopyChartSummary = (patient: TodayScheduleItem) => {
+    const summary = `PATIENT: ${patient.name} (${patient.id})\nPROCEDURE: ${patient.proc} - ${patient.tooth}\nOPERATORY: ${patient.operatory} | DOCTOR: ${patient.doctor}\nVITALS: BP: ${patient.vitals.bp}, HR: ${patient.vitals.pulse}, SpO2: ${patient.vitals.spo2}\nALERTS: ${patient.medicalAlert}\nNOTES: ${patient.clinicalNotes}\nNEXT STEP: ${patient.nextAction}`;
+    navigator.clipboard.writeText(summary);
+    showToast(`Clinical chart summary for ${patient.name} copied to clipboard!`);
+  };
 
   // Quick Notes State
   const [notes, setNotes] = useState<QuickNote[]>(INITIAL_NOTES);
@@ -242,14 +436,8 @@ export default function Dashboard() {
                   </tr>
                 </thead>
                 <tbody className="text-sm text-on-surface divide-y divide-surface-container-low/50">
-                  {[
-                    { time: "09:00 AM", name: "Neha Gupta", id: "#40921", initials: "NG", proc: "Root Canal Therapy", status: "In Progress", statusColor: "bg-primary text-on-primary", avatarColor: "bg-primary/10 text-primary" },
-                    { time: "10:15 AM", name: "Mark Singh", id: "#40922", initials: "MS", proc: "Routine Cleaning & Exam", status: "Confirmed", statusColor: "bg-surface-container-high text-on-surface", avatarColor: "bg-tertiary-fixed text-on-tertiary-fixed" },
-                    { time: "11:30 AM", name: "Alice Ross", id: "#40925", initials: "AR", proc: "Orthodontic Adjustment", status: "Confirmed", statusColor: "bg-surface-container-high text-on-surface", avatarColor: "bg-secondary-container text-on-secondary-container" },
-                    { time: "01:30 PM", name: "Robert King", id: "#40930", initials: "RK", proc: "Teeth Whitening Session", status: "Completed", statusColor: "bg-emerald-100 text-emerald-800", avatarColor: "bg-surface-container-high text-on-surface" },
-                    { time: "03:00 PM", name: "Anjali Lane", id: "#40935", initials: "AL", proc: "Emergency Crown Fix", status: "Confirmed", statusColor: "bg-surface-container-high text-on-surface", avatarColor: "bg-error-container text-on-error-container" }
-                  ].map((row, i) => (
-                    <tr key={i} className="hover:bg-surface-container-low/30 transition-colors">
+                  {todaySchedule.map((row) => (
+                    <tr key={row.id} className="hover:bg-surface-container-low/30 transition-colors">
                       <td className="p-4 pl-4 font-bold whitespace-nowrap text-xs">{row.time}</td>
                       <td className="p-4 flex items-center gap-3">
                         <div className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs ${row.avatarColor}`}>{row.initials}</div>
@@ -266,10 +454,11 @@ export default function Dashboard() {
                       </td>
                       <td className="p-4 pr-4 text-right whitespace-nowrap">
                         <button 
-                          onClick={() => showToast(`Opening patient chart for ${row.name}`)}
-                          className="p-1.5 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors cursor-pointer"
+                          onClick={() => setSelectedSchedulePatient(row)}
+                          className="p-1.5 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors cursor-pointer group"
+                          title={`Open clinical appointment details for ${row.name}`}
                         >
-                          <span className="material-symbols-outlined text-[18px]">visibility</span>
+                          <span className="material-symbols-outlined text-[18px] group-hover:scale-110 transition-transform">visibility</span>
                         </button>
                       </td>
                     </tr>
@@ -910,6 +1099,274 @@ export default function Dashboard() {
                   >
                     Create Record
                   </button>
+                </div>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
+
+      {/* ========================================================================= */}
+      {/* 4. PATIENT SCHEDULE DETAIL & CONFIGURATION MODAL (Portaled to body)       */}
+      {/* ========================================================================= */}
+      {typeof document !== 'undefined' && createPortal(
+        <AnimatePresence>
+          {selectedSchedulePatient && (
+            <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+              {/* Backdrop */}
+              <motion.div 
+                initial={{ opacity: 0 }} 
+                animate={{ opacity: 1 }} 
+                exit={{ opacity: 0 }} 
+                className="fixed inset-0 bg-black/60 backdrop-blur-md"
+                onClick={() => setSelectedSchedulePatient(null)}
+              />
+              
+              {/* Dialog Content */}
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.94, y: 15 }} 
+                animate={{ opacity: 1, scale: 1, y: 0 }} 
+                exit={{ opacity: 0, scale: 0.94, y: 10 }} 
+                transition={{ type: "spring", damping: 25, stiffness: 320 }}
+                className="relative bg-surface-container-lowest w-full max-w-2xl rounded-2xl shadow-2xl border border-surface-container-high overflow-hidden flex flex-col z-10 my-auto max-h-[92vh]"
+              >
+                {/* Modal Header */}
+                <div className="p-5 sm:p-6 border-b border-surface-container-low flex justify-between items-center bg-gradient-to-r from-surface-container-low/50 via-surface-container-lowest to-surface-container-low/30">
+                  <div className="flex items-center gap-3.5">
+                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-base shadow-sm shrink-0 ${selectedSchedulePatient.avatarColor}`}>
+                      {selectedSchedulePatient.initials}
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h2 className="text-xl font-bold text-on-surface">{selectedSchedulePatient.name}</h2>
+                        <span className="text-xs font-mono font-bold text-on-surface-variant bg-surface-container-high px-2 py-0.5 rounded-md">
+                          {selectedSchedulePatient.id}
+                        </span>
+                        <span className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full ${selectedSchedulePatient.statusColor}`}>
+                          {selectedSchedulePatient.status}
+                        </span>
+                      </div>
+                      <p className="text-xs text-on-surface-variant mt-0.5 flex items-center gap-2">
+                        <span>{selectedSchedulePatient.ageGender}</span>
+                        <span>•</span>
+                        <span>{selectedSchedulePatient.phone}</span>
+                      </p>
+                    </div>
+                  </div>
+
+                  <button 
+                    onClick={() => setSelectedSchedulePatient(null)} 
+                    className="p-2 text-outline hover:text-on-surface hover:bg-surface-container-low rounded-xl transition-colors cursor-pointer shrink-0"
+                    title="Close modal"
+                  >
+                    <span className="material-symbols-outlined text-[20px]">close</span>
+                  </button>
+                </div>
+
+                {/* Modal Scrollable Body */}
+                <div className="p-5 sm:p-6 overflow-y-auto space-y-4 text-xs">
+                  {/* Quick Overview Strip */}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                    <div className="p-3 bg-surface-container-low rounded-xl border border-surface-container-high/60">
+                      <span className="text-[10px] font-bold text-outline uppercase tracking-wider block">Time Slot</span>
+                      <span className="text-xs font-bold text-on-surface mt-0.5 flex items-center gap-1">
+                        <span className="material-symbols-outlined text-[14px] text-primary">schedule</span>
+                        {selectedSchedulePatient.timeSlot}
+                      </span>
+                    </div>
+                    <div className="p-3 bg-surface-container-low rounded-xl border border-surface-container-high/60">
+                      <span className="text-[10px] font-bold text-outline uppercase tracking-wider block">Operatory Location</span>
+                      <span className="text-xs font-bold text-on-surface mt-0.5 flex items-center gap-1">
+                        <span className="material-symbols-outlined text-[14px] text-teal-600">door_front</span>
+                        {selectedSchedulePatient.operatory}
+                      </span>
+                    </div>
+                    <div className="p-3 bg-surface-container-low rounded-xl border border-surface-container-high/60">
+                      <span className="text-[10px] font-bold text-outline uppercase tracking-wider block">Lead Clinician</span>
+                      <span className="text-xs font-bold text-on-surface mt-0.5 truncate flex items-center gap-1">
+                        <span className="material-symbols-outlined text-[14px] text-sky-600">badge</span>
+                        {selectedSchedulePatient.doctor}
+                      </span>
+                    </div>
+                    <div className="p-3 bg-surface-container-low rounded-xl border border-surface-container-high/60">
+                      <span className="text-[10px] font-bold text-outline uppercase tracking-wider block">Target Tooth / Arch</span>
+                      <span className="text-xs font-bold text-primary mt-0.5 truncate flex items-center gap-1">
+                        <span className="material-symbols-outlined text-[14px]">dentistry</span>
+                        {selectedSchedulePatient.tooth}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Medical Alert Callout */}
+                  <div className={`p-3.5 rounded-xl border flex items-start gap-2.5 ${
+                    selectedSchedulePatient.alertLevel === 'high'
+                      ? 'bg-rose-50 border-rose-200 text-rose-900'
+                      : selectedSchedulePatient.alertLevel === 'medium'
+                      ? 'bg-amber-50 border-amber-200 text-amber-900'
+                      : 'bg-emerald-50 border-emerald-200 text-emerald-900'
+                  }`}>
+                    <span className={`material-symbols-outlined text-[20px] shrink-0 ${
+                      selectedSchedulePatient.alertLevel === 'high' ? 'text-rose-600' : selectedSchedulePatient.alertLevel === 'medium' ? 'text-amber-600' : 'text-emerald-600'
+                    }`}>
+                      {selectedSchedulePatient.alertLevel === 'normal' ? 'verified_user' : 'warning'}
+                    </span>
+                    <div>
+                      <span className="font-bold block text-xs">Medical Alerts & Clinical Precautions</span>
+                      <p className="text-xs mt-0.5 leading-relaxed">{selectedSchedulePatient.medicalAlert}</p>
+                    </div>
+                  </div>
+
+                  {/* Vitals Telemetry Grid */}
+                  <div className="p-3.5 bg-surface-container-low/70 rounded-xl border border-surface-container-high space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] font-bold text-on-surface uppercase tracking-wider flex items-center gap-1.5">
+                        <span className="material-symbols-outlined text-[16px] text-rose-500">cardiology</span>
+                        Pre-Procedure Patient Vitals (Telemetry)
+                      </span>
+                      <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                        Normal Range
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-4 gap-2 pt-1 text-center">
+                      <div className="bg-surface-container-lowest p-2 rounded-lg border border-surface-container-high/70">
+                        <span className="text-[10px] text-outline font-medium block">Blood Pressure</span>
+                        <span className="text-xs font-bold text-on-surface">{selectedSchedulePatient.vitals.bp}</span>
+                      </div>
+                      <div className="bg-surface-container-lowest p-2 rounded-lg border border-surface-container-high/70">
+                        <span className="text-[10px] text-outline font-medium block">Pulse Rate</span>
+                        <span className="text-xs font-bold text-on-surface">{selectedSchedulePatient.vitals.pulse}</span>
+                      </div>
+                      <div className="bg-surface-container-lowest p-2 rounded-lg border border-surface-container-high/70">
+                        <span className="text-[10px] text-outline font-medium block">Oxygen (SpO2)</span>
+                        <span className="text-xs font-bold text-on-surface">{selectedSchedulePatient.vitals.spo2}</span>
+                      </div>
+                      <div className="bg-surface-container-lowest p-2 rounded-lg border border-surface-container-high/70">
+                        <span className="text-[10px] text-outline font-medium block">Pain Level</span>
+                        <span className="text-xs font-bold text-primary">{selectedSchedulePatient.vitals.painLevel}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Clinical Procedure & Anesthesia Config */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="p-3.5 bg-surface-container-lowest rounded-xl border border-surface-container-high space-y-1">
+                      <span className="text-[10px] font-bold text-outline uppercase tracking-wider block">Clinical Procedure</span>
+                      <span className="font-bold text-on-surface text-sm block">{selectedSchedulePatient.proc}</span>
+                      <p className="text-[11px] text-on-surface-variant leading-relaxed">
+                        Target: <strong>{selectedSchedulePatient.tooth}</strong>
+                      </p>
+                    </div>
+
+                    <div className="p-3.5 bg-surface-container-lowest rounded-xl border border-surface-container-high space-y-1">
+                      <span className="text-[10px] font-bold text-outline uppercase tracking-wider block">Anesthesia Protocol</span>
+                      <span className="font-bold text-on-surface text-xs block flex items-center gap-1">
+                        <span className="material-symbols-outlined text-[15px] text-amber-600">vaccines</span>
+                        {selectedSchedulePatient.anesthesia}
+                      </span>
+                      <p className="text-[11px] text-on-surface-variant leading-relaxed">
+                        Payer: <strong>{selectedSchedulePatient.insurance}</strong>
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Doctor Chart Notes */}
+                  <div className="p-3.5 bg-surface-container-lowest rounded-xl border border-surface-container-high space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] font-bold text-on-surface uppercase tracking-wider flex items-center gap-1.5">
+                        <span className="material-symbols-outlined text-[15px] text-primary">clinical_notes</span>
+                        Operative Chart Notes
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => handleCopyChartSummary(selectedSchedulePatient)}
+                        className="text-[10px] font-semibold text-primary hover:underline flex items-center gap-1 cursor-pointer"
+                      >
+                        <span className="material-symbols-outlined text-[13px]">content_copy</span>
+                        Copy Notes
+                      </button>
+                    </div>
+                    <p className="text-xs text-on-surface-variant leading-relaxed font-sans bg-surface-container-low/40 p-2.5 rounded-lg border border-surface-container-low">
+                      {selectedSchedulePatient.clinicalNotes}
+                    </p>
+                  </div>
+
+                  {/* Prescriptions & Follow-up Action */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="p-3 bg-surface-container-low rounded-xl border border-surface-container-high/60 space-y-1">
+                      <span className="text-[10px] font-bold text-outline uppercase tracking-wider block flex items-center gap-1">
+                        <span className="material-symbols-outlined text-[14px] text-rose-500">medication</span>
+                        Prescriptions Issued
+                      </span>
+                      <p className="text-xs text-on-surface font-medium leading-relaxed">{selectedSchedulePatient.prescriptions}</p>
+                    </div>
+
+                    <div className="p-3 bg-surface-container-low rounded-xl border border-surface-container-high/60 space-y-1">
+                      <span className="text-[10px] font-bold text-outline uppercase tracking-wider block flex items-center gap-1">
+                        <span className="material-symbols-outlined text-[14px] text-teal-600">event_repeat</span>
+                        Next Clinical Action
+                      </span>
+                      <p className="text-xs text-on-surface font-medium leading-relaxed">{selectedSchedulePatient.nextAction}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Modal Footer with Status Change & Close */}
+                <div className="p-4 border-t border-surface-container-low bg-surface-container-lowest flex flex-wrap items-center justify-between gap-3 px-6">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-bold text-on-surface-variant">Update Status:</span>
+                    <button
+                      type="button"
+                      onClick={() => handleUpdateScheduleStatus(selectedSchedulePatient.id, 'In Progress')}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                        selectedSchedulePatient.status === 'In Progress'
+                          ? 'bg-primary text-on-primary shadow-xs'
+                          : 'bg-surface-container-high text-on-surface hover:bg-surface-container-highest'
+                      }`}
+                    >
+                      In Progress
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleUpdateScheduleStatus(selectedSchedulePatient.id, 'Confirmed')}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                        selectedSchedulePatient.status === 'Confirmed'
+                          ? 'bg-primary text-on-primary shadow-xs'
+                          : 'bg-surface-container-high text-on-surface hover:bg-surface-container-highest'
+                      }`}
+                    >
+                      Confirmed
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleUpdateScheduleStatus(selectedSchedulePatient.id, 'Completed')}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                        selectedSchedulePatient.status === 'Completed'
+                          ? 'bg-emerald-600 text-white shadow-xs'
+                          : 'bg-surface-container-high text-on-surface hover:bg-surface-container-highest'
+                      }`}
+                    >
+                      Completed
+                    </button>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <button 
+                      type="button"
+                      onClick={() => handleCopyChartSummary(selectedSchedulePatient)}
+                      className="px-4 py-2 rounded-xl font-medium text-xs text-on-surface bg-surface-container-high hover:bg-surface-container-highest transition-colors cursor-pointer flex items-center gap-1.5"
+                    >
+                      <span className="material-symbols-outlined text-[15px]">print</span>
+                      Export Chart
+                    </button>
+                    <button 
+                      type="button"
+                      onClick={() => setSelectedSchedulePatient(null)} 
+                      className="px-5 py-2 rounded-xl font-semibold text-xs bg-primary text-on-primary shadow-xs hover:bg-primary-container transition-colors cursor-pointer"
+                    >
+                      Close
+                    </button>
+                  </div>
                 </div>
               </motion.div>
             </div>
