@@ -16,10 +16,26 @@ An advanced, responsive, and modern clinical management web application designed
 
 ### 2. 📅 Clinical Appointments & Telemetry (`/dashboard/appointments`)
 - **Queue Management**: Filter appointments by status (`All`, `Confirmed`, `In Progress`, `Completed`, `Cancelled`) with live keyword search.
-- **Power BI Peak Density Telemetry**: Interactive animated histogram visualizing hourly chair capacity and patient density.
-- **Procedure Distribution Breakdown**: Visual allocation of Cleanings, Root Canals, Crowns, and Orthodontics.
+- **Enhanced Multi-Appointment Calendar Widget**:
+  - Displays appointment markers across **all days of the month**.
+  - **Color-Coded Legend at Top**:
+    - 🟢 Cleanings & Hygiene (`Teal`)
+    - 🔵 Root Canal Therapy (`Blue`)
+    - 🟡 Crown & Bridge (`Amber`)
+    - 🟣 Orthodontics & Implants (`Purple`)
+    - 🔴 Surgery & Extractions (`Rose`)
+  - **Multiple Appointments on the Same Day**: Clearly rendered with multi-colored indicator dots and `+N` overflow pills.
+  - Interactive day selection updates the appointment queue for that specific date in real time.
+- **Portaled "AI Operatory Schedule Optimization" Modal**:
+  - Opened via the **"Optimize Schedule Slots"** button.
+  - Features real-time chair utilization metrics (`78% → 94%`), wait-time reduction analysis (`18m → 4m`), and idle gap recovery.
+  - Algorithm rebalancing recommendations (Chair 01 & Chair 03 rebalancing, hygiene slot batching, 30m emergency cushion buffer).
+  - One-click execution with automated chair reassignment and patient SMS notification toggles.
+- **Dynamic Power BI Peak Density & Volume Analysis**:
+  - Interactive **Period Filter**: Seamlessly switch between `Current Week`, `Last Week`, `This Month`, and `Next Week (Projected)`.
+  - **Live Data Shifting**: Peak hour density bars (8 AM – 4 PM) and Procedure Distribution percentages (Cleanings, Root Canals, Crowns, Orthodontics) re-calculate and re-animate dynamically.
+  - Interactive hover tooltips displaying patient volume and chair capacity percentages.
 - **Portaled Schedule Appointment Modal**: Full-screen backdrop blur modal for booking new chair sessions.
-- **Interactive Calendar Widget**: Month selector with active day highlights.
 
 ### 3. 👥 Patient Directory & Treatment Flow (`/dashboard/patients`)
 - **Power BI Demographics Banner**: Live sync telemetry tracking active patient volume (2,482), preventive care ratios, insurance verification percentages, and flagged medical alerts.
