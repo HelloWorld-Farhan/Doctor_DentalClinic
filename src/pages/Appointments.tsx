@@ -1179,37 +1179,56 @@ export default function Appointments() {
             </div>
 
             {/* Dynamic Bars with smooth Framer Motion and X-axis Labels */}
-            <div className="overflow-x-auto no-scrollbar scrollbar-none pb-1">
-              <div className="flex items-end justify-between h-44 gap-1.5 sm:gap-3 pt-6 min-w-[340px] sm:min-w-0 border-b border-surface-container-highest/60 pb-2">
-                {currentTelemetry.bars.map((bar, i) => (
-                  <div key={bar.time} className="flex-1 flex flex-col items-center justify-end h-full group relative">
-                    {/* Patient count indicator above bar */}
-                    <span className="text-[10px] font-bold text-outline group-hover:text-primary mb-1 transition-colors">
-                      {bar.val}
-                    </span>
+            <div className="overflow-x-auto no-scrollbar scrollbar-none pt-12 pb-2">
+              <div className="flex items-end justify-between h-44 gap-1.5 sm:gap-3 min-w-[340px] sm:min-w-0 border-b border-surface-container-highest/60 pb-2">
+                {currentTelemetry.bars.map((bar, i) => {
+                  const isFirst = i === 0;
+                  const isLast = i === currentTelemetry.bars.length - 1;
+                  const tooltipAlign = isFirst 
+                    ? "left-0" 
+                    : isLast 
+                      ? "right-0" 
+                      : "left-1/2 -translate-x-1/2";
+                  const arrowAlign = isFirst 
+                    ? "left-3" 
+                    : isLast 
+                      ? "right-3" 
+                      : "left-1/2 -translate-x-1/2";
 
-                    {/* Tooltip on hover */}
-                    <div className="opacity-0 group-hover:opacity-100 transition-opacity absolute -top-9 bg-on-surface text-surface text-[10px] py-1 px-2 rounded-lg whitespace-nowrap shadow-md pointer-events-none z-20 font-bold">
-                      {bar.val} Patients ({bar.capacity}% Full)
+                  return (
+                    <div key={bar.time} className="flex-1 flex flex-col items-center justify-end h-full group relative">
+                      {/* Patient count indicator above bar */}
+                      <span className="text-[10px] font-bold text-outline group-hover:text-primary mb-1 transition-colors">
+                        {bar.val}
+                      </span>
+
+                      {/* Tooltip on hover / active (Never clipped, with arrow and distinct badges) */}
+                      <div className={`opacity-0 group-hover:opacity-100 transition-all duration-200 absolute -top-11 ${tooltipAlign} bg-slate-900 text-white text-[10px] sm:text-[11px] font-bold py-1.5 px-2.5 sm:px-3 rounded-lg whitespace-nowrap shadow-xl pointer-events-none z-30 border border-slate-700/80 flex items-center gap-1.5`}>
+                        <span className="w-1.5 h-1.5 rounded-full bg-teal-400 animate-pulse"></span>
+                        <span>{bar.val} Patients</span>
+                        <span className="text-teal-300 font-semibold">({bar.capacity}% Full)</span>
+                        {/* Indicator Arrow */}
+                        <div className={`absolute -bottom-1 ${arrowAlign} w-2 h-2 bg-slate-900 rotate-45 border-r border-b border-slate-700/80`}></div>
+                      </div>
+
+                      <motion.div 
+                        initial={{ height: 0 }}
+                        animate={{ height: bar.pct }}
+                        transition={{ duration: 0.5, delay: i * 0.04 }}
+                        className={`w-full max-w-[38px] rounded-t-lg cursor-pointer transition-colors ${
+                          bar.isMax 
+                            ? 'bg-primary hover:bg-primary-container shadow-xs ring-1 ring-primary/40' 
+                            : 'bg-primary/40 hover:bg-primary/70'
+                        }`}
+                      />
+
+                      {/* Time Label on X-Axis BELOW the bar */}
+                      <span className={`text-[10px] sm:text-[11px] mt-2 whitespace-nowrap block transition-colors ${bar.isMax ? 'text-primary font-bold' : 'text-on-surface-variant font-medium'}`}>
+                        {bar.time}
+                      </span>
                     </div>
-
-                    <motion.div 
-                      initial={{ height: 0 }}
-                      animate={{ height: bar.pct }}
-                      transition={{ duration: 0.5, delay: i * 0.04 }}
-                      className={`w-full max-w-[38px] rounded-t-lg cursor-pointer transition-colors ${
-                        bar.isMax 
-                          ? 'bg-primary hover:bg-primary-container shadow-xs ring-1 ring-primary/40' 
-                          : 'bg-primary/40 hover:bg-primary/70'
-                      }`}
-                    />
-
-                    {/* Time Label on X-Axis BELOW the bar */}
-                    <span className={`text-[10px] sm:text-[11px] mt-2 whitespace-nowrap block transition-colors ${bar.isMax ? 'text-primary font-bold' : 'text-on-surface-variant font-medium'}`}>
-                      {bar.time}
-                    </span>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </div>
