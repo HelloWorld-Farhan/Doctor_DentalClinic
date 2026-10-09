@@ -62,10 +62,26 @@ An advanced, responsive, and modern clinical management web application designed
   - Animated progress simulation: progress bar cycling from 0% to 100% with real-time compilation steps.
   - **Automated CSV Download**: Generates and downloads `Dental_Clinic_Reviews_PowerBI_Report.csv` directly to the client machine upon completion.
 
-### 5. ⚙️ Practice Settings (`/dashboard/settings`)
-- Practice branding, operatory chair configuration, staff access controls, and notification preferences.
+### 5. ⚙️ Practice Settings & Clinical Governance (`/dashboard/settings`)
+- **6 Comprehensive Clinical Configuration Tabs**:
+  1. **Profile & Clinic Info**: Practice legal identity, NPI registry, contact info, operating hours, logo uploader, and Lead Dentist bio (`Dr. Sarah Sharma, DDS`).
+  2. **Security & HIPAA Protocols**: Multi-Factor Authentication (MFA), automatic session inactivity timeouts, immutable audit trail logging, PHI masking on exports, and **one-click CSV HIPAA Audit Log export**.
+  3. **Notifications & Alerts**: Automated SMS appointment reminders, preventive recall emails, emergency booking push alerts, SMS sender brand ID (`DENTALPRO`), and advance notice window config.
+  4. **Power BI Analytics Integration**: Azure Tenant connection (`dentalcare-prod-uswest`), workspace GUID, ingestion cadence, and an **interactive "Test Connection" simulator with live latency metrics**.
+  5. **Equipment Status Management**: Real-time operatory equipment telemetry (CBCT 3D Scanner, iTero 5D Scanner, Curing Light, Midmark Autoclave) with live status toggling and a **portaled "Add Equipment" modal**.
+  6. **AI Voice-to-Text Charting**: Hands-free periodontal probe depth soundings, acoustic medical models, high-frequency drill noise cancellation filters, and a **live voice dictation testing playground**.
 
-### 6. 🔐 Authentication (`/` and `/signup`)
+### 6. 🔔 Modernized Header, Notifications & Doctor Profile Dropdown
+- **Enriched Notification Center**:
+  - Live unread badge count with pulse indicators.
+  - Category-coded icons (`Appointment`, `Clinical Care`, `Equipment Alert`, `Patient Feedback`, `Lab Diagnostic`).
+  - Filter tabs (`All` vs `Unread`), individual dismiss actions, and "Mark all as read".
+- **Doctor Profile Header Widget**:
+  - Shows Doctor Avatar with live green online status dot, name (`Dr. Sarah Sharma, DDS`), and specialty (`Lead Dental Surgeon`).
+  - **Quick Clinical Profile Dropdown**: Contains Practice Settings, Doctor Credentials, Security & HIPAA, and one-click Session Log Out.
+  - Cleans up main sidebar navigation to focus strictly on clinical patient workflows.
+
+### 7. 🔐 Authentication (`/` and `/signup`)
 - Doctor Sign In with demo credentials.
 - Multi-step Doctor Registration with clinical credential validation.
 
