@@ -1,200 +1,143 @@
-# 🦷 Dental Clinic Pro — Doctor Clinical Portal & Power BI Analytics
+<h1 align="center">🦷 Doctor DentalCare Portal - Clinical Management System</h1>
 
-An advanced, responsive, and modern clinical management web application designed for dental practices and healthcare professionals. Built with **React 18**, **TypeScript**, **Vite**, **Tailwind CSS**, and **Framer Motion**.
+<p align="center">
+  <img src="https://img.shields.io/badge/React_18-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React 18"/>
+  <img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript"/>
+  <img src="https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Vite"/>
+  <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS"/>
+  <img src="https://img.shields.io/badge/Framer_Motion-0055FF?style=for-the-badge&logo=framer&logoColor=white" alt="Framer Motion"/>
+  <img src="https://img.shields.io/badge/License-MIT-brightgreen?style=for-the-badge" alt="MIT License"/>
+</p>
 
----
-
-## 🌟 Key Modules & Features
-
-### 1. 📊 Doctor Clinical Dashboard (`/dashboard`)
-- **Key Practice KPIs Bento Grid**: Real-time tracking of Today's Appointments, Pending Reviews, Clinical Satisfaction, and Active Patient Volume.
-- **Active Schedule Queue**: Today's appointment timeline with status tracking, patient badges, and procedure indicators.
-- **Functional Quick Note Pad**:
-  - Inner section design with dual modes: **New Note** composer & **Saved Notes** list.
-  - Category tagging chips: `Clinical` (Teal), `Rx` (Blue), `Lab` (Purple), `Urgent` (Rose), `Follow-up` (Amber).
-  - Dynamic note states: mark complete (strikethrough), active counter badges, and one-click deletion.
-- **Portaled "AI Voice-to-Text Charting Setup" Modal**:
-  - Launched from the **"Enable Feature"** card.
-  - Full configuration controls: Operatory microphone selection (Chairside Wireless Headset, Lapel Mic, Ceiling Beamforming Array), drill & suction high-pass noise filtering, ADA acoustic vocabulary models, and automated quadrant chimes.
-  - **Live Audio Stream Simulator**: Real-time audio waveform animation parsing dictated clinical EHR notes.
-  - Enables the feature across operatories and updates the dashboard badge to `AI Voice Active • Operatory 01`.
-- **Interactive Operatory Equipment Telemetry**: Real-time status cards (Digital X-Ray Unit, Autoclave, Laser Scaler) with one-click operational status toggles.
-- **Portaled Quick Action Modals**: 
-  - **Register New Patient**: Demographics, contact info, and birth date capture.
-  - **Schedule Appointment**: Date, time, procedure, and operatory chair assignment.
-- **Real-Time Notification Center**: Interactive dropdown displaying equipment alerts, new bookings, and chart notifications.
-
-### 2. 📅 Clinical Appointments & Telemetry (`/dashboard/appointments`)
-- **Queue Management**: Filter appointments by status (`All`, `Confirmed`, `In Progress`, `Completed`, `Cancelled`) with live keyword search.
-- **Enhanced Multi-Appointment Calendar Widget**:
-  - Displays appointment markers across **all days of the month**.
-  - **Color-Coded Legend at Top**:
-    - 🟢 Cleanings & Hygiene (`Teal`)
-    - 🔵 Root Canal Therapy (`Blue`)
-    - 🟡 Crown & Bridge (`Amber`)
-    - 🟣 Orthodontics & Implants (`Purple`)
-    - 🔴 Surgery & Extractions (`Rose`)
-  - **Multiple Appointments on the Same Day**: Clearly rendered with multi-colored indicator dots and `+N` overflow pills.
-  - Interactive day selection updates the appointment queue for that specific date in real time.
-- **Portaled "AI Operatory Schedule Optimization" Modal**:
-  - Opened via the **"Optimize Schedule Slots"** button.
-  - Features real-time chair utilization metrics (`78% → 94%`), wait-time reduction analysis (`18m → 4m`), and idle gap recovery.
-  - Algorithm rebalancing recommendations (Chair 01 & Chair 03 rebalancing, hygiene slot batching, 30m emergency cushion buffer).
-  - One-click execution with automated chair reassignment and patient SMS notification toggles.
-- **Dynamic Power BI Peak Density & Volume Analysis**:
-  - Interactive **Period Filter**: Seamlessly switch between `Current Week`, `Last Week`, `This Month`, and `Next Week (Projected)`.
-  - **Live Data Shifting**: Peak hour density bars (8 AM – 4 PM) and Procedure Distribution percentages (Cleanings, Root Canals, Crowns, Orthodontics) re-calculate and re-animate dynamically.
-  - Interactive hover tooltips displaying patient volume and chair capacity percentages.
-- **Portaled Schedule Appointment Modal**: Full-screen backdrop blur modal for booking new chair sessions.
-
-### 3. 👥 Patient Directory & Treatment Flow (`/dashboard/patients`)
-- **Power BI Demographics Banner**: Live sync telemetry tracking active patient volume (2,482), preventive care ratios, insurance verification percentages, and flagged medical alerts.
-- **Patient Table**: Comprehensive records with patient ID, age, gender, last visit, primary procedure, medical alert tags, and insurance status.
-- **Portaled "Edit Patient Record" Modal**:
-  - Clicking the pencil edit icon opens the modal pre-filled with the exact selected patient's demographics, contact info, clinical procedure, medical alerts, and insurance details.
-  - Allows live editing with one-click allergy chips and updates the clinical table in real time with toast confirmation.
-- **Interactive Dental Chart & Odontogram Modal (Tooth Icon)**:
-  - Clicking the tooth icon opens an adult 32-tooth odontogram (Universal Numbering System 1–32).
-  - Segregated by **Maxillary Arch (Upper Teeth 1–16)** and **Mandibular Arch (Lower Teeth 17–32)**.
-  - Interactive status toggles for each tooth: `Healthy (Sound)`, `Crown / Bridge`, `Root Canal Treated`, `Dental Implant`, `Caries / Watch`, and `Extracted / Missing`.
-  - Clinical findings notes view with Print & Export Chart capability.
-- **Working Dynamic Pagination (Pages 1 to 62)**:
-  - Supports navigation across pages `1`, `2`, `3`, `...`, `62`, `Previous`, and `Next`.
-  - Accurately shifts patient records per page (e.g., `Showing 1-4`, `Showing 5-8`, `Showing 9-12`, up to `Showing 2445-2482 of 2,482 patients`).
-- **Interactive Filter & Sort Popovers**:
-  - **Filter Popover**: Multi-criteria filtering by Medical Alerts (Latex, Penicillin, Hypertension), Insurance Providers (Delta Dental, MetLife, Cigna, Guardian, Pending), and Clinical Procedures.
-  - **Sort Popover**: Instant sorting by Name (A→Z, Z→A), Age (Youngest/Oldest), and Patient ID with active checkmark indicators.
-- **Portaled "Add New Patient" Modal**: Structured 3-step clinical form portaled to `document.body` with zero header clipping.
-- **Patient History Drawer**: Slide-out timeline detailing past endodontic treatments, periodontal probing depths, and radiographs.
-
-### 4. ⭐ Doctor Reviews & Advanced Feedback (`/dashboard/reviews`)
-- **Power BI Clinical Analytics Header**:
-  - Overall rating card with star distribution breakdown (5★, 4★, 3★).
-  - NLP Sentiment Analysis breakdown (Positive, Neutral, Critical).
-  - Punctuality & Wait-Time adherence gauge.
-  - Pain management and gentle care comfort scores.
-- **Animated Power BI Trend Histogram**:
-  - 6-month rating distribution bars with smooth Framer Motion spring entry animations.
-  - Interactive hover tooltips displaying review count, average stars, and Net Promoter Score (NPS).
-  - Clickable month selection highlighting active performance period.
-- **Dynamic Star & Status Filtering**:
-  - Filter tabs with live counts calculated directly from dummy data: `All Reviews (12)`, `5 Stars (8)`, `4 Stars (4)`, `Needs Reply (7)`.
-- **Live Sorting Dropdown**:
-  - `Most Recent`: Chronological timestamp sorting.
-  - `Highest Rating`: 5-star to 1-star reviews.
-  - `Lowest Rating`: Critical reviews first.
-- **Working Pagination System**:
-  - Full pagination controls (`1`, `2`, `3`, `4`, `Previous`, `Next`).
-  - Smooth page transitions and dynamic counter (`Showing 1-3 of 12 reviews`).
-- **Portaled "Reply to Patient" Modal**:
-  - Displays original patient feedback card, procedure tag, and star rating.
-  - **Quick Clinical Response Templates**: Clickable presets (`Warm Gratitude`, `Wait Time Apology`, `Post-Procedure Check-in`, `Gentle Care Acknowledgment`).
-  - Textarea for Dr. Sharma's official clinical response with character counter.
-  - Push & SMS notification toggle for the patient.
-  - Updates review card in real-time with doctor response badge.
-- **Portaled "Export Reports" Modal**:
-  - Format selection: PDF Executive Summary, Excel (.xlsx) Matrix, CSV Raw Data, Power BI Data Pack (.pbix).
-  - Animated progress simulation: progress bar cycling from 0% to 100% with real-time compilation steps.
-  - **Automated CSV Download**: Generates and downloads `Dental_Clinic_Reviews_PowerBI_Report.csv` directly to the client machine upon completion.
-
-### 5. ⚙️ Practice Settings & Clinical Governance (`/dashboard/settings`)
-- **6 Comprehensive Clinical Configuration Tabs**:
-  1. **Profile & Clinic Info**: Practice legal identity, NPI registry, contact info, operating hours, logo uploader, and Lead Dentist bio (`Dr. Sarah Sharma, DDS`).
-  2. **Security & HIPAA Protocols**: Multi-Factor Authentication (MFA), automatic session inactivity timeouts, immutable audit trail logging, PHI masking on exports, and **one-click CSV HIPAA Audit Log export**.
-  3. **Notifications & Alerts**: Automated SMS appointment reminders, preventive recall emails, emergency booking push alerts, SMS sender brand ID (`DENTALPRO`), and advance notice window config.
-  4. **Power BI Analytics Integration**: Azure Tenant connection (`dentalcare-prod-uswest`), workspace GUID, ingestion cadence, and an **interactive "Test Connection" simulator with live latency metrics**.
-  5. **Equipment Status Management**: Real-time operatory equipment telemetry (CBCT 3D Scanner, iTero 5D Scanner, Curing Light, Midmark Autoclave) with live status toggling and a **portaled "Add Equipment" modal**.
-  6. **AI Voice-to-Text Charting**: Hands-free periodontal probe depth soundings, acoustic medical models, high-frequency drill noise cancellation filters, and a **live voice dictation testing playground**.
-
-### 6. 🔔 Modernized Header, Notifications & Doctor Profile Dropdown
-- **Enriched Notification Center**:
-  - Live unread badge count with pulse indicators.
-  - Category-coded icons (`Appointment`, `Clinical Care`, `Equipment Alert`, `Patient Feedback`, `Lab Diagnostic`).
-  - Filter tabs (`All` vs `Unread`), individual dismiss actions, and "Mark all as read".
-- **Doctor Profile Header Widget**:
-  - Shows Doctor Avatar with live green online status dot, name (`Dr. Sarah Sharma, DDS`), and specialty (`Lead Dental Surgeon`).
-  - **Quick Clinical Profile Dropdown**: Contains Practice Settings, Doctor Credentials, Security & HIPAA, and one-click Session Log Out.
-  - Cleans up main sidebar navigation to focus strictly on clinical patient workflows.
-
-### 7. 🔐 Authentication (`/` and `/signup`)
-- Doctor Sign In with demo credentials.
-- Multi-step Doctor Registration with clinical credential validation.
+<p align="center">
+  <strong>Doctor DentalCare Portal</strong> is an advanced, highly polished clinical management web application built for dental practitioners and modern clinics.<br/>
+  It features comprehensive patient charting, interactive 32-tooth odontograms, AI-powered voice-to-text charting, multi-day appointment telemetry,<br/>
+  and interactive Power BI clinical analytics to streamline operatory workflows.
+</p>
 
 ---
 
-## 🛠️ Technology Stack
+## ✨ Features
 
-- **Framework**: React 18 (Vite SPA)
-- **Language**: TypeScript (Strict typing)
-- **Styling**: Tailwind CSS with custom clinical theme tokens (`surface-container-low`, `primary`, `on-surface`, `tertiary`, `secondary`)
-- **Animations**: Framer Motion (page transitions, spring height graphs, layout animations, portaled modals)
-- **Icons**: Google Material Symbols Outlined
-- **Typography**: Inter (Google Fonts)
+| Feature | Description |
+|---|---|
+| 📊 **Doctor Clinical Dashboard** | Practice KPIs bento grid, today's schedule queue, interactive quick note pad with clinical categorization, operatory equipment telemetry, and quick action modals. |
+| 🎙️ **AI Voice-to-Text Charting** | Hands-free chairside dictation modal with high-pass drill/suction noise suppression, ADA CDT vocabulary models, and live audio waveform stream simulation. |
+| 📅 **Smart Multi-Day Calendar** | Complete monthly calendar with color-coded procedure legends (🟢 Cleanings, 🔵 Root Canals, 🟡 Crowns, 🟣 Orthodontics, 🔴 Surgery) and multi-appointment same-day indicators. |
+| ⚡ **AI Operatory Optimization** | Algorithmic chair utilization and wait-time rebalancing modal (`78% → 94%`) with automatic patient notification and emergency cushion buffers. |
+| 👥 **Comprehensive Patient Directory** | Demographic telemetry banner, live pagination across 62 pages (2,482 records), and multi-criteria filter & sort popovers. |
+| 🦷 **Interactive 32-Tooth Odontogram** | Universal Numbering System dental chart modal for maxillary and mandibular arches with real-time condition tracking (Caries, Crown, Root Canal, Implant). |
+| 📝 **Patient Record Editing** | Pre-filled clinical record modal with allergy chips, contact updates, and instant table synchronization with toast feedback. |
+| ⭐ **Power BI Reviews & Feedback** | Sentiment analysis gauges, rating distribution histograms with Framer Motion spring animations, and star-level filters calculated from dynamic data. |
+| 💬 **Patient Reply Modal** | Clinician response interface with one-click clinical response presets (`Warm Gratitude`, `Wait Time Apology`), character counter, and SMS alerts. |
+| 📥 **Export Reports Suite** | Generates PDF, Excel, Power BI (.pbix), and direct CSV downloads (`Dental_Clinic_Reviews_PowerBI_Report.csv`) with simulated compilation progress. |
+| ⚙️ **Practice Settings & Governance** | 6 configuration modules: Clinic Info, HIPAA Protocols & Audit Log export, Automated Notifications, Power BI Azure integration, Equipment management, and Voice Charting. |
+| 🔔 **Notification Center & Profile** | Real-time clinical alert dropdown with category indicators, unread filters, and Doctor Profile header menu with fast logout and settings access. |
+| 🎨 **Clinical Design System** | Healthcare-tailored color palette, crisp typography (Inter), glassmorphic backdrops, portaled modals, and responsive mobile-first layouts. |
 
 ---
 
-## 🚀 Getting Started
+## 💻 How to Build (For Developers)
 
-### Prerequisites
-- Node.js (v18.0.0 or higher recommended)
-- npm or yarn
+Before you begin, ensure you have **[Node.js](https://nodejs.org/)** (v18.0.0 or higher recommended) and **npm** installed on your system.
 
-### Installation
+### Step 1 — Clone the Repository
+
 ```bash
-# Clone the repository
 git clone https://github.com/HelloWorld-Farhan/Doctor_DentalClinic.git
-
-# Navigate to the project directory
 cd Doctor_DentalClinic
+```
 
-# Install dependencies
+### Step 2 — Install Dependencies
+
+```bash
 npm install
 ```
 
-### Development
+### Step 3 — Run Locally
+
 ```bash
-# Start local development server
 npm run dev
 ```
-Open [http://localhost:5173](http://localhost:5173) in your browser.
 
-### Production Build
+> The application will be running live at `http://localhost:5173`.
+
+### Step 4 — Build for Production
+
 ```bash
-# Build optimized production bundle
 npm run build
-
-# Preview production build locally
-npm run preview
 ```
+
+> Your optimized production bundle will be generated inside the `dist/` directory.
 
 ---
 
 ## 📁 Project Structure
 
-```
+```text
 Doctor_DentalClinic/
 ├── public/
 ├── src/
 │   ├── components/
-│   │   └── Layout.tsx         # Responsive sidebar, header & notifications
+│   │   └── Layout.tsx         # Modern sidebar, top navigation, notification center & doctor profile
 │   ├── pages/
-│   │   ├── Dashboard.tsx      # Clinical workspace & bento metrics
-│   │   ├── Appointments.tsx   # Appointment queue & peak density graphs
-│   │   ├── Patients.tsx       # Demographics directory & patient modal
-│   │   ├── Reviews.tsx        # Power BI reviews, pagination, reply & export modals
-│   │   ├── Settings.tsx       # Clinic configuration & preferences
+│   │   ├── Dashboard.tsx      # Clinical dashboard, quick note pad, voice charting setup & equipment telemetry
+│   │   ├── Appointments.tsx   # Appointment queue, multi-appointment calendar & AI schedule optimizer
+│   │   ├── Patients.tsx       # Patient directory, 62-page pagination, edit record & 32-tooth odontogram
+│   │   ├── Reviews.tsx        # Power BI feedback analytics, animated histograms, reply & export modals
+│   │   ├── Settings.tsx       # Clinic governance, HIPAA audit logs, Power BI integration & equipment manager
 │   │   ├── Login.tsx          # Doctor sign-in portal
-│   │   └── Signup.tsx         # Doctor registration portal
+│   │   └── Signup.tsx         # Doctor credential registration portal
 │   ├── App.tsx                # Client-side routing configuration
 │   ├── main.tsx               # App entrypoint
-│   └── index.css              # Global styles & Tailwind directives
-├── tailwind.config.js         # Design system tokens & color definitions
-├── tsconfig.json              # TypeScript configuration
+│   └── index.css              # Global styles, clinical design tokens & Tailwind directives
+├── tailwind.config.js         # Theme extensions, surface containers & brand colors
+├── tsconfig.json              # TypeScript strict configuration
 └── package.json               # Dependencies and scripts
 ```
 
 ---
 
+## 👨‍💻 Author
+
+**Farhan Khalid**
+
+📧 [farhankhalid17968@gmail.com](mailto:farhankhalid17968@gmail.com)  
+🔗 [LinkedIn](https://www.linkedin.com/in/farhan-khalid-117514259/)  
+🐙 [GitHub](https://github.com/HelloWorld-Farhan)
+
+---
+
 ## 📄 License
 
-This project is licensed under the MIT License.
+```text
+MIT License
+
+Copyright (c) 2026 Farhan Khalid
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is furnished
+to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
+---
+
+## 🌟 Support
+
+If you found this clinical portal helpful, please consider giving it a ⭐ on GitHub!
+
+<p align="center">Made with ❤️ in India</p>
