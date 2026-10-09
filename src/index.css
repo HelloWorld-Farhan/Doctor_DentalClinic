@@ -3,16 +3,33 @@
 @tailwind utilities;
 
 @layer base {
-  html, body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
+  html {
+    scrollbar-gutter: stable;
+    overflow-x: hidden;
+    overflow-y: scroll;
   }
   body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100%;
+    overflow-x: hidden;
     overscroll-behavior: none;
   }
 }
 
+/* Custom smooth subtle scrollbar */
 ::-webkit-scrollbar {
-  display: none;
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.25);
 }

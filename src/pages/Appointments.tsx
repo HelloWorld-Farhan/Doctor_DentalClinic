@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import Toast from '../components/Toast';
 
 export interface AppointmentItem {
   id: string;
@@ -14,11 +15,23 @@ export interface AppointmentItem {
   status: 'Confirmed' | 'In Progress' | 'Completed' | 'Cancelled';
   statusColor: string;
   dateDay?: number;
+  month?: number; // 0-indexed: 8 = Sep, 9 = Oct, 10 = Nov
+  year?: number;
 }
 
-// Master appointments across multiple calendar days
+const MONTH_NAMES = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December"
+];
+
+const SHORT_MONTH_NAMES = [
+  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+];
+
+// Master appointments across multiple calendar days and months
 const INITIAL_APPOINTMENTS: AppointmentItem[] = [
-  // Day 21 (Today)
+  // Day 21 (October - Today)
   {
     id: "1",
     time: "09:00 AM - 09:45 AM",
@@ -30,7 +43,9 @@ const INITIAL_APPOINTMENTS: AppointmentItem[] = [
     chair: "Chair 01",
     status: "In Progress",
     statusColor: "bg-tertiary-container text-on-tertiary-container",
-    dateDay: 21
+    dateDay: 21,
+    month: 9,
+    year: 2023
   },
   {
     id: "2",
@@ -43,7 +58,9 @@ const INITIAL_APPOINTMENTS: AppointmentItem[] = [
     chair: "Chair 02",
     status: "Confirmed",
     statusColor: "bg-primary-fixed text-on-primary-fixed",
-    dateDay: 21
+    dateDay: 21,
+    month: 9,
+    year: 2023
   },
   {
     id: "3",
@@ -56,7 +73,9 @@ const INITIAL_APPOINTMENTS: AppointmentItem[] = [
     chair: "Chair 01",
     status: "Confirmed",
     statusColor: "bg-primary-fixed text-on-primary-fixed",
-    dateDay: 21
+    dateDay: 21,
+    month: 9,
+    year: 2023
   },
   {
     id: "4",
@@ -69,7 +88,9 @@ const INITIAL_APPOINTMENTS: AppointmentItem[] = [
     chair: "Chair 03",
     status: "Completed",
     statusColor: "bg-surface-container text-on-surface-variant",
-    dateDay: 21
+    dateDay: 21,
+    month: 9,
+    year: 2023
   },
   {
     id: "5",
@@ -82,10 +103,12 @@ const INITIAL_APPOINTMENTS: AppointmentItem[] = [
     chair: "Chair 02",
     status: "Confirmed",
     statusColor: "bg-primary-fixed text-on-primary-fixed",
-    dateDay: 21
+    dateDay: 21,
+    month: 9,
+    year: 2023
   },
 
-  // Day 20
+  // Day 20 (October)
   {
     id: "6",
     time: "09:15 AM - 10:00 AM",
@@ -97,7 +120,9 @@ const INITIAL_APPOINTMENTS: AppointmentItem[] = [
     chair: "Chair 01",
     status: "Completed",
     statusColor: "bg-surface-container text-on-surface-variant",
-    dateDay: 20
+    dateDay: 20,
+    month: 9,
+    year: 2023
   },
   {
     id: "7",
@@ -110,7 +135,9 @@ const INITIAL_APPOINTMENTS: AppointmentItem[] = [
     chair: "Chair 02",
     status: "Completed",
     statusColor: "bg-surface-container text-on-surface-variant",
-    dateDay: 20
+    dateDay: 20,
+    month: 9,
+    year: 2023
   },
   {
     id: "8",
@@ -123,10 +150,12 @@ const INITIAL_APPOINTMENTS: AppointmentItem[] = [
     chair: "Chair 03",
     status: "Completed",
     statusColor: "bg-surface-container text-on-surface-variant",
-    dateDay: 20
+    dateDay: 20,
+    month: 9,
+    year: 2023
   },
 
-  // Day 22
+  // Day 22 (October)
   {
     id: "9",
     time: "09:30 AM - 10:15 AM",
@@ -138,7 +167,9 @@ const INITIAL_APPOINTMENTS: AppointmentItem[] = [
     chair: "Chair 01",
     status: "Confirmed",
     statusColor: "bg-primary-fixed text-on-primary-fixed",
-    dateDay: 22
+    dateDay: 22,
+    month: 9,
+    year: 2023
   },
   {
     id: "10",
@@ -151,7 +182,9 @@ const INITIAL_APPOINTMENTS: AppointmentItem[] = [
     chair: "Chair 02",
     status: "Confirmed",
     statusColor: "bg-primary-fixed text-on-primary-fixed",
-    dateDay: 22
+    dateDay: 22,
+    month: 9,
+    year: 2023
   },
   {
     id: "11",
@@ -164,7 +197,9 @@ const INITIAL_APPOINTMENTS: AppointmentItem[] = [
     chair: "Chair 03",
     status: "Confirmed",
     statusColor: "bg-primary-fixed text-on-primary-fixed",
-    dateDay: 22
+    dateDay: 22,
+    month: 9,
+    year: 2023
   },
   {
     id: "12",
@@ -177,23 +212,182 @@ const INITIAL_APPOINTMENTS: AppointmentItem[] = [
     chair: "Chair 01",
     status: "Confirmed",
     statusColor: "bg-primary-fixed text-on-primary-fixed",
-    dateDay: 22
+    dateDay: 22,
+    month: 9,
+    year: 2023
+  },
+
+  // Day 29 (October - Previously Selected in Screenshot)
+  {
+    id: "29-1",
+    time: "09:00 AM - 09:45 AM",
+    name: "Dr. Marcus Vance",
+    patientId: "#PT-8812",
+    initials: "MV",
+    initialsBg: "bg-blue-100 text-blue-800",
+    proc: "Root Canal Therapy",
+    chair: "Chair 01",
+    status: "Confirmed",
+    statusColor: "bg-primary-fixed text-on-primary-fixed",
+    dateDay: 29,
+    month: 9,
+    year: 2023
+  },
+  {
+    id: "29-2",
+    time: "10:30 AM - 11:15 AM",
+    name: "Priya Nair",
+    patientId: "#PT-8813",
+    initials: "PN",
+    initialsBg: "bg-amber-100 text-amber-800",
+    proc: "Crown Fitting",
+    chair: "Chair 02",
+    status: "In Progress",
+    statusColor: "bg-tertiary-container text-on-tertiary-container",
+    dateDay: 29,
+    month: 9,
+    year: 2023
+  },
+  {
+    id: "29-3",
+    time: "02:00 PM - 02:45 PM",
+    name: "Hannah Abbott",
+    patientId: "#PT-8814",
+    initials: "HA",
+    initialsBg: "bg-teal-100 text-teal-800",
+    proc: "Routine Cleaning",
+    chair: "Chair 03",
+    status: "Confirmed",
+    statusColor: "bg-primary-fixed text-on-primary-fixed",
+    dateDay: 29,
+    month: 9,
+    year: 2023
+  },
+
+  // November 2023 Appointments
+  {
+    id: "nov-1",
+    time: "09:00 AM - 09:45 AM",
+    name: "Ethan Wright",
+    patientId: "#PT-9101",
+    initials: "EW",
+    initialsBg: "bg-amber-100 text-amber-800",
+    proc: "Crown Fitting",
+    chair: "Chair 01",
+    status: "Confirmed",
+    statusColor: "bg-primary-fixed text-on-primary-fixed",
+    dateDay: 1,
+    month: 10,
+    year: 2023
+  },
+  {
+    id: "nov-2",
+    time: "11:00 AM - 11:45 AM",
+    name: "Grace Hopper",
+    patientId: "#PT-9102",
+    initials: "GH",
+    initialsBg: "bg-teal-100 text-teal-800",
+    proc: "Routine Cleaning",
+    chair: "Chair 02",
+    status: "Confirmed",
+    statusColor: "bg-primary-fixed text-on-primary-fixed",
+    dateDay: 1,
+    month: 10,
+    year: 2023
+  },
+  {
+    id: "nov-3",
+    time: "10:15 AM - 11:00 AM",
+    name: "Lucas Scott",
+    patientId: "#PT-9103",
+    initials: "LS",
+    initialsBg: "bg-rose-100 text-rose-800",
+    proc: "Wisdom Tooth Extraction",
+    chair: "Chair 01",
+    status: "Confirmed",
+    statusColor: "bg-primary-fixed text-on-primary-fixed",
+    dateDay: 2,
+    month: 10,
+    year: 2023
+  },
+  {
+    id: "nov-4",
+    time: "01:30 PM - 02:15 PM",
+    name: "Maya Lin",
+    patientId: "#PT-9104",
+    initials: "ML",
+    initialsBg: "bg-purple-100 text-purple-800",
+    proc: "Orthodontic Adjustment",
+    chair: "Chair 03",
+    status: "Confirmed",
+    statusColor: "bg-primary-fixed text-on-primary-fixed",
+    dateDay: 2,
+    month: 10,
+    year: 2023
+  },
+  {
+    id: "nov-5",
+    time: "09:30 AM - 10:30 AM",
+    name: "Oliver Twist",
+    patientId: "#PT-9105",
+    initials: "OT",
+    initialsBg: "bg-blue-100 text-blue-800",
+    proc: "Root Canal Therapy",
+    chair: "Chair 02",
+    status: "Confirmed",
+    statusColor: "bg-primary-fixed text-on-primary-fixed",
+    dateDay: 6,
+    month: 10,
+    year: 2023
+  },
+  {
+    id: "nov-6",
+    time: "02:00 PM - 02:45 PM",
+    name: "Charlotte Bronte",
+    patientId: "#PT-9106",
+    initials: "CB",
+    initialsBg: "bg-teal-100 text-teal-800",
+    proc: "Routine Cleaning",
+    chair: "Chair 01",
+    status: "Confirmed",
+    statusColor: "bg-primary-fixed text-on-primary-fixed",
+    dateDay: 14,
+    month: 10,
+    year: 2023
+  },
+  {
+    id: "nov-7",
+    time: "10:00 AM - 11:00 AM",
+    name: "Benjamin Franklin",
+    patientId: "#PT-9107",
+    initials: "BF",
+    initialsBg: "bg-indigo-100 text-indigo-800",
+    proc: "Dental Implants",
+    chair: "Chair 01",
+    status: "Confirmed",
+    statusColor: "bg-primary-fixed text-on-primary-fixed",
+    dateDay: 20,
+    month: 10,
+    year: 2023
+  },
+  {
+    id: "nov-8",
+    time: "03:15 PM - 04:00 PM",
+    name: "Amelia Earhart",
+    patientId: "#PT-9108",
+    initials: "AE",
+    initialsBg: "bg-amber-100 text-amber-800",
+    proc: "Crown Fitting",
+    chair: "Chair 02",
+    status: "Confirmed",
+    statusColor: "bg-primary-fixed text-on-primary-fixed",
+    dateDay: 21,
+    month: 10,
+    year: 2023
   }
 ];
 
-// Calendar appointment indicators map for all days of October 2023
-// Colors:
-// teal: Routine Cleaning / Hygiene
-// blue: Root Canal / Endodontics
-// amber: Crown & Bridge / Restorative
-// purple: Orthodontics & Implants
-// rose: Surgical / Wisdom Extraction
-interface DayAppointmentMarker {
-  day: number;
-  dots: ('teal' | 'blue' | 'amber' | 'purple' | 'rose')[];
-  count: number;
-}
-
+// Fallback base calendar appointment indicators map for October 2023
 const CALENDAR_MARKERS: Record<number, ('teal' | 'blue' | 'amber' | 'purple' | 'rose')[]> = {
   2: ['teal'],
   4: ['teal', 'amber'],
@@ -209,7 +403,7 @@ const CALENDAR_MARKERS: Record<number, ('teal' | 'blue' | 'amber' | 'purple' | '
   24: ['teal', 'purple'],
   25: ['blue', 'amber'],
   27: ['rose', 'teal'],
-  29: ['amber', 'blue']
+  29: ['blue', 'amber', 'teal']
 };
 
 // Power BI Telemetry datasets for periods
@@ -323,7 +517,11 @@ export default function Appointments() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isNewAppointmentOpen, setIsNewAppointmentOpen] = useState(false);
   const [isOptimizeOpen, setIsOptimizeOpen] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(21);
+  
+  // Real dynamic Month & Year state (0-indexed: 9 = October 2023)
+  const [currentMonth, setCurrentMonth] = useState<number>(9);
+  const [currentYear, setCurrentYear] = useState<number>(2023);
+  const [selectedDate, setSelectedDate] = useState<number>(21);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   // Power BI Telemetry Period filter
@@ -346,9 +544,74 @@ export default function Appointments() {
     setTimeout(() => setToastMessage(null), 3200);
   };
 
-  // Filter appointments by selected calendar date + status + search
+  // Month navigation handlers
+  const handlePrevMonth = () => {
+    let newM = currentMonth - 1;
+    let newY = currentYear;
+    if (newM < 0) {
+      newM = 11;
+      newY -= 1;
+    }
+    setCurrentMonth(newM);
+    setCurrentYear(newY);
+    setSelectedDate(1);
+    showToast(`Navigated to ${MONTH_NAMES[newM]} ${newY}`);
+  };
+
+  const handleNextMonth = () => {
+    let newM = currentMonth + 1;
+    let newY = currentYear;
+    if (newM > 11) {
+      newM = 0;
+      newY += 1;
+    }
+    setCurrentMonth(newM);
+    setCurrentYear(newY);
+    setSelectedDate(1);
+    showToast(`Navigated to ${MONTH_NAMES[newM]} ${newY}`);
+  };
+
+  // Calendar Day Grid Calculation
+  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+  // Monday start: 0 = Mon, 6 = Sun
+  const firstDayIndex = (new Date(currentYear, currentMonth, 1).getDay() + 6) % 7;
+  const prevMonthDays = new Date(currentYear, currentMonth, 0).getDate();
+  const leadingDays = Array.from({ length: firstDayIndex }, (_, i) => prevMonthDays - firstDayIndex + 1 + i);
+  const totalCells = Math.ceil((firstDayIndex + daysInMonth) / 7) * 7;
+  const trailingDaysCount = totalCells - (firstDayIndex + daysInMonth);
+  const trailingDays = Array.from({ length: trailingDaysCount }, (_, i) => i + 1);
+
+  // Dynamic procedure dot determination for any day in the current month
+  const getDotsForDay = (day: number): ('teal' | 'blue' | 'amber' | 'purple' | 'rose')[] => {
+    const dayApts = appointments.filter(a => {
+      const aM = a.month !== undefined ? a.month : 9;
+      const aY = a.year !== undefined ? a.year : 2023;
+      return a.dateDay === day && aM === currentMonth && aY === currentYear;
+    });
+
+    if (dayApts.length > 0) {
+      return dayApts.map(a => {
+        const p = a.proc.toLowerCase();
+        if (p.includes('clean') || p.includes('whiten')) return 'teal' as const;
+        if (p.includes('root') || p.includes('canal') || p.includes('endo')) return 'blue' as const;
+        if (p.includes('crown') || p.includes('veneer') || p.includes('fill')) return 'amber' as const;
+        if (p.includes('ortho') || p.includes('implant')) return 'purple' as const;
+        return 'rose' as const;
+      });
+    }
+
+    if (currentMonth === 9 && currentYear === 2023 && CALENDAR_MARKERS[day]) {
+      return CALENDAR_MARKERS[day];
+    }
+
+    return [];
+  };
+
+  // Filter appointments by selected calendar date + month + year + status + search
   const visibleAppointments = appointments.filter(apt => {
-    const matchesDate = apt.dateDay === undefined || apt.dateDay === selectedDate;
+    const aptMonth = apt.month !== undefined ? apt.month : 9;
+    const aptYear = apt.year !== undefined ? apt.year : 2023;
+    const matchesDate = (apt.dateDay === undefined || apt.dateDay === selectedDate) && aptMonth === currentMonth && aptYear === currentYear;
     const matchesFilter = activeFilter === "All" || apt.status === activeFilter;
     const matchesSearch = !searchQuery || 
       apt.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -373,13 +636,15 @@ export default function Appointments() {
       chair: newChair,
       status: "Confirmed",
       statusColor: "bg-primary-fixed text-on-primary-fixed",
-      dateDay: selectedDate
+      dateDay: selectedDate,
+      month: currentMonth,
+      year: currentYear
     };
 
     setAppointments([newApt, ...appointments]);
     setIsNewAppointmentOpen(false);
     setNewName("");
-    showToast(`Appointment scheduled for ${newApt.name} on Oct ${selectedDate}, 2023!`);
+    showToast(`Appointment scheduled for ${newApt.name} on ${SHORT_MONTH_NAMES[currentMonth]} ${selectedDate}, ${currentYear}!`);
   };
 
   const handleCancelAppointment = (id: string, name: string) => {
@@ -392,7 +657,6 @@ export default function Appointments() {
     setTimeout(() => {
       setOptEngineRunning(false);
       setIsOptimizeOpen(false);
-      // Re-balance chair queue
       setAppointments(prev => prev.map(a => {
         if (a.name === "Robert King") {
           return { ...a, chair: "Chair 03", time: "11:00 AM - 11:45 AM" };
@@ -420,25 +684,13 @@ export default function Appointments() {
       transition={{ duration: 0.3 }}
       className="space-y-8 relative pb-12"
     >
-      {/* Toast Notification */}
-      <AnimatePresence>
-        {toastMessage && (
-          <motion.div
-            initial={{ opacity: 0, y: -20, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -20, scale: 0.95 }}
-            className="fixed top-20 right-8 z-[9999] bg-primary text-on-primary px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-3 border border-primary-container"
-          >
-            <span className="material-symbols-outlined text-[20px] text-teal-300">check_circle</span>
-            <span className="text-sm font-semibold tracking-wide">{toastMessage}</span>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Shared Non-Intrusive Portaled Toast */}
+      <Toast message={toastMessage} onClose={() => setToastMessage(null)} />
 
       {/* Top Stats / Overview Row */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {[
-          { title: "Today's Appointments", value: `${appointments.filter(a => a.dateDay === 21).length + 19} Scheduled`, change: "+12% from yesterday", icon: "trending_up", mainIcon: "calendar_today", color: "text-primary", bgInfo: "bg-primary-container text-on-primary-container" },
+          { title: "Today's Appointments", value: `${appointments.filter(a => a.dateDay === 21 && (a.month ?? 9) === 9).length + 19} Scheduled`, change: "+12% from yesterday", icon: "trending_up", mainIcon: "calendar_today", color: "text-primary", bgInfo: "bg-primary-container text-on-primary-container" },
           { title: "In Progress", value: "4 Active Chairs", change: "Telemetry Synced", icon: "schedule", mainIcon: "clinical_notes", color: "text-tertiary", bgInfo: "bg-tertiary-container text-on-tertiary-container" },
           { title: "Completed Today", value: "16 Patients", change: "98% satisfaction", icon: "check_circle", mainIcon: "task_alt", color: "text-secondary", bgInfo: "bg-secondary-container text-on-secondary-container" },
           { title: "Cancelled / Requests", value: "2 Requests", change: "Requires action", icon: "warning", mainIcon: "event_busy", color: "text-error", bgInfo: "bg-error-container text-on-error-container" }
@@ -448,162 +700,230 @@ export default function Appointments() {
               <p className="text-xs font-semibold text-on-surface-variant uppercase tracking-wider">{stat.title}</p>
               <h3 className="text-2xl font-bold text-on-surface mt-1">{stat.value}</h3>
               <span className={`inline-flex items-center text-xs ${stat.color} mt-1 font-semibold`}>
-                <span className="material-symbols-outlined text-[15px] mr-1">{stat.icon}</span> {stat.change}
+                <span className="material-symbols-outlined text-xs mr-1">{stat.icon}</span>
+                {stat.change}
               </span>
             </div>
-            <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${stat.bgInfo} shadow-xs`}>
+            <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${stat.bgInfo} shadow-xs`}>
               <span className="material-symbols-outlined text-[24px]">{stat.mainIcon}</span>
             </div>
           </div>
         ))}
       </div>
 
-      {/* Main Section: Analytics & Calendar/Queue Split */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left 2 Cols: Appointment Queue & Controls */}
-        <div className="lg:col-span-2 space-y-6">
-          <div className="bg-surface-container-low p-6 rounded-2xl shadow-xs border border-surface-container-high">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-              <div>
-                <div className="flex items-center gap-2">
-                  <h2 className="text-xl font-bold text-on-surface">Appointment Queue</h2>
-                  <span className="px-2.5 py-0.5 bg-primary/10 text-primary rounded-full text-xs font-bold">
-                    Oct {selectedDate}, 2023
-                  </span>
+      {/* Main Content Grid: Left Table Queue (Col 8) + Right Calendar & Quick Tools (Col 4) */}
+      {/* Symmetrically aligned with items-stretch so NO whitespace is left */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
+        
+        {/* Left 2 Cols: Appointment Queue List */}
+        <div className="lg:col-span-2 flex flex-col h-full space-y-4">
+          <div className="bg-surface-container-lowest rounded-2xl shadow-xs border border-surface-container-high overflow-hidden flex flex-col flex-1 justify-between">
+            <div>
+              {/* Header */}
+              <div className="p-6 border-b border-surface-container-low flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h2 className="text-xl font-bold text-on-surface">Appointment Queue</h2>
+                    <span className="px-2.5 py-0.5 bg-primary/10 text-primary rounded-full text-xs font-bold">
+                      {SHORT_MONTH_NAMES[currentMonth]} {selectedDate}, {currentYear}
+                    </span>
+                  </div>
+                  <p className="text-xs text-on-surface-variant mt-0.5">Manage daily clinical schedule, operatory chair intake, and procedure status.</p>
                 </div>
-                <p className="text-xs text-on-surface-variant mt-0.5">Manage daily clinical schedule, operatory chair intake, and procedure status.</p>
-              </div>
-              <div className="flex items-center gap-2">
-                <motion.button 
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => setIsNewAppointmentOpen(true)}
-                  className="bg-primary text-on-primary px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 hover:bg-primary-container transition-all shadow-md shadow-primary/20 cursor-pointer"
-                >
-                  <span className="material-symbols-outlined text-[18px]">add</span>
-                  New Appointment
-                </motion.button>
-              </div>
-            </div>
-
-            {/* Filters & Search */}
-            <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 mb-6">
-              <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0">
-                {["All", "Confirmed", "In Progress", "Completed", "Cancelled"].map(filter => (
-                  <button 
-                    key={filter} 
-                    onClick={() => setActiveFilter(filter)}
-                    className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
-                      activeFilter === filter 
-                        ? 'bg-primary text-on-primary shadow-xs' 
-                        : 'bg-surface-container-high text-on-surface-variant hover:text-on-surface'
-                    }`}
+                <div className="flex items-center gap-2">
+                  <motion.button 
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => setIsNewAppointmentOpen(true)}
+                    className="bg-primary text-on-primary px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 hover:bg-primary-container transition-all shadow-md shadow-primary/20 cursor-pointer"
                   >
-                    {filter}
-                  </button>
-                ))}
+                    <span className="material-symbols-outlined text-[18px]">add</span>
+                    New Appointment
+                  </motion.button>
+                </div>
               </div>
-              <div className="relative">
-                <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px]">search</span>
-                <input 
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 pr-4 py-1.5 bg-surface-container-high rounded-xl text-on-surface text-xs outline-none w-full md:w-64 focus:ring-1 focus:ring-primary" 
-                  placeholder="Search patient or procedure..." 
-                  type="text"
-                />
+
+              {/* Filters & Search */}
+              <div className="px-6 pt-4 pb-2 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
+                <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0">
+                  {["All", "Confirmed", "In Progress", "Completed", "Cancelled"].map(filter => (
+                    <button 
+                      key={filter} 
+                      onClick={() => setActiveFilter(filter)}
+                      className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
+                        activeFilter === filter 
+                          ? 'bg-primary text-on-primary shadow-xs' 
+                          : 'bg-surface-container-high text-on-surface-variant hover:text-on-surface'
+                      }`}
+                    >
+                      {filter}
+                    </button>
+                  ))}
+                </div>
+                <div className="relative">
+                  <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px]">search</span>
+                  <input 
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-10 pr-4 py-1.5 bg-surface-container-high rounded-xl text-on-surface text-xs outline-none w-full md:w-64 focus:ring-1 focus:ring-primary" 
+                    placeholder="Search patient or procedure..." 
+                    type="text"
+                  />
+                </div>
               </div>
+
+              {/* Appointment List Table OR Empty Operatory Schedule */}
+              {visibleAppointments.length === 0 ? (
+                <div className="p-8 text-center flex flex-col items-center justify-center flex-1 my-2">
+                  <div className="w-14 h-14 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-3 shadow-xs">
+                    <span className="material-symbols-outlined text-[30px]">event_available</span>
+                  </div>
+                  <h4 className="text-base font-bold text-on-surface">
+                    Operatory Suites Open for {MONTH_NAMES[currentMonth]} {selectedDate}, {currentYear}
+                  </h4>
+                  <p className="text-xs text-on-surface-variant max-w-md mt-1 mb-6 leading-relaxed">
+                    No bookings currently confirmed for this date. All 4 operatory chairs are sanitized, calibrated, and ready for patient intake or scheduled procedures.
+                  </p>
+                  
+                  {/* Ready-to-Book Chair Slots */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-xl mb-5 text-left">
+                    {[
+                      { chair: "Chair 01", time: "09:00 AM - 09:45 AM", type: "Restorative Suite (Drill & Curing)" },
+                      { chair: "Chair 02", time: "10:30 AM - 11:15 AM", type: "Prophylaxis Bay (Hygiene & Scaler)" },
+                      { chair: "Chair 03", time: "01:30 PM - 02:15 PM", type: "Endodontics & Apex Suite" },
+                      { chair: "Chair 04", time: "03:15 PM - 04:00 PM", type: "Surgical Operatory (Sedation Prep)" }
+                    ].map((slot, sIdx) => (
+                      <div key={sIdx} className="p-3.5 bg-surface-container-low rounded-xl border border-surface-container-high flex items-center justify-between hover:border-primary/50 transition-all shadow-xs">
+                        <div>
+                          <span className="text-[11px] font-bold text-primary block">{slot.chair} • {slot.time}</span>
+                          <span className="text-[10px] text-on-surface-variant">{slot.type}</span>
+                        </div>
+                        <button
+                          onClick={() => {
+                            setNewChair(slot.chair);
+                            setNewTime(slot.time);
+                            setIsNewAppointmentOpen(true);
+                          }}
+                          className="px-2.5 py-1.5 bg-surface-container-lowest hover:bg-primary hover:text-on-primary text-primary font-bold text-[11px] rounded-lg transition-colors border border-surface-container-high cursor-pointer shrink-0"
+                        >
+                          Book Slot
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => setIsNewAppointmentOpen(true)}
+                    className="px-5 py-2.5 bg-primary text-on-primary rounded-xl text-xs font-bold shadow-md hover:bg-primary-container transition-all flex items-center gap-2 cursor-pointer"
+                  >
+                    <span className="material-symbols-outlined text-[18px]">add</span>
+                    Schedule Custom Appointment
+                  </motion.button>
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse min-w-max">
+                    <thead>
+                      <tr className="text-xs font-semibold text-on-surface-variant border-b border-surface-container-highest">
+                        <th className="py-2.5 px-6">Time Slot</th>
+                        <th className="py-2.5 px-4">Patient Details</th>
+                        <th className="py-2.5 px-4">Procedure</th>
+                        <th className="py-2.5 px-4">Chair</th>
+                        <th className="py-2.5 px-4">Status</th>
+                        <th className="py-2.5 px-6 text-right">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-surface-container-high/60 text-sm text-on-surface">
+                      {visibleAppointments.map((apt) => (
+                        <tr key={apt.id} className="hover:bg-surface-container transition-colors">
+                          <td className="py-3.5 px-6 font-bold text-xs">{apt.time}</td>
+                          <td className="py-3.5 px-4">
+                            <div className="flex items-center gap-3">
+                              <div className={`w-8 h-8 rounded-full ${apt.initialsBg} flex items-center justify-center font-bold text-xs shrink-0 shadow-xs`}>
+                                {apt.initials}
+                              </div>
+                              <div>
+                                <p className="font-bold text-xs">{apt.name}</p>
+                                <p className="text-[11px] text-on-surface-variant">ID: {apt.patientId}</p>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="py-3.5 px-4">
+                            <span className="px-2.5 py-1 bg-surface-container-high rounded-md text-xs font-bold">{apt.proc}</span>
+                          </td>
+                          <td className="py-3.5 px-4 text-on-surface-variant font-medium text-xs">{apt.chair}</td>
+                          <td className="py-3.5 px-4">
+                            <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold ${apt.statusColor}`}>
+                              {apt.status}
+                            </span>
+                          </td>
+                          <td className="py-3.5 px-6 text-right space-x-2">
+                            <button 
+                              onClick={() => showToast(`Reschedule requested for ${apt.name}`)}
+                              className="p-1 text-on-surface-variant hover:text-primary transition-colors cursor-pointer" 
+                              title="Reschedule"
+                            >
+                              <span className="material-symbols-outlined text-[18px]">edit_calendar</span>
+                            </button>
+                            <button 
+                              onClick={() => handleCancelAppointment(apt.id, apt.name)}
+                              className="p-1 text-on-surface-variant hover:text-error transition-colors cursor-pointer" 
+                              title="Cancel"
+                            >
+                              <span className="material-symbols-outlined text-[18px]">cancel</span>
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
 
-            {/* Appointment List Table */}
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse min-w-max">
-                <thead>
-                  <tr className="text-xs font-semibold text-on-surface-variant border-b border-surface-container-highest">
-                    <th className="py-2.5 px-4">Time Slot</th>
-                    <th className="py-2.5 px-4">Patient Details</th>
-                    <th className="py-2.5 px-4">Procedure</th>
-                    <th className="py-2.5 px-4">Chair</th>
-                    <th className="py-2.5 px-4">Status</th>
-                    <th className="py-2.5 px-4 text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-surface-container-high/60 text-sm text-on-surface">
-                  {visibleAppointments.length === 0 ? (
-                    <tr>
-                      <td colSpan={6} className="py-10 text-center text-outline">
-                        <span className="material-symbols-outlined text-[32px] block text-outline/60 mb-1">event_busy</span>
-                        No appointments scheduled for October {selectedDate}, 2023.
-                      </td>
-                    </tr>
-                  ) : (
-                    visibleAppointments.map((apt) => (
-                      <tr key={apt.id} className="hover:bg-surface-container transition-colors">
-                        <td className="py-3.5 px-4 font-bold text-xs">{apt.time}</td>
-                        <td className="py-3.5 px-4">
-                          <div className="flex items-center gap-3">
-                            <div className={`w-8 h-8 rounded-full ${apt.initialsBg} flex items-center justify-center font-bold text-xs shrink-0 shadow-xs`}>
-                              {apt.initials}
-                            </div>
-                            <div>
-                              <p className="font-bold text-xs">{apt.name}</p>
-                              <p className="text-[11px] text-on-surface-variant">ID: {apt.patientId}</p>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="py-3.5 px-4">
-                          <span className="px-2.5 py-1 bg-surface-container-high rounded-md text-xs font-bold">{apt.proc}</span>
-                        </td>
-                        <td className="py-3.5 px-4 text-on-surface-variant font-medium text-xs">{apt.chair}</td>
-                        <td className="py-3.5 px-4">
-                          <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold ${apt.statusColor}`}>
-                            {apt.status}
-                          </span>
-                        </td>
-                        <td className="py-3.5 px-4 text-right space-x-2">
-                          <button 
-                            onClick={() => showToast(`Reschedule requested for ${apt.name}`)}
-                            className="p-1 text-on-surface-variant hover:text-primary transition-colors cursor-pointer" 
-                            title="Reschedule"
-                          >
-                            <span className="material-symbols-outlined text-[18px]">edit_calendar</span>
-                          </button>
-                          <button 
-                            onClick={() => handleCancelAppointment(apt.id, apt.name)}
-                            className="p-1 text-on-surface-variant hover:text-error transition-colors cursor-pointer" 
-                            title="Cancel"
-                          >
-                            <span className="material-symbols-outlined text-[18px]">cancel</span>
-                          </button>
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
+            {/* Bottom Symmetrical Alignment Bar: Operatory Chair Status & Telemetry */}
+            <div className="p-3.5 px-6 bg-surface-container-low/50 border-t border-surface-container-high flex flex-wrap items-center justify-between gap-3 text-xs text-on-surface-variant mt-auto">
+              <div className="flex items-center gap-4">
+                <span className="font-bold text-on-surface flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                  Operatory Status:
+                </span>
+                <span className="flex items-center gap-1 text-[11px]">Chair 01 <strong className="text-emerald-600">Active</strong></span>
+                <span className="flex items-center gap-1 text-[11px]">Chair 02 <strong className="text-emerald-600">Active</strong></span>
+                <span className="flex items-center gap-1 text-[11px]">Chair 03 <strong className="text-amber-600">Sterilization</strong></span>
+                <span className="flex items-center gap-1 text-[11px]">Chair 04 <strong className="text-sky-600">Standby</strong></span>
+              </div>
+              <div className="text-[11px] font-semibold text-primary">
+                Daily Load: {visibleAppointments.length} procedure{visibleAppointments.length === 1 ? '' : 's'} scheduled
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Right Col: Calendar Date Picker & Quick Actions */}
-        <div className="space-y-6">
-          {/* Calendar Widget with Appointment Indicators & Color Legend */}
+        {/* Right Col: Calendar Date Picker & Quick Tools */}
+        <div className="space-y-6 flex flex-col justify-between">
+          
+          {/* Calendar Widget with Dynamic Month Navigation & Indicators */}
           <div className="bg-surface-container-low p-6 rounded-2xl shadow-xs border border-surface-container-high space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-base font-bold text-on-surface">October 2023</h3>
+                <h3 className="text-base font-bold text-on-surface">{MONTH_NAMES[currentMonth]} {currentYear}</h3>
                 <p className="text-[11px] text-on-surface-variant">Click day to inspect schedule</p>
               </div>
               <div className="flex items-center gap-1">
                 <button 
-                  onClick={() => showToast("Navigated to September 2023")}
+                  onClick={handlePrevMonth}
                   className="p-1 hover:bg-surface-container-high rounded-lg text-on-surface-variant transition-colors cursor-pointer"
+                  title="Previous Month"
                 >
                   <span className="material-symbols-outlined text-[18px]">chevron_left</span>
                 </button>
                 <button 
-                  onClick={() => showToast("Navigated to November 2023")}
+                  onClick={handleNextMonth}
                   className="p-1 hover:bg-surface-container-high rounded-lg text-on-surface-variant transition-colors cursor-pointer"
+                  title="Next Month"
                 >
                   <span className="material-symbols-outlined text-[18px]">chevron_right</span>
                 </button>
@@ -644,24 +964,28 @@ export default function Appointments() {
               <span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span><span>Su</span>
             </div>
 
-            {/* Calendar Days with Multiple Colored Appointment Dots */}
+            {/* Dynamic Calendar Days Grid with Appointment Indicators */}
             <div className="grid grid-cols-7 gap-1 text-center text-sm font-medium">
-              {[25,26,27,28,29,30].map(d => (
+              {leadingDays.map(d => (
                 <span key={`prev-${d}`} className="p-2 text-on-surface-variant/30 text-xs">{d}</span>
               ))}
 
-              {Array.from({ length: 31 }).map((_, i) => {
+              {Array.from({ length: daysInMonth }).map((_, i) => {
                 const day = i + 1;
                 const isSelected = selectedDate === day;
-                const dots = CALENDAR_MARKERS[day];
+                const dots = getDotsForDay(day);
 
                 return (
                   <button 
                     key={`d-${day}`} 
                     onClick={() => { 
                       setSelectedDate(day); 
-                      const count = appointments.filter(a => a.dateDay === day).length || (dots ? dots.length : 0);
-                      showToast(`Selected Oct ${day}, 2023 (${count} appointments scheduled)`); 
+                      const count = appointments.filter(a => {
+                        const aM = a.month !== undefined ? a.month : 9;
+                        const aY = a.year !== undefined ? a.year : 2023;
+                        return a.dateDay === day && aM === currentMonth && aY === currentYear;
+                      }).length || (dots ? dots.length : 0);
+                      showToast(`Selected ${SHORT_MONTH_NAMES[currentMonth]} ${day}, ${currentYear} (${count} appointments scheduled)`); 
                     }}
                     className={`p-1.5 rounded-xl transition-all flex flex-col items-center justify-between min-h-[42px] cursor-pointer relative group ${
                       isSelected 
@@ -690,6 +1014,10 @@ export default function Appointments() {
                   </button>
                 );
               })}
+
+              {trailingDays.map(d => (
+                <span key={`next-${d}`} className="p-2 text-on-surface-variant/30 text-xs">{d}</span>
+              ))}
             </div>
           </div>
 
@@ -849,148 +1177,136 @@ export default function Appointments() {
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
             className="relative bg-surface-container-lowest rounded-2xl w-full max-w-2xl shadow-2xl border border-surface-container-high overflow-hidden flex flex-col z-10 my-auto max-h-[92vh]"
           >
-            {/* Header */}
+            {/* Modal Header */}
             <div className="p-6 border-b border-surface-container-low flex justify-between items-center bg-surface-container-lowest">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shrink-0 shadow-xs">
-                  <span className="material-symbols-outlined text-[26px]">auto_awesome</span>
+                <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shadow-xs">
+                  <span className="material-symbols-outlined text-[24px]">auto_awesome</span>
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-on-surface">AI Operatory Schedule Optimization</h3>
-                  <p className="text-xs text-outline mt-0.5">
-                    Real-time chair load balancing, turnaround reduction & idle gap recovery
-                  </p>
+                  <h2 className="text-xl font-bold text-on-surface">AI Operatory Schedule Optimization</h2>
+                  <p className="text-xs text-outline">Machine learning appointment gap reduction & chair balance</p>
                 </div>
               </div>
               <button 
-                type="button"
-                className="p-2 rounded-xl text-outline hover:text-on-surface hover:bg-surface-container-low transition-colors cursor-pointer" 
-                onClick={() => setIsOptimizeOpen(false)}
+                onClick={() => setIsOptimizeOpen(false)} 
+                className="p-2 text-outline hover:text-on-surface hover:bg-surface-container-low rounded-xl transition-colors cursor-pointer"
               >
                 <span className="material-symbols-outlined text-[20px]">close</span>
               </button>
             </div>
 
             {/* Modal Body */}
-            <div className="p-6 overflow-y-auto space-y-5">
-              {/* Telemetry Metric Gains */}
+            <div className="p-6 space-y-6 overflow-y-auto">
+              {/* Telemetry Metrics Comparison */}
               <div className="grid grid-cols-3 gap-3">
-                <div className="p-3 bg-surface rounded-xl border border-surface-container-high text-center">
-                  <span className="text-[11px] text-outline font-medium block">Chair Utilization</span>
-                  <div className="text-lg font-bold text-primary mt-0.5">78% → 94%</div>
-                  <span className="text-[10px] text-emerald-600 font-bold">+16% Gain</span>
+                <div className="p-3.5 bg-surface-container-low rounded-xl border border-surface-container-high text-center">
+                  <span className="text-[11px] text-on-surface-variant block font-medium">Chair Utilization</span>
+                  <div className="flex items-center justify-center gap-1.5 mt-1">
+                    <span className="text-sm line-through text-outline">78%</span>
+                    <span className="text-base font-bold text-emerald-600">94%</span>
+                  </div>
+                  <span className="text-[10px] text-emerald-600 font-semibold">+16% Gain</span>
                 </div>
-                <div className="p-3 bg-surface rounded-xl border border-surface-container-high text-center">
-                  <span className="text-[11px] text-outline font-medium block">Patient Wait Time</span>
-                  <div className="text-lg font-bold text-emerald-600 mt-0.5">18m → 4m</div>
-                  <span className="text-[10px] text-emerald-600 font-bold">-14m Saved</span>
+                <div className="p-3.5 bg-surface-container-low rounded-xl border border-surface-container-high text-center">
+                  <span className="text-[11px] text-on-surface-variant block font-medium">Avg Patient Wait</span>
+                  <div className="flex items-center justify-center gap-1.5 mt-1">
+                    <span className="text-sm line-through text-outline">18m</span>
+                    <span className="text-base font-bold text-emerald-600">4.2m</span>
+                  </div>
+                  <span className="text-[10px] text-emerald-600 font-semibold">-13.8m Saved</span>
                 </div>
-                <div className="p-3 bg-surface rounded-xl border border-surface-container-high text-center">
-                  <span className="text-[11px] text-outline font-medium block">Idle Gaps Recovered</span>
-                  <div className="text-lg font-bold text-on-surface mt-0.5">3 Gaps</div>
-                  <span className="text-[10px] text-primary font-bold">45m Billable</span>
+                <div className="p-3.5 bg-surface-container-low rounded-xl border border-surface-container-high text-center">
+                  <span className="text-[11px] text-on-surface-variant block font-medium">Idle Buffer Gap</span>
+                  <div className="flex items-center justify-center gap-1.5 mt-1">
+                    <span className="text-sm line-through text-outline">45m</span>
+                    <span className="text-base font-bold text-emerald-600">12m</span>
+                  </div>
+                  <span className="text-[10px] text-emerald-600 font-semibold">3 Slots Freed</span>
                 </div>
               </div>
 
-              {/* Recommended Action Items */}
+              {/* Algorithm Recommendations List */}
               <div className="space-y-3">
-                <span className="text-xs font-bold text-on-surface-variant uppercase tracking-wider block">
-                  Algorithm Rebalancing Actions (Oct 21, 2023)
-                </span>
-
-                <div className="p-3.5 bg-surface rounded-xl border border-surface-container-high space-y-1">
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold text-xs text-on-surface flex items-center gap-1.5">
-                      <span className="material-symbols-outlined text-[16px] text-primary">swap_horiz</span>
-                      Shift Robert King (Crown Fitting) to Chair 03
-                    </span>
-                    <span className="text-[10px] font-bold px-2 py-0.5 bg-emerald-50 text-emerald-600 rounded-full border border-emerald-200">
-                      Recommended
-                    </span>
+                <h4 className="text-xs font-bold uppercase tracking-wider text-outline">
+                  Recommended Automated Adjustments
+                </h4>
+                
+                <div className="space-y-2.5">
+                  <div className="p-3 bg-surface-container-low rounded-xl border border-surface-container-high flex items-start gap-3">
+                    <span className="material-symbols-outlined text-primary text-[20px] mt-0.5">swap_horiz</span>
+                    <div className="flex-1 text-xs">
+                      <p className="font-bold text-on-surface">Shift Robert King (#PT-1182) from Chair 01 to Chair 03</p>
+                      <p className="text-on-surface-variant mt-0.5">Eliminates 30m idle gap in Operatory 3 and prevents Dr. Sharma bottle-necking during Crown fitting.</p>
+                    </div>
+                    <span className="px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded text-[10px] font-bold">Optimized</span>
                   </div>
-                  <p className="text-xs text-on-surface-variant">
-                    Moves 11:00 AM slot to Chair 03 to eliminate 15m idle time in Operatory 1.
-                  </p>
-                </div>
 
-                <div className="p-3.5 bg-surface rounded-xl border border-surface-container-high space-y-1">
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold text-xs text-on-surface flex items-center gap-1.5">
-                      <span className="material-symbols-outlined text-[16px] text-teal-600">group_work</span>
-                      Batch Hygiene Slots in Operatory 02
-                    </span>
-                    <span className="text-[10px] font-bold px-2 py-0.5 bg-teal-50 text-teal-600 rounded-full border border-teal-200">
-                      Efficiency
-                    </span>
+                  <div className="p-3 bg-surface-container-low rounded-xl border border-surface-container-high flex items-start gap-3">
+                    <span className="material-symbols-outlined text-primary text-[20px] mt-0.5">schedule_send</span>
+                    <div className="flex-1 text-xs">
+                      <p className="font-bold text-on-surface">Batch Routine Hygiene appointments in Operatory 02</p>
+                      <p className="text-on-surface-variant mt-0.5">Groups Sarah Mehta and Michael Chang back-to-back to maximize ultrasonic scaler sterilization efficiency.</p>
+                    </div>
+                    <span className="px-2 py-0.5 bg-blue-100 text-blue-800 rounded text-[10px] font-bold">Consolidated</span>
                   </div>
-                  <p className="text-xs text-on-surface-variant">
-                    Clusters Sarah Mehta & follow-up cleaning back-to-back to conserve autoclave cycles.
-                  </p>
-                </div>
 
-                <div className="p-3.5 bg-surface rounded-xl border border-surface-container-high space-y-1">
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold text-xs text-on-surface flex items-center gap-1.5">
-                      <span className="material-symbols-outlined text-[16px] text-rose-600">emergency</span>
-                      Reserve 30m Emergency Cushion Buffer
-                    </span>
-                    <span className="text-[10px] font-bold px-2 py-0.5 bg-rose-50 text-rose-600 rounded-full border border-rose-200">
-                      Safety Protocol
-                    </span>
+                  <div className="p-3 bg-surface-container-low rounded-xl border border-surface-container-high flex items-start gap-3">
+                    <span className="material-symbols-outlined text-primary text-[20px] mt-0.5">security_update_good</span>
+                    <div className="flex-1 text-xs">
+                      <p className="font-bold text-on-surface">Insert 15m Emergency Cushion Buffer at 03:00 PM</p>
+                      <p className="text-on-surface-variant mt-0.5">Protects clinical schedule against high-complexity wisdom tooth extraction overrun.</p>
+                    </div>
+                    <span className="px-2 py-0.5 bg-amber-100 text-amber-800 rounded text-[10px] font-bold">Protected</span>
                   </div>
-                  <p className="text-xs text-on-surface-variant">
-                    Locks 03:00 PM – 03:30 PM in Chair 04 for walk-in pulpitis or trauma.
-                  </p>
                 </div>
               </div>
 
               {/* Toggles */}
-              <div className="pt-2 border-t border-surface-container-low space-y-2">
-                <div className="flex items-center justify-between p-2">
-                  <span className="text-xs font-semibold text-on-surface">Auto-reassign chair operatory tags</span>
+              <div className="p-3.5 bg-surface-container-low rounded-xl border border-surface-container-high space-y-3">
+                <label className="flex items-center justify-between cursor-pointer">
+                  <span className="text-xs font-semibold text-on-surface">Automatically reassign operatory chair chairs in queue</span>
                   <input 
                     type="checkbox" 
                     checked={autoReassign} 
-                    onChange={(e) => setAutoReassign(e.target.checked)} 
-                    className="w-4 h-4 text-primary rounded focus:ring-primary accent-primary cursor-pointer" 
+                    onChange={e => setAutoReassign(e.target.checked)}
+                    className="w-4 h-4 rounded text-primary focus:ring-primary cursor-pointer"
                   />
-                </div>
-                <div className="flex items-center justify-between p-2">
-                  <span className="text-xs font-semibold text-on-surface">Send automated SMS notifications to shifted patients</span>
+                </label>
+                <label className="flex items-center justify-between cursor-pointer">
+                  <span className="text-xs font-semibold text-on-surface">Send automated SMS timing updates to affected patients</span>
                   <input 
                     type="checkbox" 
                     checked={notifyPatients} 
-                    onChange={(e) => setNotifyPatients(e.target.checked)} 
-                    className="w-4 h-4 text-primary rounded focus:ring-primary accent-primary cursor-pointer" 
+                    onChange={e => setNotifyPatients(e.target.checked)}
+                    className="w-4 h-4 rounded text-primary focus:ring-primary cursor-pointer"
                   />
-                </div>
+                </label>
               </div>
             </div>
 
-            {/* Footer */}
+            {/* Modal Actions */}
             <div className="p-4 border-t border-surface-container-low bg-surface-container-lowest flex justify-end gap-3 px-6">
               <button 
-                type="button"
-                className="px-5 py-2.5 rounded-xl text-outline hover:text-on-surface text-xs font-semibold cursor-pointer"
-                onClick={() => setIsOptimizeOpen(false)}
+                onClick={() => setIsOptimizeOpen(false)} 
+                className="px-5 py-2.5 rounded-xl font-medium text-xs text-outline hover:text-on-surface hover:bg-surface-container-low transition-colors cursor-pointer"
               >
                 Cancel
               </button>
               <button 
-                type="button"
                 disabled={optEngineRunning}
-                onClick={handleApplyOptimization}
-                className="px-6 py-2.5 rounded-xl bg-primary text-on-primary text-xs font-semibold shadow-md shadow-primary/20 hover:bg-primary-container transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
+                onClick={handleApplyOptimization} 
+                className="px-5 py-2.5 rounded-xl font-semibold text-xs bg-primary text-on-primary shadow-xs hover:bg-primary-container transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
               >
                 {optEngineRunning ? (
                   <>
-                    <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    Applying Optimization...
+                    <span className="material-symbols-outlined text-[16px] animate-spin">refresh</span>
+                    Optimizing Schedule...
                   </>
                 ) : (
                   <>
-                    <span className="material-symbols-outlined text-[16px]">check_circle</span>
-                    Apply Schedule Optimization
+                    <span className="material-symbols-outlined text-[16px]">check</span>
+                    Apply AI Optimizations
                   </>
                 )}
               </button>
@@ -1005,17 +1321,19 @@ export default function Appointments() {
       {/* ========================================================================= */}
       {isNewAppointmentOpen && typeof document !== 'undefined' && createPortal(
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+          {/* Fullscreen Backdrop Blur */}
           <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            initial={{ opacity: 0 }} 
+            animate={{ opacity: 1 }} 
             exit={{ opacity: 0 }}
-            onClick={() => setIsNewAppointmentOpen(false)}
             className="fixed inset-0 bg-black/60 backdrop-blur-md"
+            onClick={() => setIsNewAppointmentOpen(false)}
           />
+
           <motion.div 
             initial={{ opacity: 0, scale: 0.95, y: 15 }} 
             animate={{ opacity: 1, scale: 1, y: 0 }} 
-            exit={{ opacity: 0, scale: 0.95, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 0 }} 
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
             className="relative bg-surface-container-lowest w-full max-w-lg rounded-2xl shadow-2xl border border-surface-container-high overflow-hidden flex flex-col z-10 my-auto"
           >
@@ -1026,7 +1344,7 @@ export default function Appointments() {
                 </div>
                 <div>
                   <h2 className="text-xl font-bold text-on-surface">Schedule Appointment</h2>
-                  <p className="text-xs text-outline">Book a procedure slot for Oct {selectedDate}, 2023</p>
+                  <p className="text-xs text-outline">Book a procedure slot for {SHORT_MONTH_NAMES[currentMonth]} {selectedDate}, {currentYear}</p>
                 </div>
               </div>
               <button 
@@ -1048,7 +1366,7 @@ export default function Appointments() {
                     onChange={(e) => setNewName(e.target.value)}
                     type="text" 
                     placeholder="e.g. Liam Henderson" 
-                    className="w-full pl-10 pr-3 py-2.5 bg-surface-container-low rounded-xl border border-surface-container-high focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-sm font-medium" 
+                    className="w-full pl-10 pr-3 py-2.5 bg-surface-container-low rounded-xl border border-surface-container-high focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-xs font-medium" 
                   />
                 </div>
               </div>
@@ -1061,7 +1379,7 @@ export default function Appointments() {
                     <select 
                       value={newProc}
                       onChange={(e) => setNewProc(e.target.value)}
-                      className="w-full pl-10 pr-8 py-2.5 bg-surface-container-low rounded-xl border border-surface-container-high focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-sm font-medium appearance-none cursor-pointer"
+                      className="w-full pl-10 pr-8 py-2.5 bg-surface-container-low rounded-xl border border-surface-container-high focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-xs font-medium appearance-none cursor-pointer"
                     >
                       <option>Routine Cleaning</option>
                       <option>Root Canal Therapy</option>
@@ -1080,7 +1398,7 @@ export default function Appointments() {
                     <select 
                       value={newChair}
                       onChange={(e) => setNewChair(e.target.value)}
-                      className="w-full pl-10 pr-8 py-2.5 bg-surface-container-low rounded-xl border border-surface-container-high focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-sm font-medium appearance-none cursor-pointer"
+                      className="w-full pl-10 pr-8 py-2.5 bg-surface-container-low rounded-xl border border-surface-container-high focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-xs font-medium appearance-none cursor-pointer"
                     >
                       <option>Chair 01</option>
                       <option>Chair 02</option>
@@ -1099,7 +1417,7 @@ export default function Appointments() {
                   <select 
                     value={newTime}
                     onChange={(e) => setNewTime(e.target.value)}
-                    className="w-full pl-10 pr-8 py-2.5 bg-surface-container-low rounded-xl border border-surface-container-high focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-sm font-medium appearance-none cursor-pointer"
+                    className="w-full pl-10 pr-8 py-2.5 bg-surface-container-low rounded-xl border border-surface-container-high focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-xs font-medium appearance-none cursor-pointer"
                   >
                     <option>09:00 AM - 09:45 AM</option>
                     <option>10:00 AM - 10:30 AM</option>

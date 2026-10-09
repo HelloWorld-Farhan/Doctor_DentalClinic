@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import Toast from '../components/Toast';
 
 export interface QuickNote {
   id: string;
@@ -153,20 +154,8 @@ export default function Dashboard() {
       transition={{ duration: 0.3 }}
       className="space-y-8 relative pb-12"
     >
-      {/* Toast Notification */}
-      <AnimatePresence>
-        {toastMessage && (
-          <motion.div
-            initial={{ opacity: 0, y: -20, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -20, scale: 0.95 }}
-            className="fixed top-20 right-8 z-[9999] bg-primary text-on-primary px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-3 border border-primary-container"
-          >
-            <span className="material-symbols-outlined text-[20px] text-teal-300">check_circle</span>
-            <span className="text-sm font-semibold tracking-wide">{toastMessage}</span>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Shared Non-Intrusive Portaled Toast */}
+      <Toast message={toastMessage} onClose={() => setToastMessage(null)} />
 
       {/* Top Welcome & Quick Actions Bar */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">

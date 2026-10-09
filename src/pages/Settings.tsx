@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import Toast from '../components/Toast';
 
 type Tab = 'profile' | 'security' | 'notifications' | 'powerbi' | 'equipment' | 'voice';
 
@@ -221,20 +222,8 @@ export default function Settings() {
       transition={{ duration: 0.3 }}
       className="pb-12"
     >
-      {/* Toast Notification Banner */}
-      <AnimatePresence>
-        {toastMessage && (
-          <motion.div
-            initial={{ opacity: 0, y: -20, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -20, scale: 0.95 }}
-            className="fixed top-20 right-8 z-[9999] bg-primary text-on-primary px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-3 border border-primary-container"
-          >
-            <span className="material-symbols-outlined text-[20px] text-teal-300">check_circle</span>
-            <span className="text-sm font-semibold tracking-wide">{toastMessage}</span>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Shared Non-Intrusive Portaled Toast */}
+      <Toast message={toastMessage} onClose={() => setToastMessage(null)} />
 
       {/* Hero Header */}
       <div className="pt-2 pb-5 flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-surface-container-high/60">
