@@ -708,33 +708,43 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 pb-4">
         
         {/* 1. UPGRADED & FUNCTIONAL QUICK NOTE PAD */}
-        <div className="bg-surface-container-lowest rounded-2xl shadow-xs border border-surface-container-high p-6 flex flex-col justify-between">
+        <div className="bg-surface-container-lowest rounded-2xl shadow-xs border border-surface-container-high p-5 sm:p-6 flex flex-col justify-between">
           <div>
-            <div className="flex justify-between items-center mb-4">
-              <div className="flex items-center gap-2">
-                <h2 className="text-xl font-bold text-on-surface">Quick Note Pad</h2>
-                <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-primary/10 text-primary">
+            <div className="flex flex-col gap-3 mb-4">
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2 min-w-0">
+                  <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                    <span className="material-symbols-outlined text-[18px]">edit_note</span>
+                  </div>
+                  <h2 className="text-base sm:text-lg font-bold text-on-surface truncate">Quick Note Pad</h2>
+                </div>
+                <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-primary/10 text-primary border border-primary/20 shrink-0 flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
                   {notes.filter(n => !n.completed).length} Active
                 </span>
               </div>
               
-              {/* Tab Selector: Write vs View Saved */}
-              <div className="flex bg-surface-container-high p-1 rounded-xl text-xs font-semibold">
+              {/* Tab Selector: Write vs View Saved (Responsive Segmented Control) */}
+              <div className="grid grid-cols-2 bg-surface-container-high p-1 rounded-xl text-xs font-semibold">
                 <button
+                  type="button"
                   onClick={() => setNoteTab('write')}
-                  className={`px-3 py-1 rounded-lg transition-all cursor-pointer ${
-                    noteTab === 'write' ? 'bg-surface-container-lowest text-primary font-bold shadow-xs' : 'text-on-surface-variant'
+                  className={`py-1.5 px-3 rounded-lg transition-all cursor-pointer flex items-center justify-center gap-1.5 text-center ${
+                    noteTab === 'write' ? 'bg-surface-container-lowest text-primary font-bold shadow-xs' : 'text-on-surface-variant hover:text-on-surface'
                   }`}
                 >
-                  New Note
+                  <span className="material-symbols-outlined text-[14px]">edit</span>
+                  <span>New Note</span>
                 </button>
                 <button
+                  type="button"
                   onClick={() => setNoteTab('list')}
-                  className={`px-3 py-1 rounded-lg transition-all cursor-pointer ${
-                    noteTab === 'list' ? 'bg-surface-container-lowest text-primary font-bold shadow-xs' : 'text-on-surface-variant'
+                  className={`py-1.5 px-3 rounded-lg transition-all cursor-pointer flex items-center justify-center gap-1.5 text-center ${
+                    noteTab === 'list' ? 'bg-surface-container-lowest text-primary font-bold shadow-xs' : 'text-on-surface-variant hover:text-on-surface'
                   }`}
                 >
-                  Saved ({notes.length})
+                  <span className="material-symbols-outlined text-[14px]">bookmark</span>
+                  <span>Saved ({notes.length})</span>
                 </button>
               </div>
             </div>
@@ -768,7 +778,7 @@ export default function Dashboard() {
                 <textarea 
                   value={noteText}
                   onChange={(e) => setNoteText(e.target.value)}
-                  className="w-full p-3.5 bg-surface-container-low/60 rounded-xl text-on-surface border border-surface-container-high focus:border-primary focus:ring-1 focus:ring-primary outline-none resize-none text-xs leading-relaxed transition-all font-medium" 
+                  className="w-full p-3.5 bg-surface-container-low/60 rounded-xl text-on-surface border border-surface-container-high focus:border-primary focus:ring-1 focus:ring-primary outline-none resize-none text-xs leading-relaxed transition-all font-medium placeholder:text-outline" 
                   placeholder="Type quick patient reminders, prescription notes, or chairside alerts here..." 
                   rows={4}
                 />
@@ -777,8 +787,9 @@ export default function Dashboard() {
               /* View Mode 2: Saved Notes List */
               <div className="max-h-[220px] overflow-y-auto space-y-2 pr-1">
                 {notes.length === 0 ? (
-                  <div className="py-8 text-center text-xs text-outline">
-                    No saved notes currently.
+                  <div className="py-8 text-center text-xs text-outline flex flex-col items-center justify-center gap-2">
+                    <span className="material-symbols-outlined text-3xl text-outline/50">note_alt</span>
+                    <span>No saved notes currently. Write your first note above!</span>
                   </div>
                 ) : (
                   notes.map((note) => (
@@ -807,14 +818,14 @@ export default function Dashboard() {
                           </span>
                           <span className="text-[10px] text-on-surface-variant">{note.time}</span>
                         </div>
-                        <p className={`text-xs text-on-surface leading-snug ${note.completed ? 'line-through text-outline' : ''}`}>
+                        <p className={`text-xs text-on-surface leading-snug break-words ${note.completed ? 'line-through text-outline' : ''}`}>
                           {note.text}
                         </p>
                       </div>
 
                       <button 
                         onClick={() => handleDeleteNote(note.id)}
-                        className="text-on-surface-variant hover:text-error transition-colors p-1"
+                        className="text-on-surface-variant hover:text-error transition-colors p-1 shrink-0"
                         title="Delete note"
                       >
                         <span className="material-symbols-outlined text-[15px]">close</span>
@@ -826,23 +837,26 @@ export default function Dashboard() {
             )}
           </div>
 
-          <div className="flex justify-between items-center mt-4 pt-3 border-t border-surface-container-low">
-            <span className="text-[11px] text-outline font-medium">Auto-saves to browser session</span>
+          <div className="flex items-center justify-between mt-4 pt-3 border-t border-surface-container-low gap-2">
+            <span className="text-[11px] text-outline font-medium flex items-center gap-1">
+              <span className="material-symbols-outlined text-[13px]">cloud_done</span>
+              <span>Auto-saves to browser session</span>
+            </span>
             {noteTab === 'write' ? (
               <button 
                 onClick={handleSaveNote}
-                className="px-5 py-2.5 bg-primary text-on-primary rounded-xl text-xs font-bold hover:bg-primary-container transition-all shadow-md shadow-primary/20 flex items-center gap-1.5 cursor-pointer"
+                className="px-4 py-2 bg-primary text-on-primary rounded-xl text-xs font-bold hover:bg-primary-container transition-all shadow-md shadow-primary/20 flex items-center gap-1.5 cursor-pointer shrink-0"
               >
-                <span className="material-symbols-outlined text-[16px]">save</span>
-                Save Note
+                <span className="material-symbols-outlined text-[15px]">save</span>
+                <span>Save Note</span>
               </button>
             ) : (
               <button 
                 onClick={() => setNoteTab('write')}
-                className="px-4 py-2 bg-surface-container-high text-on-surface rounded-xl text-xs font-semibold hover:bg-surface-container-highest transition-all flex items-center gap-1 cursor-pointer"
+                className="px-3.5 py-2 bg-surface-container-high text-on-surface rounded-xl text-xs font-semibold hover:bg-surface-container-highest transition-all flex items-center gap-1 cursor-pointer shrink-0"
               >
-                <span className="material-symbols-outlined text-[16px]">add</span>
-                Write New Note
+                <span className="material-symbols-outlined text-[15px]">add</span>
+                <span>New Note</span>
               </button>
             )}
           </div>
