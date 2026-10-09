@@ -268,6 +268,9 @@ export default function Reviews() {
   const [hoveredMonth, setHoveredMonth] = useState<typeof HISTOGRAM_MONTHS[0] | null>(null);
   const [selectedMonth, setSelectedMonth] = useState<string>("Oct");
 
+  // Persistent active telemetry dataset (smooth transition without layout fluctuation)
+  const activeTelemetry = hoveredMonth || HISTOGRAM_MONTHS.find(m => m.month === selectedMonth) || HISTOGRAM_MONTHS[HISTOGRAM_MONTHS.length - 1];
+
   // Toast Notification
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
@@ -617,10 +620,10 @@ export default function Reviews() {
       </div>
 
       {/* Secondary analytics banner: Recommendation Rate & Histogram Trends */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="bg-surface-container-lowest p-6 rounded-2xl shadow-sm flex items-center justify-between">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
+        <div className="bg-surface-container-lowest p-6 rounded-2xl shadow-xs border border-surface-container-high flex items-center justify-between min-h-[160px]">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-2xl bg-primary-fixed flex items-center justify-center text-primary shrink-0 shadow-sm">
+            <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shrink-0 shadow-xs">
               <span className="material-symbols-outlined text-[32px]">recommend</span>
             </div>
             <div>
@@ -634,43 +637,63 @@ export default function Reviews() {
           </div>
         </div>
 
-        {/* Animated Power BI Interactive Histogram */}
-        <div className="bg-surface-container-lowest p-6 rounded-2xl shadow-sm lg:col-span-2 flex flex-col justify-center relative">
-          <div className="flex justify-between items-center mb-2">
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-semibold uppercase tracking-wider text-outline">Monthly Trend & Rating Distribution Histogram (Power BI Matrix)</span>
-              {hoveredMonth && (
-                <span className="text-xs text-primary font-bold px-2 py-0.5 bg-primary-fixed/50 rounded-full animate-fadeIn">
-                  {hoveredMonth.month}: {hoveredMonth.count} reviews • {hoveredMonth.avg}★ • {hoveredMonth.nps} NPS
-                </span>
-              )}
+        {/* Animated Power BI Interactive Histogram (Fixed height & zero-fluctuation header) */}
+        <div className="bg-surface-container-lowest p-6 rounded-2xl shadow-xs border border-surface-container-high lg:col-span-2 flex flex-col justify-between min-h-[160px] relative">
+          <div className="flex items-center justify-between gap-3 mb-2 h-7">
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="material-symbols-outlined text-primary text-[18px] shrink-0">bar_chart</span>
+              <span className="text-xs font-bold uppercase tracking-wider text-outline truncate">
+                Monthly Trend & Distribution
+              </span>
             </div>
-            <span className="text-xs text-primary font-semibold">Q3-Q4 View</span>
+            
+            {/* Stable Telemetry Pill - Always present so card height NEVER shifts */}
+            <div className="flex items-center gap-2 shrink-0">
+              <div className="text-xs text-primary font-bold px-3 py-1 bg-primary/10 rounded-full flex items-center gap-1.5 border border-primary/20 shadow-2xs">
+                <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+                <span>
+                  {activeTelemetry.month}: <strong>{activeTelemetry.count}</strong> reviews • <strong>{activeTelemetry.avg}★</strong> • <strong>{activeTelemetry.nps}</strong> NPS
+                </span>
+              </div>
+              <span className="text-[11px] font-bold text-on-surface-variant bg-surface-container-high px-2 py-0.5 rounded-lg shrink-0">
+                Q3-Q4
+              </span>
+            </div>
           </div>
 
-          <div className="grid grid-cols-6 gap-3 items-end h-20 pt-2 relative">
+          <div className="grid grid-cols-6 gap-3 items-end h-24 pt-4 pb-1 relative">
             {HISTOGRAM_MONTHS.map((bar, i) => {
               const isSelected = selectedMonth === bar.month;
+              const isHovered = hoveredMonth?.month === bar.month;
               return (
                 <div 
                   key={i} 
                   onMouseEnter={() => setHoveredMonth(bar)}
                   onMouseLeave={() => setHoveredMonth(null)}
-                  onClick={() => setSelectedMonth(bar.month)}
-                  className="bg-surface-container-low rounded-t-lg flex flex-col justify-end items-center h-full pb-1 cursor-pointer transition-all hover:bg-surface-container-high group relative"
+                  onClick={() => {
+                    setSelectedMonth(bar.month);
+                    showToast(`Filtered review matrix to ${bar.month} 2023 (${bar.count} reviews)`);
+                  }}
+                  className="bg-surface-container-low rounded-t-xl flex flex-col justify-end items-center h-full pb-1 cursor-pointer transition-all hover:bg-surface-container-high group relative"
                 >
                   <motion.div 
                     initial={{ height: 0 }}
                     animate={{ height: bar.height }}
-                    transition={{ duration: 0.8, delay: i * 0.1, type: "spring", damping: 14 }}
-                    className={`w-full rounded-t-lg transition-colors ${isSelected ? 'bg-primary-container shadow-md' : 'bg-primary group-hover:bg-primary-container'}`}
-                  ></motion.div>
-                  <span className={`text-[11px] mt-1 transition-all ${isSelected ? 'text-primary font-bold' : 'text-outline group-hover:text-on-surface'}`}>
+                    transition={{ duration: 0.8, delay: i * 0.08, type: "spring", damping: 14 }}
+                    className={`w-full rounded-t-xl transition-all ${
+                      isSelected || isHovered
+                        ? 'bg-primary shadow-xs ring-1 ring-primary/40' 
+                        : 'bg-primary/50 group-hover:bg-primary/80'
+                    }`}
+                  />
+                  <span className={`text-[11px] mt-1.5 font-bold transition-all ${
+                    isSelected || isHovered ? 'text-primary' : 'text-outline group-hover:text-on-surface'
+                  }`}>
                     {bar.month}
                   </span>
 
-                  {/* Micro Tooltip */}
-                  <div className="absolute -top-8 bg-on-surface text-surface text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-20 shadow-md">
+                  {/* Clean micro-tooltip centered above each bar */}
+                  <div className="absolute -top-7 left-1/2 -translate-x-1/2 bg-slate-900/95 text-white text-[10px] font-bold py-1 px-2.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-20 shadow-xl border border-slate-700/60 ring-1 ring-black/10">
                     {bar.count} reviews ({bar.avg}★)
                   </div>
                 </div>
