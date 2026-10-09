@@ -505,7 +505,7 @@ export default function Dashboard() {
                 </div>
                 <div>
                   <div className="text-xs font-bold text-white flex items-center gap-1.5">
-                    Aria • Dental AI Receptionist
+                    Riya • Dental AI Receptionist
                   </div>
                   <div className="text-[10px] text-white/70">PropNex Neural Voice Engine v4.2</div>
                 </div>
