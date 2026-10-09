@@ -357,14 +357,14 @@ const getAuditDateStamp = () => new Date().toISOString().split('T')[0];
       </div>
 
       {/* Navigation Tabs with Smooth Animated Indicator */}
-      <div className="border-b border-surface-container-high/60 flex overflow-x-auto gap-1 md:gap-2 scrollbar-none mt-4 pt-1 relative">
+      <div className="border-b border-surface-container-high/60 flex overflow-x-auto gap-1 md:gap-2 no-scrollbar scrollbar-none mt-4 pt-1 relative">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id;
           return (
             <button
               key={tab.id}
               onClick={() => handleTabChange(tab.id)}
-              className={`relative pb-3.5 pt-2 px-3.5 font-semibold text-sm flex items-center gap-2 whitespace-nowrap transition-colors cursor-pointer rounded-t-xl ${
+              className={`relative pb-3.5 pt-2 px-3.5 font-semibold text-sm flex items-center gap-2 whitespace-nowrap transition-colors cursor-pointer rounded-t-xl shrink-0 ${
                 isActive 
                   ? 'text-primary' 
                   : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low/50'

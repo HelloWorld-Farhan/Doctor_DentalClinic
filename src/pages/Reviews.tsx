@@ -705,7 +705,7 @@ export default function Reviews() {
 
       {/* Filter Tabs & Sort Section */}
       <div className="flex items-center justify-between gap-4 flex-wrap">
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 sm:pb-0">
+        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar scrollbar-none pb-2 sm:pb-0">
           <button 
             onClick={() => handleFilterChange('all')}
             className={`px-4 py-2 rounded-xl text-sm font-medium transition-all whitespace-nowrap flex items-center gap-1.5 ${selectedFilter === 'all' ? 'bg-primary text-on-primary shadow-sm font-semibold' : 'bg-surface-container-low text-on-surface-variant hover:bg-surface-container-high'}`}

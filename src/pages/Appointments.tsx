@@ -825,7 +825,7 @@ export default function Appointments() {
 
               {/* Filters & Search */}
               <div className="px-6 pt-4 pb-2 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
-                <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0">
+                <div className="flex items-center gap-2 overflow-x-auto no-scrollbar scrollbar-none pb-2 md:pb-0">
                   {["All", "Confirmed", "In Progress", "Completed", "Cancelled"].map(filter => (
                     <button 
                       key={filter} 
