@@ -147,7 +147,7 @@ export default function Layout() {
   ];
 
   return (
-    <div className="bg-surface font-body-md text-on-surface flex min-h-screen overflow-x-hidden">
+    <div className="bg-surface font-body-md text-on-surface min-h-screen">
       {/* Sidebar Overlay for Mobile */}
       {sidebarOpen && (
         <div 
@@ -229,7 +229,7 @@ export default function Layout() {
       </aside>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-h-screen lg:ml-64 w-full">
+      <div className="lg:pl-64 min-h-screen flex flex-col">
         {/* Header */}
         <header className="fixed top-0 left-0 lg:left-64 right-0 h-16 bg-surface/90 backdrop-blur-md shadow-xs z-30 flex items-center justify-between px-6 lg:px-10 border-b border-surface-container-low">
           <button 
