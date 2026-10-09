@@ -90,6 +90,19 @@ export default function Layout() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Dynamic clinic logo synced across portal
+  const [clinicLogo, setClinicLogo] = useState<string>(() => {
+    return localStorage.getItem('dental_clinic_logo') || '';
+  });
+
+  useEffect(() => {
+    const handleLogoUpdate = () => {
+      setClinicLogo(localStorage.getItem('dental_clinic_logo') || '');
+    };
+    window.addEventListener('clinic_logo_updated', handleLogoUpdate);
+    return () => window.removeEventListener('clinic_logo_updated', handleLogoUpdate);
+  }, []);
+
   const unreadCount = notifications.filter(n => n.unread).length;
   const filteredNotifications = notifFilter === 'unread' 
     ? notifications.filter(n => n.unread) 
@@ -149,8 +162,12 @@ export default function Layout() {
       >
         {/* Brand Header */}
         <div className="px-6 mb-8 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-primary text-on-primary flex items-center justify-center shadow-md shadow-primary/20">
-            <span className="material-symbols-outlined text-[24px]">dentistry</span>
+          <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 text-primary flex items-center justify-center shadow-md overflow-hidden shrink-0">
+            {clinicLogo ? (
+              <img src={clinicLogo} alt="Clinic Logo" className="w-full h-full object-contain p-1" />
+            ) : (
+              <span className="material-symbols-outlined text-[24px] text-primary">dentistry</span>
+            )}
           </div>
           <div>
             <span className="text-lg font-bold tracking-tight text-primary block leading-tight">Dental Clinic Pro</span>
@@ -464,13 +481,13 @@ export default function Layout() {
 
                     {/* Menu Items */}
                     <div className="p-2 space-y-1">
-                      {/* Settings */}
+                      {/* Practice Settings */}
                       <button 
                         onClick={() => {
-                          navigate('/dashboard/settings');
+                          navigate('/dashboard/settings?tab=profile');
                           setProfileOpen(false);
                         }}
-                        className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-surface-container-high transition-colors text-left group"
+                        className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-surface-container-high transition-colors text-left group cursor-pointer"
                       >
                         <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-on-primary transition-colors shrink-0">
                           <span className="material-symbols-outlined text-[18px]">settings</span>
@@ -487,10 +504,10 @@ export default function Layout() {
                       {/* Doctor Profile & Credentials */}
                       <button 
                         onClick={() => {
-                          navigate('/dashboard/settings');
+                          navigate('/dashboard/settings?tab=profile&section=credentials');
                           setProfileOpen(false);
                         }}
-                        className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-surface-container-high transition-colors text-left group"
+                        className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-surface-container-high transition-colors text-left group cursor-pointer"
                       >
                         <div className="w-8 h-8 rounded-lg bg-sky-500/10 text-sky-600 flex items-center justify-center group-hover:bg-sky-600 group-hover:text-white transition-colors shrink-0">
                           <span className="material-symbols-outlined text-[18px]">badge</span>
@@ -507,10 +524,10 @@ export default function Layout() {
                       {/* Security & HIPAA */}
                       <button 
                         onClick={() => {
-                          navigate('/dashboard/settings');
+                          navigate('/dashboard/settings?tab=security');
                           setProfileOpen(false);
                         }}
-                        className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-surface-container-high transition-colors text-left group"
+                        className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-surface-container-high transition-colors text-left group cursor-pointer"
                       >
                         <div className="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-600 flex items-center justify-center group-hover:bg-amber-600 group-hover:text-white transition-colors shrink-0">
                           <span className="material-symbols-outlined text-[18px]">security</span>

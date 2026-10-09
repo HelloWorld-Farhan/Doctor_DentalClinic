@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
+import { useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import Toast from '../components/Toast';
 
@@ -14,6 +15,31 @@ interface EquipmentItem {
   icon: string;
   status: 'Operational' | 'Service Required' | 'Calibration Due';
 }
+
+const DEFAULT_LOGO = 'https://lh3.googleusercontent.com/aida-public/AB6AXuClzs2qLi01u8zRP56sdKHGde1f5v8kA1yymHxyLBBL5MgYaln6q_mBLPAf_1laSNAh36wBiFZLcKOB3z-HfMwdAn7BMkr82AhTfIofnTWYa52t35hawrdE-mnBYyVIDhGqBuAhMVADjuNnI3QLg4_fIv2VdrEsGkUY4s6IPjvCjj_Wy1JoD7bCnoKpL3UxbrsWz6GDsR4ajAF-_U38bNQL-RiwpXMAxUkZV-Pn2A9WeS-sFYW36jcU';
+
+const LOGO_PRESETS = [
+  {
+    id: 'teal_caduceus',
+    name: 'Teal Pro',
+    preview: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%230d9488"/><stop offset="100%" stop-color="%230284c7"/></linearGradient></defs><rect width="100" height="100" rx="24" fill="url(%23g1)"/><path d="M50 20 C32 20 28 32 28 44 C28 58 35 72 40 82 C43 88 47 88 48 82 C49 76 50 68 50 68 C50 68 51 76 52 82 C53 88 57 88 60 82 C65 72 72 58 72 44 C72 32 68 20 50 20 Z" fill="white"/><circle cx="50" cy="40" r="5" fill="%230d9488"/></svg>'
+  },
+  {
+    id: 'cyan_shield',
+    name: 'Apex Shield',
+    preview: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%2306b6d4"/><stop offset="100%" stop-color="%233b82f6"/></linearGradient></defs><rect width="100" height="100" rx="24" fill="url(%23g2)"/><path d="M50 18 L76 28 C76 55 64 74 50 82 C36 74 24 55 24 28 Z" fill="white" opacity="0.95"/><path d="M50 32 C42 32 38 38 38 46 C38 56 42 66 45 72 C47 75 49 75 50 72 C50 68 50 64 50 64 C50 64 50 68 50 72 C51 75 53 75 55 72 C58 66 62 56 62 46 C62 38 58 32 50 32 Z" fill="%230284c7"/></svg>'
+  },
+  {
+    id: 'gold_crest',
+    name: 'Gold Crest',
+    preview: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><linearGradient id="g3" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%23f59e0b"/><stop offset="100%" stop-color="%23d97706"/></linearGradient></defs><rect width="100" height="100" rx="24" fill="%231e293b"/><path d="M50 20 C34 20 30 32 30 44 C30 57 37 70 41 80 C44 86 48 86 49 80 C50 74 50 66 50 66 C50 66 50 74 51 80 C52 86 56 86 59 80 C63 70 70 57 70 44 C70 32 66 20 50 20 Z" fill="url(%23g3)"/><polygon points="50,12 53,19 60,19 55,23 57,30 50,26 43,30 45,23 40,19 47,19" fill="%23fbbf24"/></svg>'
+  },
+  {
+    id: 'emerald_health',
+    name: 'Emerald Smile',
+    preview: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><linearGradient id="g4" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%2310b981"/><stop offset="100%" stop-color="%23047857"/></linearGradient></defs><rect width="100" height="100" rx="24" fill="url(%23g4)"/><circle cx="50" cy="50" r="30" fill="white" opacity="0.2"/><path d="M50 24 C36 24 32 34 32 46 C32 58 38 68 42 78 C44 82 48 82 49 78 C50 72 50 66 50 66 C50 66 50 72 51 78 C52 82 56 82 58 78 C62 68 68 58 68 46 C68 34 64 24 50 24 Z" fill="white"/><path d="M42 46 L47 51 L58 40" stroke="%23047857" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>'
+  }
+];
 
 const defaultEquipment: EquipmentItem[] = [
   { 
@@ -55,8 +81,16 @@ const defaultEquipment: EquipmentItem[] = [
 ];
 
 export default function Settings() {
-  const [activeTab, setActiveTab] = useState<Tab>('profile');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [activeTab, setActiveTab] = useState<Tab>(() => {
+    const tabParam = searchParams.get('tab') as Tab | null;
+    const validTabs: Tab[] = ['profile', 'security', 'notifications', 'powerbi', 'equipment', 'voice'];
+    return (tabParam && validTabs.includes(tabParam)) ? tabParam : 'profile';
+  });
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [highlightCredentials, setHighlightCredentials] = useState(false);
+  const credentialsRef = useRef<HTMLDivElement>(null);
+  const logoFileInputRef = useRef<HTMLInputElement>(null);
 
   // Clinic profile form state
   const [clinicName, setClinicName] = useState('Dental Clinic Pro Advanced Dental Studio');
@@ -64,7 +98,72 @@ export default function Settings() {
   const [contactEmail, setContactEmail] = useState('admin@dentalclinicpro.net');
   const [phone, setPhone] = useState('+1 (555) 382-9900');
   const [address, setAddress] = useState('742 Evergreen Terrace, Suite 400, Springfield, OR 97477');
-  const [clinicLogo, setClinicLogo] = useState('https://lh3.googleusercontent.com/aida-public/AB6AXuClzs2qLi01u8zRP56sdKHGde1f5v8kA1yymHxyLBBL5MgYaln6q_mBLPAf_1laSNAh36wBiFZLcKOB3z-HfMwdAn7BMkr82AhTfIofnTWYa52t35hawrdE-mnBYyVIDhGqBuAhMVADjuNnI3QLg4_fIv2VdrEsGkUY4s6IPjvCjj_Wy1JoD7bCnoKpL3UxbrsWz6GDsR4ajAF-_U38bNQL-RiwpXMAxUkZV-Pn2A9WeS-sFYW36jcU');
+  
+  // Clinic Logo with persistence & reactive sync
+  const [clinicLogo, setClinicLogo] = useState<string>(() => {
+    return localStorage.getItem('dental_clinic_logo') || DEFAULT_LOGO;
+  });
+
+  // Watch URL params for tab & deep section links
+  useEffect(() => {
+    const tabParam = searchParams.get('tab') as Tab | null;
+    const validTabs: Tab[] = ['profile', 'security', 'notifications', 'powerbi', 'equipment', 'voice'];
+    if (tabParam && validTabs.includes(tabParam)) {
+      setActiveTab(tabParam);
+    }
+
+    const sectionParam = searchParams.get('section');
+    if (sectionParam === 'credentials') {
+      setActiveTab('profile');
+      setTimeout(() => {
+        if (credentialsRef.current) {
+          credentialsRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          setHighlightCredentials(true);
+          setTimeout(() => setHighlightCredentials(false), 3000);
+        }
+      }, 150);
+    }
+  }, [searchParams]);
+
+  const handleTabChange = (tabId: Tab) => {
+    setActiveTab(tabId);
+    setSearchParams({ tab: tabId });
+  };
+
+  const updateClinicLogo = (newLogoUrl: string, message: string) => {
+    setClinicLogo(newLogoUrl);
+    localStorage.setItem('dental_clinic_logo', newLogoUrl);
+    window.dispatchEvent(new Event('clinic_logo_updated'));
+    showToast(message);
+  };
+
+  const handleLogoFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      showToast('Logo file size must be less than 5MB.');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const dataUrl = event.target?.result as string;
+      if (dataUrl) {
+        updateClinicLogo(dataUrl, 'Clinic logo updated and synchronized across entire portal!');
+      }
+    };
+    reader.readAsDataURL(file);
+    e.target.value = '';
+  };
+
+  const handleApplyPreset = (preset: typeof LOGO_PRESETS[0]) => {
+    updateClinicLogo(preset.preview, `Applied "${preset.name}" preset emblem across portal!`);
+  };
+
+  const handleResetLogo = () => {
+    updateClinicLogo(DEFAULT_LOGO, 'Reset clinic logo to default system emblem.');
+  };
 
   // Security Toggles
   const [mfaEnabled, setMfaEnabled] = useState(true);
@@ -254,35 +353,45 @@ export default function Settings() {
         </div>
       </div>
 
-      {/* Navigation Tabs */}
-      <div className="border-b border-surface-container-high/60 flex overflow-x-auto gap-2 md:gap-4 scrollbar-none mt-4 pt-1">
-        {tabs.map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            className={`pb-3.5 pt-2 px-3 font-semibold text-sm flex items-center gap-2 whitespace-nowrap transition-all border-b-2 cursor-pointer ${
-              activeTab === tab.id 
-                ? 'text-primary border-primary bg-primary/5 rounded-t-lg' 
-                : 'text-on-surface-variant border-transparent hover:text-on-surface hover:bg-surface-container-low/50 rounded-t-lg'
-            }`}
-          >
-            <span className={`material-symbols-outlined text-[20px] ${activeTab === tab.id ? 'text-primary' : 'text-on-surface-variant'}`}>
-              {tab.icon}
-            </span>
-            {tab.label}
-          </button>
-        ))}
+      {/* Navigation Tabs with Smooth Animated Indicator */}
+      <div className="border-b border-surface-container-high/60 flex overflow-x-auto gap-1 md:gap-2 scrollbar-none mt-4 pt-1 relative">
+        {tabs.map((tab) => {
+          const isActive = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => handleTabChange(tab.id)}
+              className={`relative pb-3.5 pt-2 px-3.5 font-semibold text-sm flex items-center gap-2 whitespace-nowrap transition-colors cursor-pointer rounded-t-xl ${
+                isActive 
+                  ? 'text-primary' 
+                  : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low/50'
+              }`}
+            >
+              <span className={`material-symbols-outlined text-[20px] transition-colors ${isActive ? 'text-primary' : 'text-on-surface-variant'}`}>
+                {tab.icon}
+              </span>
+              {tab.label}
+              {isActive && (
+                <motion.div 
+                  layoutId="activeTabUnderline"
+                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-t-full shadow-xs"
+                  transition={{ type: "spring", stiffness: 500, damping: 35 }}
+                />
+              )}
+            </button>
+          );
+        })}
       </div>
 
-      {/* Tab Content Container */}
+      {/* Tab Content Container with Smooth Transitions */}
       <div className="pt-6">
         <AnimatePresence mode="wait">
           <motion.div
             key={activeTab}
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -6 }}
-            transition={{ duration: 0.18 }}
+            initial={{ opacity: 0, y: 12, filter: 'blur(3px)' }}
+            animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+            exit={{ opacity: 0, y: -10, filter: 'blur(2px)' }}
+            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
           >
             {/* 1. Profile & Clinic Info */}
             {activeTab === 'profile' && (
@@ -366,13 +475,29 @@ export default function Settings() {
                     </div>
                   </div>
 
-                  {/* Doctor In Charge Card */}
-                  <div className="bg-surface-container-lowest rounded-2xl p-6 shadow-sm border border-surface-container-high space-y-4">
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-8 h-8 rounded-lg bg-sky-500/10 text-sky-600 flex items-center justify-center">
-                        <span className="material-symbols-outlined text-[20px]">badge</span>
+                  {/* Doctor In Charge Card with Deep-Link Highlight */}
+                  <div 
+                    ref={credentialsRef}
+                    id="credentials-section"
+                    className={`bg-surface-container-lowest rounded-2xl p-6 shadow-sm border transition-all duration-500 space-y-4 ${
+                      highlightCredentials 
+                        ? 'ring-4 ring-sky-500/50 border-sky-500 bg-sky-50/20 shadow-xl shadow-sky-500/10 scale-[1.01]' 
+                        : 'border-surface-container-high'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-8 h-8 rounded-lg bg-sky-500/10 text-sky-600 flex items-center justify-center">
+                          <span className="material-symbols-outlined text-[20px]">badge</span>
+                        </div>
+                        <h2 className="text-lg font-bold text-on-surface">Lead Dentist & Medical Director</h2>
                       </div>
-                      <h2 className="text-lg font-bold text-on-surface">Lead Dentist & Medical Director</h2>
+                      {highlightCredentials && (
+                        <span className="text-[11px] font-bold text-sky-700 bg-sky-500/20 px-3 py-1 rounded-full border border-sky-500/40 animate-pulse flex items-center gap-1">
+                          <span className="w-2 h-2 rounded-full bg-sky-600"></span>
+                          Doctor Credentials
+                        </span>
+                      )}
                     </div>
 
                     <div className="flex flex-col sm:flex-row items-center gap-5 p-4 bg-surface rounded-xl border border-surface-container-high">
@@ -413,26 +538,100 @@ export default function Settings() {
                     <div className="space-y-4 w-full flex flex-col items-center">
                       <div className="flex items-center justify-between w-full">
                         <h2 className="text-lg font-bold text-on-surface">Clinic Logo</h2>
-                        <span className="text-[11px] font-semibold text-primary">Brand Asset</span>
+                        <span className="text-[11px] font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded-full border border-primary/20">
+                          Brand Asset
+                        </span>
                       </div>
-                      <div className="w-32 h-32 rounded-2xl overflow-hidden bg-surface-container-high border-2 border-primary/20 shadow-sm relative flex items-center justify-center p-2">
+
+                      {/* Main Logo Preview Box */}
+                      <div className="w-36 h-36 rounded-2xl overflow-hidden bg-surface-container-low border-2 border-primary/30 shadow-md relative flex items-center justify-center p-3 group transition-transform hover:scale-105">
                         <img 
-                          className="w-full h-full object-contain" 
+                          className="w-full h-full object-contain drop-shadow-sm transition-all duration-300" 
                           alt="Clinic logo" 
-                          src={clinicLogo}
+                          src={clinicLogo} 
                         />
+                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-2xl backdrop-blur-xs">
+                          <button
+                            type="button"
+                            onClick={() => logoFileInputRef.current?.click()}
+                            className="px-3 py-1.5 bg-white text-on-surface text-xs font-bold rounded-lg shadow-md hover:bg-slate-100 flex items-center gap-1 cursor-pointer"
+                          >
+                            <span className="material-symbols-outlined text-[16px] text-primary">photo_camera</span>
+                            Upload
+                          </button>
+                        </div>
                       </div>
+
                       <p className="text-xs text-on-surface-variant leading-relaxed">
-                        Recommended 500x500px PNG or SVG with transparent background for receipts and patient portal headers.
+                        Recommended 500x500px PNG, SVG or WEBP with transparent background. Updates header & sidebar branding in real time.
                       </p>
+
+                      {/* Quick Emblem Presets */}
+                      <div className="w-full pt-3 border-t border-surface-container-high/60">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider">Quick Presets</span>
+                          {clinicLogo !== DEFAULT_LOGO && (
+                            <button
+                              type="button"
+                              onClick={handleResetLogo}
+                              className="text-[11px] font-semibold text-error hover:underline flex items-center gap-0.5 cursor-pointer"
+                            >
+                              <span className="material-symbols-outlined text-[13px]">history</span>
+                              Reset Default
+                            </button>
+                          )}
+                        </div>
+                        <div className="grid grid-cols-4 gap-2">
+                          {LOGO_PRESETS.map((preset) => {
+                            const isSelected = clinicLogo === preset.preview;
+                            return (
+                              <button
+                                key={preset.id}
+                                type="button"
+                                onClick={() => handleApplyPreset(preset)}
+                                title={preset.name}
+                                className={`relative p-2 rounded-xl border flex flex-col items-center gap-1 transition-all cursor-pointer ${
+                                  isSelected 
+                                    ? 'border-primary bg-primary/10 ring-2 ring-primary/40 shadow-xs' 
+                                    : 'border-surface-container-high bg-surface hover:bg-surface-container-high/70 hover:border-outline-variant'
+                                }`}
+                              >
+                                <div className="w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center p-0.5">
+                                  <img src={preset.preview} alt={preset.name} className="w-full h-full object-contain" />
+                                </div>
+                                <span className="text-[10px] font-bold text-on-surface truncate w-full">{preset.name}</span>
+                                {isSelected && (
+                                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-primary text-white rounded-full flex items-center justify-center text-[10px] shadow-xs">
+                                    ✓
+                                  </span>
+                                )}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
                     </div>
-                    <button 
-                      onClick={() => showToast('Logo upload dialog simulated. Asset updated.')}
-                      className="w-full mt-5 py-2.5 bg-surface-container-high hover:bg-surface-container-highest text-on-surface rounded-xl font-semibold text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
-                    >
-                      <span className="material-symbols-outlined text-[16px]">upload</span>
-                      Change Clinic Logo
-                    </button>
+
+                    {/* Hidden File Input */}
+                    <input 
+                      ref={logoFileInputRef}
+                      type="file" 
+                      accept="image/png, image/jpeg, image/svg+xml, image/webp" 
+                      onChange={handleLogoFileSelect}
+                      className="hidden" 
+                    />
+
+                    {/* Change Logo Action Button */}
+                    <div className="w-full mt-4 space-y-2">
+                      <button 
+                        type="button"
+                        onClick={() => logoFileInputRef.current?.click()}
+                        className="w-full py-2.5 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/30 rounded-xl font-bold text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
+                      >
+                        <span className="material-symbols-outlined text-[18px]">cloud_upload</span>
+                        Upload Custom Logo
+                      </button>
+                    </div>
                   </div>
 
                   <div className="bg-surface-container-lowest rounded-2xl p-6 shadow-sm border border-surface-container-high space-y-3">
