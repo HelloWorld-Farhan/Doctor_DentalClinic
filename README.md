@@ -9,6 +9,16 @@ An advanced, responsive, and modern clinical management web application designed
 ### 1. 📊 Doctor Clinical Dashboard (`/dashboard`)
 - **Key Practice KPIs Bento Grid**: Real-time tracking of Today's Appointments, Pending Reviews, Clinical Satisfaction, and Active Patient Volume.
 - **Active Schedule Queue**: Today's appointment timeline with status tracking, patient badges, and procedure indicators.
+- **Functional Quick Note Pad**:
+  - Inner section design with dual modes: **New Note** composer & **Saved Notes** list.
+  - Category tagging chips: `Clinical` (Teal), `Rx` (Blue), `Lab` (Purple), `Urgent` (Rose), `Follow-up` (Amber).
+  - Dynamic note states: mark complete (strikethrough), active counter badges, and one-click deletion.
+- **Portaled "AI Voice-to-Text Charting Setup" Modal**:
+  - Launched from the **"Enable Feature"** card.
+  - Full configuration controls: Operatory microphone selection (Chairside Wireless Headset, Lapel Mic, Ceiling Beamforming Array), drill & suction high-pass noise filtering, ADA acoustic vocabulary models, and automated quadrant chimes.
+  - **Live Audio Stream Simulator**: Real-time audio waveform animation parsing dictated clinical EHR notes.
+  - Enables the feature across operatories and updates the dashboard badge to `AI Voice Active • Operatory 01`.
+- **Interactive Operatory Equipment Telemetry**: Real-time status cards (Digital X-Ray Unit, Autoclave, Laser Scaler) with one-click operational status toggles.
 - **Portaled Quick Action Modals**: 
   - **Register New Patient**: Demographics, contact info, and birth date capture.
   - **Schedule Appointment**: Date, time, procedure, and operatory chair assignment.
