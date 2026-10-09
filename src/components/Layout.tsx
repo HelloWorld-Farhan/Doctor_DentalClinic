@@ -265,13 +265,19 @@ export default function Layout() {
               
               <AnimatePresence>
                 {notificationsOpen && (
-                  <motion.div 
-                    initial={{ opacity: 0, y: 10, scale: 0.96 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: 10, scale: 0.96 }}
-                    transition={{ duration: 0.18, ease: "easeOut" }}
-                    className="absolute top-13 right-0 w-88 sm:w-96 bg-surface-container-lowest rounded-2xl shadow-2xl border border-surface-container-high/80 overflow-hidden z-50 ring-1 ring-black/5"
-                  >
+                  <>
+                    {/* Mobile backdrop to easily close */}
+                    <div 
+                      className="fixed inset-0 bg-black/20 z-40 sm:hidden"
+                      onClick={() => setNotificationsOpen(false)}
+                    />
+                    <motion.div 
+                      initial={{ opacity: 0, y: 10, scale: 0.96 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 10, scale: 0.96 }}
+                      transition={{ duration: 0.18, ease: "easeOut" }}
+                      className="fixed left-3 right-3 top-16 max-w-sm mx-auto sm:absolute sm:left-auto sm:right-0 sm:top-13 sm:w-96 bg-surface-container-lowest rounded-2xl shadow-2xl border border-surface-container-high/80 overflow-hidden z-50 ring-1 ring-black/5"
+                    >
                     {/* Header */}
                     <div className="p-4 bg-surface-container-lowest border-b border-surface-container-low flex justify-between items-center">
                       <div className="flex items-center gap-2">
@@ -400,51 +406,58 @@ export default function Layout() {
                       </button>
                     </div>
                   </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
+                </>
+              )}
+            </AnimatePresence>
+          </div>
 
-            {/* 2. Doctor Profile Menu with Doctor Name & Dropdown */}
-            <div className="relative" ref={profileDropdownRef}>
-              <button 
-                onClick={() => {
-                  setProfileOpen(!profileOpen);
-                  setNotificationsOpen(false);
-                }}
-                className="flex items-center gap-3 p-1.5 pl-2 pr-3.5 rounded-full hover:bg-surface-container-high transition-all cursor-pointer border border-surface-container-high/70 bg-surface-container-lowest shadow-xs"
-              >
-                <div className="relative w-9 h-9 rounded-full overflow-hidden bg-primary/10 text-primary ring-2 ring-primary/20 flex items-center justify-center shrink-0">
-                  <img 
-                    src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=150&auto=format&fit=crop&q=80" 
-                    alt="Dr. Sarah Sharma" 
-                    className="w-full h-full object-cover" 
-                  />
-                  <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 rounded-full ring-2 ring-white"></span>
-                </div>
-                
-                {/* Doctor Name & Specialty */}
-                <div className="hidden sm:flex flex-col text-left">
-                  <span className="text-xs font-bold text-on-surface leading-tight flex items-center gap-1">
-                    Dr. Sarah Sharma, DDS
-                    <span className="material-symbols-outlined text-[14px] text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>verified</span>
-                  </span>
-                  <span className="text-[10px] text-on-surface-variant font-medium">Chief Dental Surgeon</span>
-                </div>
-                
-                <span className={`material-symbols-outlined text-[18px] text-on-surface-variant transition-transform duration-200 ${profileOpen ? 'rotate-180 text-primary' : ''}`}>
-                  expand_more
+          {/* 2. Doctor Profile Menu with Doctor Name & Dropdown */}
+          <div className="relative" ref={profileDropdownRef}>
+            <button 
+              onClick={() => {
+                setProfileOpen(!profileOpen);
+                setNotificationsOpen(false);
+              }}
+              className="flex items-center gap-3 p-1.5 pl-2 pr-3.5 rounded-full hover:bg-surface-container-high transition-all cursor-pointer border border-surface-container-high/70 bg-surface-container-lowest shadow-xs"
+            >
+              <div className="relative w-9 h-9 rounded-full overflow-hidden bg-primary/10 text-primary ring-2 ring-primary/20 flex items-center justify-center shrink-0">
+                <img 
+                  src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=150&auto=format&fit=crop&q=80" 
+                  alt="Dr. Sarah Sharma" 
+                  className="w-full h-full object-cover" 
+                />
+                <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 rounded-full ring-2 ring-white"></span>
+              </div>
+              
+              {/* Doctor Name & Specialty */}
+              <div className="hidden sm:flex flex-col text-left">
+                <span className="text-xs font-bold text-on-surface leading-tight flex items-center gap-1">
+                  Dr. Sarah Sharma, DDS
+                  <span className="material-symbols-outlined text-[14px] text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>verified</span>
                 </span>
-              </button>
+                <span className="text-[10px] text-on-surface-variant font-medium">Chief Dental Surgeon</span>
+              </div>
+              
+              <span className={`material-symbols-outlined text-[18px] text-on-surface-variant transition-transform duration-200 ${profileOpen ? 'rotate-180 text-primary' : ''}`}>
+                expand_more
+              </span>
+            </button>
 
-              {/* Profile Dropdown Menu */}
-              <AnimatePresence>
-                {profileOpen && (
+            {/* Profile Dropdown Menu */}
+            <AnimatePresence>
+              {profileOpen && (
+                <>
+                  {/* Mobile backdrop to easily close */}
+                  <div 
+                    className="fixed inset-0 bg-black/20 z-40 sm:hidden"
+                    onClick={() => setProfileOpen(false)}
+                  />
                   <motion.div 
                     initial={{ opacity: 0, y: 10, scale: 0.96 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 10, scale: 0.96 }}
                     transition={{ duration: 0.18, ease: "easeOut" }}
-                    className="absolute top-13 right-0 w-80 bg-surface-container-lowest rounded-2xl shadow-2xl border border-surface-container-high/80 overflow-hidden z-50 ring-1 ring-black/5"
+                    className="fixed left-3 right-3 top-16 max-w-sm mx-auto sm:absolute sm:left-auto sm:right-0 sm:top-13 sm:w-80 bg-surface-container-lowest rounded-2xl shadow-2xl border border-surface-container-high/80 overflow-hidden z-50 ring-1 ring-black/5"
                   >
                     {/* Header Info Card */}
                     <div className="p-4 bg-gradient-to-br from-primary/5 via-surface-container-lowest to-surface-container-low border-b border-surface-container-low">
@@ -561,18 +574,19 @@ export default function Layout() {
                       </button>
                     </div>
                   </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-
+                </>
+              )}
+            </AnimatePresence>
           </div>
-        </header>
 
-        {/* Dynamic Page Content */}
-        <div className="flex-1 mt-16 p-6 lg:p-10 max-w-[1600px] w-full mx-auto">
-          <Outlet />
         </div>
+      </header>
+
+      {/* Dynamic Page Content */}
+      <div className="flex-1 mt-16 p-3 sm:p-6 lg:p-10 max-w-[1600px] w-full mx-auto">
+        <Outlet />
       </div>
     </div>
-  );
+  </div>
+);
 }

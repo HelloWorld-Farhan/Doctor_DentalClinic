@@ -1167,42 +1167,50 @@ export default function Appointments() {
         {/* Chart Visualization */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
           {/* Animated Bar Chart for Peak Hours */}
-          <div className="lg:col-span-2 bg-surface-container-high p-6 rounded-2xl flex flex-col justify-between h-72 border border-surface-container-highest">
-            <div className="flex justify-between items-center text-xs font-bold text-on-surface-variant mb-2">
-              <span className="flex items-center gap-1.5">
-                <span className="material-symbols-outlined text-[16px] text-primary">bar_chart</span>
+          <div className="lg:col-span-2 bg-surface-container-high p-4 sm:p-6 rounded-2xl flex flex-col justify-between min-h-[300px] border border-surface-container-highest">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs font-bold text-on-surface-variant mb-4">
+              <span className="flex items-center gap-1.5 font-bold text-on-surface">
+                <span className="material-symbols-outlined text-[18px] text-primary">bar_chart</span>
                 Peak Patient Density by Hour ({telemetryFilter})
               </span>
-              <span className="text-primary font-bold bg-primary/10 px-2.5 py-1 rounded-full">
+              <span className="text-primary font-bold bg-primary/10 px-2.5 py-1 rounded-full text-[11px] self-start sm:self-auto whitespace-nowrap">
                 {currentTelemetry.maxText}
               </span>
             </div>
 
-            {/* Dynamic Bars with smooth Framer Motion */}
-            <div className="flex items-end justify-between h-44 gap-2 pt-4">
-              {currentTelemetry.bars.map((bar, i) => (
-                <div key={bar.time} className="w-full flex flex-col items-center justify-end h-full group relative">
-                  {/* Tooltip on hover */}
-                  <div className="opacity-0 group-hover:opacity-100 transition-opacity absolute -top-10 bg-on-surface text-surface text-[10px] py-1 px-2 rounded-lg whitespace-nowrap shadow-md pointer-events-none z-20 font-bold">
-                    {bar.val} Patients ({bar.capacity}% Full)
-                  </div>
+            {/* Dynamic Bars with smooth Framer Motion and X-axis Labels */}
+            <div className="overflow-x-auto no-scrollbar scrollbar-none pb-1">
+              <div className="flex items-end justify-between h-44 gap-1.5 sm:gap-3 pt-6 min-w-[340px] sm:min-w-0 border-b border-surface-container-highest/60 pb-2">
+                {currentTelemetry.bars.map((bar, i) => (
+                  <div key={bar.time} className="flex-1 flex flex-col items-center justify-end h-full group relative">
+                    {/* Patient count indicator above bar */}
+                    <span className="text-[10px] font-bold text-outline group-hover:text-primary mb-1 transition-colors">
+                      {bar.val}
+                    </span>
 
-                  <motion.div 
-                    initial={{ height: 0 }}
-                    animate={{ height: bar.pct }}
-                    transition={{ duration: 0.5, delay: i * 0.04 }}
-                    className={`w-full rounded-t-lg flex flex-col justify-end items-center pb-2 cursor-pointer transition-colors ${
-                      bar.isMax 
-                        ? 'bg-primary hover:bg-primary-container shadow-xs' 
-                        : 'bg-primary/40 hover:bg-primary/70'
-                    }`}
-                  >
-                    <span className={`text-[10px] ${bar.isMax ? 'text-on-primary font-bold' : 'text-on-surface font-medium'}`}>
+                    {/* Tooltip on hover */}
+                    <div className="opacity-0 group-hover:opacity-100 transition-opacity absolute -top-9 bg-on-surface text-surface text-[10px] py-1 px-2 rounded-lg whitespace-nowrap shadow-md pointer-events-none z-20 font-bold">
+                      {bar.val} Patients ({bar.capacity}% Full)
+                    </div>
+
+                    <motion.div 
+                      initial={{ height: 0 }}
+                      animate={{ height: bar.pct }}
+                      transition={{ duration: 0.5, delay: i * 0.04 }}
+                      className={`w-full max-w-[38px] rounded-t-lg cursor-pointer transition-colors ${
+                        bar.isMax 
+                          ? 'bg-primary hover:bg-primary-container shadow-xs ring-1 ring-primary/40' 
+                          : 'bg-primary/40 hover:bg-primary/70'
+                      }`}
+                    />
+
+                    {/* Time Label on X-Axis BELOW the bar */}
+                    <span className={`text-[10px] sm:text-[11px] mt-2 whitespace-nowrap block transition-colors ${bar.isMax ? 'text-primary font-bold' : 'text-on-surface-variant font-medium'}`}>
                       {bar.time}
                     </span>
-                  </motion.div>
-                </div>
-              ))}
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 
@@ -1242,7 +1250,7 @@ export default function Appointments() {
       {/* 1. OPTIMIZE SCHEDULE SLOTS MODAL (Portaled to document.body)              */}
       {/* ========================================================================= */}
       {isOptimizeOpen && typeof document !== 'undefined' && createPortal(
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
           {/* Fullscreen Backdrop Blur */}
           <motion.div 
             initial={{ opacity: 0 }} 
@@ -1257,31 +1265,31 @@ export default function Appointments() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 0 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="relative bg-surface-container-lowest rounded-2xl w-full max-w-2xl shadow-2xl border border-surface-container-high overflow-hidden flex flex-col z-10 my-auto max-h-[92vh]"
+            className="relative bg-surface-container-lowest rounded-2xl w-full max-w-2xl shadow-2xl border border-surface-container-high overflow-hidden flex flex-col z-10 my-auto max-h-[90vh] sm:max-h-[92vh]"
           >
             {/* Modal Header */}
-            <div className="p-6 border-b border-surface-container-low flex justify-between items-center bg-surface-container-lowest">
+            <div className="p-4 sm:p-6 border-b border-surface-container-low flex justify-between items-center bg-surface-container-lowest shrink-0">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shadow-xs">
+                <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shadow-xs shrink-0">
                   <span className="material-symbols-outlined text-[24px]">auto_awesome</span>
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-on-surface">AI Operatory Schedule Optimization</h2>
+                  <h2 className="text-lg sm:text-xl font-bold text-on-surface">AI Operatory Schedule Optimization</h2>
                   <p className="text-xs text-outline">Machine learning appointment gap reduction & chair balance</p>
                 </div>
               </div>
               <button 
                 onClick={() => setIsOptimizeOpen(false)} 
-                className="p-2 text-outline hover:text-on-surface hover:bg-surface-container-low rounded-xl transition-colors cursor-pointer"
+                className="p-2 text-outline hover:text-on-surface hover:bg-surface-container-low rounded-xl transition-colors cursor-pointer shrink-0"
               >
                 <span className="material-symbols-outlined text-[20px]">close</span>
               </button>
             </div>
 
             {/* Modal Body */}
-            <div className="p-6 space-y-6 overflow-y-auto">
+            <div className="p-4 sm:p-6 space-y-6 overflow-y-auto flex-1">
               {/* Telemetry Metrics Comparison */}
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div className="p-3.5 bg-surface-container-low rounded-xl border border-surface-container-high text-center">
                   <span className="text-[11px] text-on-surface-variant block font-medium">Chair Utilization</span>
                   <div className="flex items-center justify-center gap-1.5 mt-1">
@@ -1402,7 +1410,7 @@ export default function Appointments() {
       {/* 2. SCHEDULE NEW APPOINTMENT MODAL (Portaled to document.body)              */}
       {/* ========================================================================= */}
       {isNewAppointmentOpen && typeof document !== 'undefined' && createPortal(
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
           {/* Fullscreen Backdrop Blur */}
           <motion.div 
             initial={{ opacity: 0 }} 
@@ -1417,27 +1425,27 @@ export default function Appointments() {
             animate={{ opacity: 1, scale: 1, y: 0 }} 
             exit={{ opacity: 0, scale: 0.95, y: 0 }} 
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="relative bg-surface-container-lowest w-full max-w-lg rounded-2xl shadow-2xl border border-surface-container-high overflow-hidden flex flex-col z-10 my-auto"
+            className="relative bg-surface-container-lowest w-full max-w-lg rounded-2xl shadow-2xl border border-surface-container-high overflow-hidden flex flex-col z-10 my-auto max-h-[90vh] sm:max-h-[92vh]"
           >
-            <div className="p-6 border-b border-surface-container-low flex justify-between items-center bg-surface-container-lowest">
+            <div className="p-4 sm:p-6 border-b border-surface-container-low flex justify-between items-center bg-surface-container-lowest shrink-0">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shadow-xs">
+                <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shadow-xs shrink-0">
                   <span className="material-symbols-outlined text-[24px]">calendar_add_on</span>
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-on-surface">Schedule Appointment</h2>
+                  <h2 className="text-lg sm:text-xl font-bold text-on-surface">Schedule Appointment</h2>
                   <p className="text-xs text-outline">Book a procedure slot for {SHORT_MONTH_NAMES[currentMonth]} {selectedDate}, {currentYear}</p>
                 </div>
               </div>
               <button 
                 onClick={() => setIsNewAppointmentOpen(false)} 
-                className="p-2 text-outline hover:text-on-surface hover:bg-surface-container-low rounded-xl transition-colors cursor-pointer"
+                className="p-2 text-outline hover:text-on-surface hover:bg-surface-container-low rounded-xl transition-colors cursor-pointer shrink-0"
               >
                 <span className="material-symbols-outlined text-[20px]">close</span>
               </button>
             </div>
 
-            <form onSubmit={handleCreateAppointment} className="p-6 space-y-4">
+            <form onSubmit={handleCreateAppointment} className="p-4 sm:p-6 space-y-4 overflow-y-auto flex-1">
               <div className="space-y-1">
                 <label className="text-xs font-semibold uppercase tracking-wider text-outline">Patient Full Name</label>
                 <div className="relative">
@@ -1453,7 +1461,7 @@ export default function Appointments() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1">
                   <label className="text-xs font-semibold uppercase tracking-wider text-outline">Procedure Type</label>
                   <div className="relative">
@@ -1512,7 +1520,7 @@ export default function Appointments() {
                 </div>
               </div>
 
-              <div className="pt-4 border-t border-surface-container-low flex justify-end gap-3">
+              <div className="pt-4 border-t border-surface-container-low flex flex-col-reverse sm:flex-row justify-end gap-3 shrink-0">
                 <button 
                   type="button" 
                   onClick={() => setIsNewAppointmentOpen(false)} 
@@ -1539,7 +1547,7 @@ export default function Appointments() {
       {/* 3. EDIT APPOINTMENT MODAL (Portaled to document.body)                     */}
       {/* ========================================================================= */}
       {editingAppointment && typeof document !== 'undefined' && createPortal(
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
           {/* Fullscreen Backdrop Blur */}
           <motion.div 
             initial={{ opacity: 0 }} 
@@ -1554,16 +1562,16 @@ export default function Appointments() {
             animate={{ opacity: 1, scale: 1, y: 0 }} 
             exit={{ opacity: 0, scale: 0.95, y: 0 }} 
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="relative bg-surface-container-lowest w-full max-w-xl rounded-2xl shadow-2xl border border-surface-container-high overflow-hidden flex flex-col z-10 my-auto"
+            className="relative bg-surface-container-lowest w-full max-w-xl rounded-2xl shadow-2xl border border-surface-container-high overflow-hidden flex flex-col z-10 my-auto max-h-[90vh] sm:max-h-[92vh]"
           >
             {/* Header */}
-            <div className="p-6 border-b border-surface-container-low flex justify-between items-center bg-surface-container-lowest">
+            <div className="p-4 sm:p-6 border-b border-surface-container-low flex justify-between items-center bg-surface-container-lowest shrink-0">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shadow-xs">
+                <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shadow-xs shrink-0">
                   <span className="material-symbols-outlined text-[24px]">edit_calendar</span>
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-on-surface">Edit Appointment</h2>
+                  <h2 className="text-lg sm:text-xl font-bold text-on-surface">Edit Appointment</h2>
                   <p className="text-xs text-outline">
                     Updating record for <span className="font-semibold text-on-surface">{editingAppointment.name}</span> ({editingAppointment.patientId})
                   </p>
@@ -1571,14 +1579,14 @@ export default function Appointments() {
               </div>
               <button 
                 onClick={() => setEditingAppointment(null)} 
-                className="p-2 text-outline hover:text-on-surface hover:bg-surface-container-low rounded-xl transition-colors cursor-pointer"
+                className="p-2 text-outline hover:text-on-surface hover:bg-surface-container-low rounded-xl transition-colors cursor-pointer shrink-0"
               >
                 <span className="material-symbols-outlined text-[20px]">close</span>
               </button>
             </div>
 
             {/* Form Body */}
-            <form onSubmit={handleSaveEditAppointment} className="p-6 space-y-4 max-h-[75vh] overflow-y-auto">
+            <form onSubmit={handleSaveEditAppointment} className="p-4 sm:p-6 space-y-4 overflow-y-auto flex-1">
               <div className="space-y-1">
                 <label className="text-xs font-semibold uppercase tracking-wider text-outline">Patient Full Name</label>
                 <div className="relative">
@@ -1690,7 +1698,7 @@ export default function Appointments() {
               </div>
 
               {/* Footer */}
-              <div className="pt-4 border-t border-surface-container-low flex flex-wrap items-center justify-between gap-3">
+              <div className="pt-4 border-t border-surface-container-low flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 shrink-0">
                 <button 
                   type="button" 
                   onClick={() => {
@@ -1698,13 +1706,13 @@ export default function Appointments() {
                     setEditingAppointment(null);
                     setAppointmentToDelete(apt);
                   }}
-                  className="flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-error hover:bg-error-container/30 rounded-xl transition-colors cursor-pointer"
+                  className="flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold text-error hover:bg-error-container/30 rounded-xl transition-colors cursor-pointer"
                 >
                   <span className="material-symbols-outlined text-[16px]">delete</span>
                   Delete Appointment
                 </button>
                 
-                <div className="flex items-center gap-2 ml-auto">
+                <div className="flex items-center justify-end gap-2">
                   <button 
                     type="button" 
                     onClick={() => setEditingAppointment(null)} 
@@ -1716,7 +1724,7 @@ export default function Appointments() {
                     whileHover={{ scale: 1.02 }} 
                     whileTap={{ scale: 0.98 }} 
                     type="submit" 
-                    className="px-5 py-2.5 rounded-xl font-semibold text-xs bg-primary text-on-primary shadow-xs hover:bg-primary-container transition-colors cursor-pointer flex items-center gap-1.5"
+                    className="px-5 py-2.5 rounded-xl font-semibold text-xs bg-primary text-on-primary shadow-xs hover:bg-primary-container transition-colors cursor-pointer flex items-center justify-center gap-1.5"
                   >
                     <span className="material-symbols-outlined text-[16px]">check</span>
                     Save Changes
@@ -1733,7 +1741,7 @@ export default function Appointments() {
       {/* 4. DELETE APPOINTMENT CONFIRMATION MODAL (Portaled to document.body)       */}
       {/* ========================================================================= */}
       {appointmentToDelete && typeof document !== 'undefined' && createPortal(
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
           {/* Fullscreen Backdrop Blur */}
           <motion.div 
             initial={{ opacity: 0 }} 
@@ -1748,15 +1756,15 @@ export default function Appointments() {
             animate={{ opacity: 1, scale: 1, y: 0 }} 
             exit={{ opacity: 0, scale: 0.95, y: 0 }} 
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="relative bg-surface-container-lowest w-full max-w-md rounded-2xl shadow-2xl border border-surface-container-high overflow-hidden flex flex-col z-10 my-auto"
+            className="relative bg-surface-container-lowest w-full max-w-md rounded-2xl shadow-2xl border border-surface-container-high overflow-hidden flex flex-col z-10 my-auto max-h-[90vh] sm:max-h-[92vh]"
           >
-            <div className="p-6 text-center">
+            <div className="p-4 sm:p-6 text-center overflow-y-auto flex-1">
               {/* Warning Icon Badge */}
               <div className="w-14 h-14 rounded-2xl bg-error-container/40 text-error mx-auto flex items-center justify-center mb-4 ring-8 ring-error-container/10">
                 <span className="material-symbols-outlined text-[28px]">delete_forever</span>
               </div>
 
-              <h3 className="text-xl font-bold text-on-surface mb-1.5">Delete Appointment?</h3>
+              <h3 className="text-lg sm:text-xl font-bold text-on-surface mb-1.5">Delete Appointment?</h3>
               <p className="text-xs text-on-surface-variant leading-relaxed max-w-sm mx-auto mb-5">
                 Are you sure you want to permanently delete the appointment for <span className="font-bold text-on-surface">{appointmentToDelete.name}</span>? This action will remove the record from the clinical schedule.
               </p>
@@ -1791,7 +1799,7 @@ export default function Appointments() {
               </div>
 
               {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row items-center justify-end gap-2.5">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-2.5">
                 <button 
                   type="button" 
                   onClick={() => setAppointmentToDelete(null)}

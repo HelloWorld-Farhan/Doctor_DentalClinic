@@ -1254,29 +1254,29 @@ const getAuditDateStamp = () => new Date().toISOString().split('T')[0];
 
       {/* Add Equipment Modal - Portaled to document.body */}
       {isAddEquipmentOpen && typeof document !== 'undefined' && createPortal(
-        <div className="fixed inset-0 z-[9999] bg-black/60 backdrop-blur-md flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[9999] bg-black/60 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
           <motion.div 
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            className="bg-surface-container-lowest rounded-2xl shadow-2xl max-w-md w-full border border-surface-container-high overflow-hidden"
+            className="bg-surface-container-lowest rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] sm:max-h-[92vh] border border-surface-container-high overflow-hidden flex flex-col my-auto"
           >
-            <div className="p-5 border-b border-surface-container-low flex items-center justify-between bg-surface-container-lowest">
+            <div className="p-4 sm:p-5 border-b border-surface-container-low flex items-center justify-between bg-surface-container-lowest shrink-0">
               <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+                <div className="w-9 h-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
                   <span className="material-symbols-outlined text-[20px]">medical_services</span>
                 </div>
-                <h3 className="font-bold text-lg text-on-surface">Add Clinic Equipment</h3>
+                <h3 className="font-bold text-base sm:text-lg text-on-surface">Add Clinic Equipment</h3>
               </div>
               <button 
                 onClick={() => setIsAddEquipmentOpen(false)}
-                className="p-1 text-on-surface-variant hover:text-on-surface rounded-lg cursor-pointer"
+                className="p-1 text-on-surface-variant hover:text-on-surface rounded-lg cursor-pointer shrink-0"
               >
                 <span className="material-symbols-outlined text-[20px]">close</span>
               </button>
             </div>
 
-            <form onSubmit={handleAddEquipment} className="p-6 space-y-4">
+            <form onSubmit={handleAddEquipment} className="p-4 sm:p-6 space-y-4 overflow-y-auto flex-1">
               <div>
                 <label className="block text-xs font-bold text-on-surface-variant mb-1">Equipment Model / Name *</label>
                 <input 
@@ -1289,7 +1289,7 @@ const getAuditDateStamp = () => new Date().toISOString().split('T')[0];
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-bold text-on-surface-variant mb-1">Category</label>
                   <select 
@@ -1331,17 +1331,17 @@ const getAuditDateStamp = () => new Date().toISOString().split('T')[0];
                 />
               </div>
 
-              <div className="pt-3 border-t border-surface-container-low flex justify-end gap-3">
+              <div className="pt-3 border-t border-surface-container-low flex flex-col-reverse sm:flex-row justify-end gap-2.5 sm:gap-3 shrink-0">
                 <button 
                   type="button"
                   onClick={() => setIsAddEquipmentOpen(false)}
-                  className="px-4 py-2.5 bg-surface-container-high hover:bg-surface-container-highest text-on-surface rounded-xl text-xs font-semibold cursor-pointer"
+                  className="w-full sm:w-auto px-4 py-2.5 bg-surface-container-high hover:bg-surface-container-highest text-on-surface rounded-xl text-xs font-semibold cursor-pointer text-center"
                 >
                   Cancel
                 </button>
                 <button 
                   type="submit"
-                  className="px-5 py-2.5 bg-primary text-on-primary hover:bg-primary-container rounded-xl text-xs font-semibold shadow-sm cursor-pointer"
+                  className="w-full sm:w-auto px-5 py-2.5 bg-primary text-on-primary hover:bg-primary-container rounded-xl text-xs font-semibold shadow-sm cursor-pointer text-center"
                 >
                   Register Equipment
                 </button>

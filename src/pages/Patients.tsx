@@ -982,26 +982,26 @@ export default function Patients() {
             className="relative bg-surface-container-lowest rounded-2xl w-full max-w-2xl shadow-2xl border border-surface-container-high overflow-hidden flex flex-col z-10 my-auto max-h-[92vh]"
           >
             {/* Modal Header */}
-            <div className="p-6 border-b border-surface-container-low flex justify-between items-center bg-surface-container-lowest">
+            <div className="p-4 sm:p-6 border-b border-surface-container-low flex justify-between items-center bg-surface-container-lowest shrink-0">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shrink-0 shadow-xs">
-                  <span className="material-symbols-outlined text-[26px]">edit_note</span>
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shrink-0 shadow-xs">
+                  <span className="material-symbols-outlined text-[22px] sm:text-[26px]">edit_note</span>
                 </div>
                 <div>
-                  <div className="flex items-center gap-2">
-                    <h3 className="text-xl font-bold text-on-surface">Edit Patient Record</h3>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h3 className="text-lg sm:text-xl font-bold text-on-surface">Edit Patient Record</h3>
                     <span className="px-2 py-0.5 bg-primary/10 text-primary text-xs font-mono font-bold rounded-md">
                       #{editingPatient.id}
                     </span>
                   </div>
-                  <p className="text-xs text-outline mt-0.5">
+                  <p className="text-[11px] sm:text-xs text-outline mt-0.5">
                     Update clinical demographics, medical alerts & insurance for {editingPatient.name}.
                   </p>
                 </div>
               </div>
               <button 
                 type="button"
-                className="p-2 rounded-xl text-outline hover:text-on-surface hover:bg-surface-container-low transition-colors cursor-pointer" 
+                className="p-2 rounded-xl text-outline hover:text-on-surface hover:bg-surface-container-low transition-colors cursor-pointer shrink-0" 
                 onClick={() => setEditingPatient(null)}
               >
                 <span className="material-symbols-outlined text-[20px]">close</span>
@@ -1009,7 +1009,7 @@ export default function Patients() {
             </div>
 
             {/* Modal Form */}
-            <form onSubmit={handleSaveEdit} className="flex-1 overflow-y-auto p-6 space-y-6">
+            <form onSubmit={handleSaveEdit} className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 sm:space-y-6">
               {/* Section 1: Demographics */}
               <div className="space-y-3">
                 <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-primary">
@@ -1196,17 +1196,17 @@ export default function Patients() {
               </div>
 
               {/* Modal Footer Controls */}
-              <div className="flex justify-end gap-3 pt-4 border-t border-surface-container-low">
+              <div className="flex flex-col-reverse sm:flex-row justify-end gap-2.5 sm:gap-3 pt-4 border-t border-surface-container-low shrink-0">
                 <button 
                   type="button"
-                  className="px-5 py-2.5 rounded-xl text-outline hover:text-on-surface text-sm font-medium hover:bg-surface-container-low transition-colors cursor-pointer" 
+                  className="w-full sm:w-auto px-5 py-2.5 rounded-xl text-outline hover:text-on-surface text-sm font-medium hover:bg-surface-container-low transition-colors cursor-pointer text-center" 
                   onClick={() => setEditingPatient(null)} 
                 >
                   Cancel
                 </button>
                 <button 
                   type="submit"
-                  className="px-6 py-2.5 rounded-xl bg-primary text-on-primary text-sm font-semibold shadow-md shadow-primary/20 hover:bg-primary-container transition-all flex items-center gap-2 cursor-pointer" 
+                  className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-primary text-on-primary text-sm font-semibold shadow-md shadow-primary/20 hover:bg-primary-container transition-all flex items-center justify-center gap-2 cursor-pointer text-center" 
                 >
                   <span className="material-symbols-outlined text-[18px]">save</span>
                   <span>Save Changes</span>
@@ -1240,26 +1240,26 @@ export default function Patients() {
             className="relative bg-surface-container-lowest rounded-2xl w-full max-w-4xl shadow-2xl border border-surface-container-high overflow-hidden flex flex-col z-10 my-auto max-h-[94vh]"
           >
             {/* Header */}
-            <div className="p-6 border-b border-surface-container-low flex justify-between items-center bg-surface-container-lowest">
+            <div className="p-4 sm:p-6 border-b border-surface-container-low flex justify-between items-center bg-surface-container-lowest shrink-0">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-2xl bg-teal-500/10 text-teal-600 flex items-center justify-center shrink-0 shadow-xs">
-                  <span className="material-symbols-outlined text-[26px]">dentistry</span>
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-teal-500/10 text-teal-600 flex items-center justify-center shrink-0 shadow-xs">
+                  <span className="material-symbols-outlined text-[22px] sm:text-[26px]">dentistry</span>
                 </div>
                 <div>
-                  <div className="flex items-center gap-2">
-                    <h3 className="text-xl font-bold text-on-surface">Adult Odontogram Dental Chart</h3>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h3 className="text-lg sm:text-xl font-bold text-on-surface">Adult Odontogram Dental Chart</h3>
                     <span className="px-2.5 py-0.5 bg-primary/10 text-primary text-xs font-bold rounded-md">
                       {odontogramPatient.name} (#{odontogramPatient.id})
                     </span>
                   </div>
-                  <p className="text-xs text-outline mt-0.5">
+                  <p className="text-[11px] sm:text-xs text-outline mt-0.5">
                     Universal Numbering System (Teeth 1–32) • Maxillary & Mandibular Arches
                   </p>
                 </div>
               </div>
               <button 
                 type="button"
-                className="p-2 rounded-xl text-outline hover:text-on-surface hover:bg-surface-container-low transition-colors cursor-pointer" 
+                className="p-2 rounded-xl text-outline hover:text-on-surface hover:bg-surface-container-low transition-colors cursor-pointer shrink-0" 
                 onClick={() => setOdontogramPatient(null)}
               >
                 <span className="material-symbols-outlined text-[20px]">close</span>
@@ -1267,7 +1267,7 @@ export default function Patients() {
             </div>
 
             {/* Scrollable Body */}
-            <div className="flex-1 overflow-y-auto p-6 space-y-6">
+            <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 sm:space-y-6">
               {/* Odontogram Controls & Arch Selector */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-surface-container-low p-3 rounded-xl border border-surface-container-high">
                 <div className="flex items-center gap-2">
@@ -1414,17 +1414,17 @@ export default function Patients() {
             </div>
 
             {/* Footer */}
-            <div className="p-4 border-t border-surface-container-low bg-surface-container-lowest flex justify-between items-center px-6">
+            <div className="p-4 sm:p-6 border-t border-surface-container-low bg-surface-container-lowest flex flex-col-reverse sm:flex-row justify-between items-stretch sm:items-center gap-2.5 sm:gap-3 shrink-0">
               <button 
                 onClick={() => showToast(`Exported full mouth Odontogram report for ${odontogramPatient.name}`)}
-                className="px-4 py-2 bg-surface-container-high hover:bg-surface-container-highest text-on-surface rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer"
+                className="w-full sm:w-auto px-4 py-2 bg-surface-container-high hover:bg-surface-container-highest text-on-surface rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer text-center"
               >
                 <span className="material-symbols-outlined text-[16px]">print</span>
                 Print / Export Chart
               </button>
               <button 
                 onClick={() => setOdontogramPatient(null)}
-                className="px-6 py-2 bg-primary text-on-primary rounded-xl text-xs font-semibold shadow-xs hover:bg-primary-container transition-all cursor-pointer"
+                className="w-full sm:w-auto px-6 py-2 bg-primary text-on-primary rounded-xl text-xs font-semibold shadow-xs hover:bg-primary-container transition-all cursor-pointer text-center"
               >
                 Close Odontogram
               </button>
@@ -1456,21 +1456,21 @@ export default function Patients() {
             className="relative bg-surface-container-lowest rounded-2xl w-full max-w-2xl shadow-2xl border border-surface-container-high overflow-hidden flex flex-col z-10 my-auto max-h-[92vh]"
           >
             {/* Modal Header */}
-            <div className="p-6 border-b border-surface-container-low flex justify-between items-center bg-surface-container-lowest">
+            <div className="p-4 sm:p-6 border-b border-surface-container-low flex justify-between items-center bg-surface-container-lowest shrink-0">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-2xl bg-primary-fixed text-primary flex items-center justify-center shrink-0 shadow-xs">
-                  <span className="material-symbols-outlined text-[26px]">person_add</span>
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-primary-fixed text-primary flex items-center justify-center shrink-0 shadow-xs">
+                  <span className="material-symbols-outlined text-[22px] sm:text-[26px]">person_add</span>
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-on-surface">Add New Patient Record</h3>
-                  <p className="text-xs text-outline mt-0.5">
+                  <h3 className="text-lg sm:text-xl font-bold text-on-surface">Add New Patient Record</h3>
+                  <p className="text-[11px] sm:text-xs text-outline mt-0.5">
                     Register clinical demographics, medical alerts & insurance provider.
                   </p>
                 </div>
               </div>
               <button 
                 type="button"
-                className="p-2 rounded-xl text-outline hover:text-on-surface hover:bg-surface-container-low transition-colors cursor-pointer" 
+                className="p-2 rounded-xl text-outline hover:text-on-surface hover:bg-surface-container-low transition-colors cursor-pointer shrink-0" 
                 onClick={() => setShowNewPatientModal(false)}
               >
                 <span className="material-symbols-outlined text-[20px]">close</span>
@@ -1478,7 +1478,7 @@ export default function Patients() {
             </div>
 
             {/* Form */}
-            <form onSubmit={handleCreatePatient} className="flex-1 overflow-y-auto p-6 space-y-6">
+            <form onSubmit={handleCreatePatient} className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 sm:space-y-6">
               {/* Section 1 */}
               <div className="space-y-3">
                 <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-primary">
@@ -1654,17 +1654,17 @@ export default function Patients() {
               </div>
 
               {/* Footer */}
-              <div className="flex justify-end gap-3 pt-4 border-t border-surface-container-low">
+              <div className="flex flex-col-reverse sm:flex-row justify-end gap-2.5 sm:gap-3 pt-4 border-t border-surface-container-low shrink-0">
                 <button 
                   type="button"
-                  className="px-5 py-2.5 rounded-xl text-outline hover:text-on-surface text-sm font-medium hover:bg-surface-container-low transition-colors cursor-pointer" 
+                  className="w-full sm:w-auto px-5 py-2.5 rounded-xl text-outline hover:text-on-surface text-sm font-medium hover:bg-surface-container-low transition-colors cursor-pointer text-center" 
                   onClick={() => setShowNewPatientModal(false)} 
                 >
                   Cancel
                 </button>
                 <button 
                   type="submit"
-                  className="px-6 py-2.5 rounded-xl bg-primary text-on-primary text-sm font-semibold shadow-md shadow-primary/20 hover:bg-primary-container transition-all flex items-center gap-2 cursor-pointer" 
+                  className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-primary text-on-primary text-sm font-semibold shadow-md shadow-primary/20 hover:bg-primary-container transition-all flex items-center justify-center gap-2 cursor-pointer text-center" 
                 >
                   <span className="material-symbols-outlined text-[18px]">save</span>
                   <span>Save Patient Record</span>
@@ -1693,20 +1693,20 @@ export default function Patients() {
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 220 }}
-            className="bg-surface-container-lowest h-full w-full max-w-lg shadow-2xl flex flex-col p-6 relative z-10"
+            className="bg-surface-container-lowest h-full w-full max-w-lg shadow-2xl flex flex-col p-4 sm:p-6 relative z-10"
           >
-            <div className="flex justify-between items-center pb-4 border-b border-surface-variant/20">
+            <div className="flex justify-between items-center pb-4 border-b border-surface-variant/20 shrink-0">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-secondary-fixed text-secondary flex items-center justify-center">
+                <div className="w-10 h-10 rounded-xl bg-secondary-fixed text-secondary flex items-center justify-center shrink-0">
                   <span className="material-symbols-outlined text-[22px]">history_edu</span>
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-on-surface">{historyPatientName}</h3>
-                  <div className="text-xs text-on-surface-variant mt-0.5">Clinical timeline & treatment records</div>
+                  <h3 className="text-lg sm:text-xl font-bold text-on-surface">{historyPatientName}</h3>
+                  <div className="text-[11px] sm:text-xs text-on-surface-variant mt-0.5">Clinical timeline & treatment records</div>
                 </div>
               </div>
               <button 
-                className="p-2 rounded-xl text-outline hover:text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer" 
+                className="p-2 rounded-xl text-outline hover:text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer shrink-0" 
                 onClick={() => setHistoryPatientName(null)}
               >
                 <span className="material-symbols-outlined text-[20px]">close</span>
@@ -1742,9 +1742,9 @@ export default function Patients() {
               </div>
             </div>
 
-            <div className="pt-4 border-t border-surface-variant/20 flex justify-end">
+            <div className="pt-4 border-t border-surface-variant/20 flex justify-end shrink-0">
               <button 
-                className="px-6 py-2.5 rounded-xl bg-primary text-on-primary text-sm font-semibold shadow-xs hover:bg-primary-container transition-all cursor-pointer" 
+                className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-primary text-on-primary text-sm font-semibold shadow-xs hover:bg-primary-container transition-all cursor-pointer text-center" 
                 onClick={() => setHistoryPatientName(null)}
               >
                 Close History

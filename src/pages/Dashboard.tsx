@@ -978,26 +978,26 @@ export default function Dashboard() {
             className="relative bg-surface-container-lowest w-full max-w-xl rounded-2xl shadow-2xl border border-surface-container-high overflow-hidden flex flex-col z-10 my-auto max-h-[92vh]"
           >
             {/* Modal Header */}
-            <div className="p-6 border-b border-surface-container-low flex justify-between items-center bg-surface-container-lowest">
+            <div className="p-4 sm:p-6 border-b border-surface-container-low flex justify-between items-center bg-surface-container-lowest shrink-0">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shadow-xs">
-                  <span className="material-symbols-outlined text-[26px]">mic</span>
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shadow-xs shrink-0">
+                  <span className="material-symbols-outlined text-[22px] sm:text-[26px]">mic</span>
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-on-surface">AI Voice-to-Text Charting Setup</h2>
-                  <p className="text-xs text-outline mt-0.5">Automated hands-free periodontal soundings & restorative dictation</p>
+                  <h2 className="text-lg sm:text-xl font-bold text-on-surface">AI Voice-to-Text Charting Setup</h2>
+                  <p className="text-[11px] sm:text-xs text-outline mt-0.5">Automated hands-free periodontal soundings & restorative dictation</p>
                 </div>
               </div>
               <button 
                 onClick={() => setIsVoiceConfigOpen(false)} 
-                className="p-2 text-outline hover:text-on-surface hover:bg-surface-container-low rounded-xl transition-colors cursor-pointer"
+                className="p-2 text-outline hover:text-on-surface hover:bg-surface-container-low rounded-xl transition-colors cursor-pointer shrink-0"
               >
                 <span className="material-symbols-outlined text-[20px]">close</span>
               </button>
             </div>
 
             {/* Modal Form Body */}
-            <div className="p-6 overflow-y-auto space-y-5">
+            <div className="p-4 sm:p-6 overflow-y-auto flex-1 space-y-4 sm:space-y-5">
               {/* Hardware Selection */}
               <div className="space-y-1">
                 <label className="text-xs font-semibold uppercase tracking-wider text-outline">Operatory Microphone Source</label>
@@ -1138,7 +1138,7 @@ export default function Dashboard() {
                   href="https://propnexai.com/auth/sign-in"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-4 py-2 bg-primary text-on-primary hover:bg-primary-container rounded-xl text-xs font-bold flex items-center gap-1.5 shrink-0 transition-all shadow-xs cursor-pointer"
+                  className="w-full sm:w-auto px-4 py-2 bg-primary text-on-primary hover:bg-primary-container rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 shrink-0 transition-all shadow-xs cursor-pointer text-center"
                 >
                   <span>Sign In to PropNex AI</span>
                   <span className="material-symbols-outlined text-[14px]">open_in_new</span>
@@ -1147,18 +1147,18 @@ export default function Dashboard() {
             </div>
 
             {/* Modal Footer */}
-            <div className="p-4 border-t border-surface-container-low bg-surface-container-lowest flex justify-end gap-3 px-6">
+            <div className="p-4 sm:p-6 border-t border-surface-container-low bg-surface-container-lowest flex flex-col-reverse sm:flex-row justify-end gap-2.5 sm:gap-3 shrink-0">
               <button 
                 type="button" 
                 onClick={() => setIsVoiceConfigOpen(false)} 
-                className="px-5 py-2.5 rounded-xl font-medium text-xs text-outline hover:text-on-surface hover:bg-surface-container-low transition-colors cursor-pointer"
+                className="w-full sm:w-auto px-5 py-2.5 rounded-xl font-medium text-xs text-outline hover:text-on-surface hover:bg-surface-container-low transition-colors cursor-pointer text-center"
               >
                 Cancel
               </button>
               <button 
                 type="button" 
                 onClick={handleSaveVoiceConfig} 
-                className="px-6 py-2.5 rounded-xl font-semibold text-xs bg-primary text-on-primary shadow-md shadow-primary/20 hover:bg-primary-container transition-colors cursor-pointer flex items-center gap-2"
+                className="w-full sm:w-auto px-6 py-2.5 rounded-xl font-semibold text-xs bg-primary text-on-primary shadow-md shadow-primary/20 hover:bg-primary-container transition-colors cursor-pointer flex items-center justify-center gap-2"
               >
                 <span className="material-symbols-outlined text-[16px]">check_circle</span>
                 Save & Enable Voice Charting
@@ -1188,23 +1188,23 @@ export default function Dashboard() {
                 animate={{ opacity: 1, scale: 1, y: 0 }} 
                 exit={{ opacity: 0, scale: 0.95, y: 0 }} 
                 transition={{ type: "spring", damping: 25, stiffness: 300 }}
-                className="relative bg-surface-container-lowest w-full max-w-lg rounded-2xl shadow-2xl border border-surface-container-high overflow-hidden flex flex-col z-10 my-auto"
+                className="relative bg-surface-container-lowest w-full max-w-lg max-h-[90vh] sm:max-h-[92vh] rounded-2xl shadow-2xl border border-surface-container-high overflow-hidden flex flex-col z-10 my-auto"
               >
-                <div className="p-6 border-b border-surface-container-low flex justify-between items-center bg-surface-container-lowest">
+                <div className="p-4 sm:p-6 border-b border-surface-container-low flex justify-between items-center bg-surface-container-lowest shrink-0">
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shadow-xs">
-                      <span className="material-symbols-outlined text-[24px]">calendar_add_on</span>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shadow-xs shrink-0">
+                      <span className="material-symbols-outlined text-[20px] sm:text-[24px]">calendar_add_on</span>
                     </div>
                     <div>
-                      <h2 className="text-xl font-bold text-on-surface">Schedule Appointment</h2>
-                      <p className="text-xs text-outline">Select patient, chair operatory and procedure slot.</p>
+                      <h2 className="text-lg sm:text-xl font-bold text-on-surface">Schedule Appointment</h2>
+                      <p className="text-[11px] sm:text-xs text-outline">Select patient, chair operatory and procedure slot.</p>
                     </div>
                   </div>
-                  <button onClick={() => setIsScheduleOpen(false)} className="p-2 text-outline hover:text-on-surface hover:bg-surface-container-low rounded-xl transition-colors cursor-pointer">
+                  <button onClick={() => setIsScheduleOpen(false)} className="p-2 text-outline hover:text-on-surface hover:bg-surface-container-low rounded-xl transition-colors cursor-pointer shrink-0">
                     <span className="material-symbols-outlined text-[20px]">close</span>
                   </button>
                 </div>
-                <div className="p-6 space-y-4">
+                <div className="p-4 sm:p-6 space-y-4 overflow-y-auto flex-1">
                   <div className="space-y-1">
                     <label className="text-xs font-semibold uppercase tracking-wider text-outline">Patient Name</label>
                     <div className="relative">
@@ -1212,7 +1212,7 @@ export default function Dashboard() {
                       <input type="text" placeholder="Search patient name or ID..." className="w-full pl-10 pr-3 py-2.5 bg-surface-container-low rounded-xl border border-surface-container-high focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-xs font-medium" />
                     </div>
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div className="space-y-1">
                       <label className="text-xs font-semibold uppercase tracking-wider text-outline">Date</label>
                       <div className="relative">
@@ -1243,14 +1243,14 @@ export default function Dashboard() {
                     </div>
                   </div>
                 </div>
-                <div className="p-4 border-t border-surface-container-low bg-surface-container-lowest flex justify-end gap-3 px-6">
-                  <button onClick={() => setIsScheduleOpen(false)} className="px-5 py-2.5 rounded-xl font-medium text-xs text-outline hover:text-on-surface hover:bg-surface-container-low transition-colors cursor-pointer">Cancel</button>
+                <div className="p-4 sm:p-6 border-t border-surface-container-low bg-surface-container-lowest flex flex-col-reverse sm:flex-row justify-end gap-2.5 sm:gap-3 shrink-0">
+                  <button onClick={() => setIsScheduleOpen(false)} className="w-full sm:w-auto px-5 py-2.5 rounded-xl font-medium text-xs text-outline hover:text-on-surface hover:bg-surface-container-low transition-colors cursor-pointer text-center">Cancel</button>
                   <button 
                     onClick={() => { 
                       setIsScheduleOpen(false); 
                       showToast("Appointment scheduled successfully!"); 
                     }} 
-                    className="px-5 py-2.5 rounded-xl font-semibold text-xs bg-primary text-on-primary shadow-xs hover:bg-primary-container transition-colors cursor-pointer"
+                    className="w-full sm:w-auto px-5 py-2.5 rounded-xl font-semibold text-xs bg-primary text-on-primary shadow-xs hover:bg-primary-container transition-colors cursor-pointer text-center"
                   >
                     Confirm Schedule
                   </button>
@@ -1281,23 +1281,23 @@ export default function Dashboard() {
                 animate={{ opacity: 1, scale: 1, y: 0 }} 
                 exit={{ opacity: 0, scale: 0.95, y: 0 }} 
                 transition={{ type: "spring", damping: 25, stiffness: 300 }}
-                className="relative bg-surface-container-lowest w-full max-w-lg rounded-2xl shadow-2xl border border-surface-container-high overflow-hidden flex flex-col z-10 my-auto"
+                className="relative bg-surface-container-lowest w-full max-w-lg max-h-[90vh] sm:max-h-[92vh] rounded-2xl shadow-2xl border border-surface-container-high overflow-hidden flex flex-col z-10 my-auto"
               >
-                <div className="p-6 border-b border-surface-container-low flex justify-between items-center bg-surface-container-lowest">
+                <div className="p-4 sm:p-6 border-b border-surface-container-low flex justify-between items-center bg-surface-container-lowest shrink-0">
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shadow-xs">
-                      <span className="material-symbols-outlined text-[24px]">person_add</span>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shadow-xs shrink-0">
+                      <span className="material-symbols-outlined text-[20px] sm:text-[24px]">person_add</span>
                     </div>
                     <div>
-                      <h2 className="text-xl font-bold text-on-surface">Register New Patient</h2>
-                      <p className="text-xs text-outline">Enter patient demographics & contact details.</p>
+                      <h2 className="text-lg sm:text-xl font-bold text-on-surface">Register New Patient</h2>
+                      <p className="text-[11px] sm:text-xs text-outline">Enter patient demographics & contact details.</p>
                     </div>
                   </div>
-                  <button onClick={() => setIsNewPatientOpen(false)} className="p-2 text-outline hover:text-on-surface hover:bg-surface-container-low rounded-lg transition-colors cursor-pointer">
+                  <button onClick={() => setIsNewPatientOpen(false)} className="p-2 text-outline hover:text-on-surface hover:bg-surface-container-low rounded-lg transition-colors cursor-pointer shrink-0">
                     <span className="material-symbols-outlined text-[20px]">close</span>
                   </button>
                 </div>
-                <div className="p-6 space-y-4">
+                <div className="p-4 sm:p-6 space-y-4 overflow-y-auto flex-1">
                   <div className="space-y-1">
                     <label className="text-xs font-semibold uppercase tracking-wider text-outline">Full Name</label>
                     <div className="relative">
@@ -1305,7 +1305,7 @@ export default function Dashboard() {
                       <input type="text" placeholder="e.g. John Doe" className="w-full pl-10 pr-3 py-2.5 bg-surface-container-low rounded-xl border border-surface-container-high focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-xs font-medium" />
                     </div>
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div className="space-y-1">
                       <label className="text-xs font-semibold uppercase tracking-wider text-outline">Phone Number</label>
                       <div className="relative">
@@ -1329,14 +1329,14 @@ export default function Dashboard() {
                     </div>
                   </div>
                 </div>
-                <div className="p-4 border-t border-surface-container-low bg-surface-container-lowest flex justify-end gap-3 px-6">
-                  <button onClick={() => setIsNewPatientOpen(false)} className="px-5 py-2.5 rounded-xl font-medium text-xs text-outline hover:text-on-surface hover:bg-surface-container-low transition-colors cursor-pointer">Cancel</button>
+                <div className="p-4 sm:p-6 border-t border-surface-container-low bg-surface-container-lowest flex flex-col-reverse sm:flex-row justify-end gap-2.5 sm:gap-3 shrink-0">
+                  <button onClick={() => setIsNewPatientOpen(false)} className="w-full sm:w-auto px-5 py-2.5 rounded-xl font-medium text-xs text-outline hover:text-on-surface hover:bg-surface-container-low transition-colors cursor-pointer text-center">Cancel</button>
                   <button 
                     onClick={() => { 
                       setIsNewPatientOpen(false); 
                       showToast("New patient record created successfully!"); 
                     }} 
-                    className="px-5 py-2.5 rounded-xl font-semibold text-xs bg-primary text-on-primary shadow-xs hover:bg-primary-container transition-colors cursor-pointer"
+                    className="w-full sm:w-auto px-5 py-2.5 rounded-xl font-semibold text-xs bg-primary text-on-primary shadow-xs hover:bg-primary-container transition-colors cursor-pointer text-center"
                   >
                     Create Record
                   </button>
@@ -1370,17 +1370,17 @@ export default function Dashboard() {
                 animate={{ opacity: 1, scale: 1, y: 0 }} 
                 exit={{ opacity: 0, scale: 0.94, y: 10 }} 
                 transition={{ type: "spring", damping: 25, stiffness: 320 }}
-                className="relative bg-surface-container-lowest w-full max-w-2xl rounded-2xl shadow-2xl border border-surface-container-high overflow-hidden flex flex-col z-10 my-auto max-h-[92vh]"
+                className="relative bg-surface-container-lowest w-full max-w-2xl rounded-2xl shadow-2xl border border-surface-container-high overflow-hidden flex flex-col z-10 my-auto max-h-[90vh] sm:max-h-[92vh]"
               >
                 {/* Modal Header */}
-                <div className="p-5 sm:p-6 border-b border-surface-container-low flex justify-between items-center bg-gradient-to-r from-surface-container-low/50 via-surface-container-lowest to-surface-container-low/30">
+                <div className="p-4 sm:p-6 border-b border-surface-container-low flex justify-between items-center bg-gradient-to-r from-surface-container-low/50 via-surface-container-lowest to-surface-container-low/30 shrink-0">
                   <div className="flex items-center gap-3.5">
-                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-base shadow-sm shrink-0 ${selectedSchedulePatient.avatarColor}`}>
+                    <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center font-bold text-sm sm:text-base shadow-sm shrink-0 ${selectedSchedulePatient.avatarColor}`}>
                       {selectedSchedulePatient.initials}
                     </div>
                     <div>
-                      <div className="flex items-center gap-2">
-                        <h2 className="text-xl font-bold text-on-surface">{selectedSchedulePatient.name}</h2>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <h2 className="text-lg sm:text-xl font-bold text-on-surface">{selectedSchedulePatient.name}</h2>
                         <span className="text-xs font-mono font-bold text-on-surface-variant bg-surface-container-high px-2 py-0.5 rounded-md">
                           {selectedSchedulePatient.id}
                         </span>
@@ -1553,8 +1553,8 @@ export default function Dashboard() {
                 </div>
 
                 {/* Modal Footer with Status Change & Close */}
-                <div className="p-4 border-t border-surface-container-low bg-surface-container-lowest flex flex-wrap items-center justify-between gap-3 px-6">
-                  <div className="flex items-center gap-2">
+                <div className="p-4 sm:p-6 border-t border-surface-container-low bg-surface-container-lowest flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 shrink-0">
+                  <div className="flex flex-wrap items-center gap-2">
                     <span className="text-xs font-bold text-on-surface-variant">Update Status:</span>
                     <button
                       type="button"
@@ -1591,7 +1591,7 @@ export default function Dashboard() {
                     </button>
                   </div>
 
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center justify-end gap-2 pt-2 sm:pt-0 border-t sm:border-t-0 border-surface-container-high/50">
                     <button 
                       type="button"
                       onClick={() => handleCopyChartSummary(selectedSchedulePatient)}

@@ -431,10 +431,10 @@ export default function Reviews() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <span className="text-xs font-semibold uppercase tracking-wider text-primary">Patient Relations & Power BI Analytics</span>
-          <h1 className="text-3xl font-bold text-on-surface mt-1 tracking-tight">Doctor Reviews & Advanced Feedback</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-on-surface mt-1 tracking-tight break-words">Doctor Reviews & Advanced Feedback</h1>
         </div>
-        <div className="flex items-center gap-3">
-          <div className="relative">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto">
+          <div className="relative flex-1 sm:w-64">
             <span className="material-symbols-outlined absolute left-3 top-2.5 text-[20px] text-outline">search</span>
             <input 
               value={searchQuery}
@@ -442,7 +442,7 @@ export default function Reviews() {
                 setSearchQuery(e.target.value);
                 setCurrentPage(1);
               }}
-              className="pl-10 pr-4 py-2 bg-surface-container-low rounded-xl text-on-surface text-sm focus:outline-none focus:ring-1 focus:ring-primary w-full md:w-64 transition-all" 
+              className="pl-10 pr-4 py-2 bg-surface-container-low rounded-xl text-on-surface text-sm focus:outline-none focus:ring-1 focus:ring-primary w-full transition-all" 
               placeholder="Search reviews..." 
               type="text"
             />
@@ -464,7 +464,7 @@ export default function Reviews() {
               setExportProgress(0);
               setIsExporting(false);
             }}
-            className="flex items-center gap-2 px-4 py-2 bg-primary text-on-primary rounded-xl text-sm font-medium shadow-sm hover:bg-primary-container transition-all"
+            className="flex items-center justify-center gap-2 px-4 py-2 bg-primary text-on-primary rounded-xl text-sm font-medium shadow-sm hover:bg-primary-container transition-all cursor-pointer whitespace-nowrap"
           >
             <span className="material-symbols-outlined text-[18px]">download</span>
             <span>Export Reports</span>
@@ -638,8 +638,8 @@ export default function Reviews() {
         </div>
 
         {/* Animated Power BI Interactive Histogram (Fixed height & zero-fluctuation header) */}
-        <div className="bg-surface-container-lowest p-6 rounded-2xl shadow-xs border border-surface-container-high lg:col-span-2 flex flex-col justify-between min-h-[160px] relative">
-          <div className="flex items-center justify-between gap-3 mb-2 h-7">
+        <div className="bg-surface-container-lowest p-4 sm:p-6 rounded-2xl shadow-xs border border-surface-container-high lg:col-span-2 flex flex-col justify-between min-h-[160px] relative overflow-hidden">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
             <div className="flex items-center gap-2 min-w-0">
               <span className="material-symbols-outlined text-primary text-[18px] shrink-0">bar_chart</span>
               <span className="text-xs font-bold uppercase tracking-wider text-outline truncate">
@@ -647,21 +647,21 @@ export default function Reviews() {
               </span>
             </div>
             
-            {/* Stable Telemetry Pill - Always present so card height NEVER shifts */}
-            <div className="flex items-center gap-2 shrink-0">
-              <div className="text-xs text-primary font-bold px-3 py-1 bg-primary/10 rounded-full flex items-center gap-1.5 border border-primary/20 shadow-2xs">
-                <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+            {/* Stable Telemetry Pill */}
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <div className="text-[11px] sm:text-xs text-primary font-bold px-2.5 py-1 bg-primary/10 rounded-full flex items-center gap-1.5 border border-primary/20 shadow-2xs">
+                <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse shrink-0"></span>
                 <span>
                   {activeTelemetry.month}: <strong>{activeTelemetry.count}</strong> reviews • <strong>{activeTelemetry.avg}★</strong> • <strong>{activeTelemetry.nps}</strong> NPS
                 </span>
               </div>
-              <span className="text-[11px] font-bold text-on-surface-variant bg-surface-container-high px-2 py-0.5 rounded-lg shrink-0">
+              <span className="text-[10px] sm:text-[11px] font-bold text-on-surface-variant bg-surface-container-high px-2 py-0.5 rounded-lg shrink-0">
                 Q3-Q4
               </span>
             </div>
           </div>
 
-          <div className="grid grid-cols-6 gap-3 items-end h-24 pt-4 pb-1 relative">
+          <div className="grid grid-cols-6 gap-2 sm:gap-3 items-end h-24 pt-4 pb-1 relative min-w-[280px] sm:min-w-0">
             {HISTOGRAM_MONTHS.map((bar, i) => {
               const isSelected = selectedMonth === bar.month;
               const isHovered = hoveredMonth?.month === bar.month;
@@ -704,8 +704,8 @@ export default function Reviews() {
       </div>
 
       {/* Filter Tabs & Sort Section */}
-      <div className="flex items-center justify-between gap-4 flex-wrap">
-        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar scrollbar-none pb-2 sm:pb-0">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar scrollbar-none pb-2 sm:pb-0 w-full sm:w-auto">
           <button 
             onClick={() => handleFilterChange('all')}
             className={`px-4 py-2 rounded-xl text-sm font-medium transition-all whitespace-nowrap flex items-center gap-1.5 ${selectedFilter === 'all' ? 'bg-primary text-on-primary shadow-sm font-semibold' : 'bg-surface-container-low text-on-surface-variant hover:bg-surface-container-high'}`}
@@ -805,16 +805,16 @@ export default function Reviews() {
                 <motion.div 
                   layout
                   key={review.id} 
-                  className="bg-surface-container-lowest p-6 rounded-2xl shadow-sm flex flex-col gap-4 border border-surface-container-low hover:border-surface-container-high transition-all"
+                  className="bg-surface-container-lowest p-4 sm:p-6 rounded-2xl shadow-sm flex flex-col gap-4 border border-surface-container-low hover:border-surface-container-high transition-all"
                 >
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-center gap-4">
-                      <div className={`w-12 h-12 rounded-full ${review.avatarBg} ${review.avatarText} font-bold flex items-center justify-center shrink-0 shadow-sm`}>
+                  <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+                    <div className="flex items-center gap-3 sm:gap-4">
+                      <div className={`w-11 h-11 sm:w-12 sm:h-12 rounded-full ${review.avatarBg} ${review.avatarText} font-bold flex items-center justify-center shrink-0 shadow-sm text-sm sm:text-base`}>
                         <span>{review.initials}</span>
                       </div>
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <h3 className="text-lg font-bold text-on-surface">{review.name}</h3>
+                      <div className="min-w-0">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <h3 className="text-base sm:text-lg font-bold text-on-surface truncate">{review.name}</h3>
                           <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold ${review.procColor}`}>
                             {review.proc}
                           </span>
@@ -835,7 +835,7 @@ export default function Reviews() {
                         </div>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
                       {!review.hasReply && (
                         <span className="px-2.5 py-1 bg-amber-50 text-amber-700 border border-amber-200 rounded-lg text-xs font-semibold flex items-center gap-1">
                           <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
@@ -857,7 +857,7 @@ export default function Reviews() {
                     <motion.div 
                       initial={{ opacity: 0, y: 5 }}
                       animate={{ opacity: 1, y: 0 }}
-                      className="bg-surface-container-low p-4 rounded-xl flex flex-col gap-1 ml-6 md:ml-12 relative border border-surface-container-high/60"
+                      className="bg-surface-container-low p-4 rounded-xl flex flex-col gap-1 ml-4 sm:ml-8 md:ml-12 relative border border-surface-container-high/60"
                     >
                       <div className="absolute -left-2.5 top-4 w-3 h-3 bg-surface-container-low rotate-45 border-l border-b border-surface-container-high/60"></div>
                       <div className="flex items-center justify-between text-xs font-bold text-primary">
@@ -873,7 +873,7 @@ export default function Reviews() {
                     </motion.div>
                   )}
 
-                  <div className="flex items-center justify-between pt-3 border-t border-surface-container-low">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-surface-container-low">
                     <div className="flex items-center gap-1.5 text-xs text-outline">
                       <span className="material-symbols-outlined text-[18px] text-primary">verified</span>
                       <span>Treatment completed on {review.completed}</span>
@@ -882,7 +882,7 @@ export default function Reviews() {
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                       onClick={() => openReplyModal(review)}
-                      className="flex items-center gap-1.5 px-3 py-1.5 bg-surface-container-low text-primary hover:bg-primary hover:text-on-primary rounded-xl text-xs font-medium transition-all shadow-sm"
+                      className="flex items-center justify-center gap-1.5 px-3 py-1.5 bg-surface-container-low text-primary hover:bg-primary hover:text-on-primary rounded-xl text-xs font-medium transition-all shadow-sm cursor-pointer self-start sm:self-auto"
                     >
                       <span className="material-symbols-outlined text-[16px]">{review.hasReply ? 'edit' : 'reply'}</span>
                       <span>{review.hasReply ? 'Edit Reply' : 'Reply to Patient'}</span>
@@ -943,7 +943,7 @@ export default function Reviews() {
       {typeof document !== 'undefined' && createPortal(
         <AnimatePresence>
           {replyingReview && (
-            <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+            <div className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
               {/* Backdrop */}
               <motion.div 
                 initial={{ opacity: 0 }}
@@ -959,16 +959,16 @@ export default function Reviews() {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 15 }}
                 transition={{ type: "spring", damping: 25, stiffness: 300 }}
-                className="relative bg-surface-container-lowest w-full max-w-2xl rounded-2xl shadow-2xl border border-surface-container-low overflow-hidden z-10 flex flex-col max-h-[90vh] my-auto"
+                className="relative bg-surface-container-lowest w-full max-w-2xl rounded-2xl shadow-2xl border border-surface-container-low overflow-hidden z-10 flex flex-col max-h-[90vh] sm:max-h-[92vh] my-auto"
               >
                 {/* Modal Header */}
-                <div className="p-6 border-b border-surface-container-low flex justify-between items-center bg-surface-container-lowest">
+                <div className="p-4 sm:p-6 border-b border-surface-container-low flex justify-between items-center bg-surface-container-lowest shrink-0">
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-2xl bg-primary-fixed text-primary flex items-center justify-center shadow-sm">
+                    <div className="w-12 h-12 rounded-2xl bg-primary-fixed text-primary flex items-center justify-center shadow-sm shrink-0">
                       <span className="material-symbols-outlined text-[26px]">rate_review</span>
                     </div>
                     <div>
-                      <h2 className="text-xl font-bold text-on-surface">
+                      <h2 className="text-lg sm:text-xl font-bold text-on-surface">
                         {replyingReview.hasReply ? 'Edit Doctor Response' : 'Reply to Patient Review'}
                       </h2>
                       <p className="text-xs text-outline">
@@ -978,14 +978,14 @@ export default function Reviews() {
                   </div>
                   <button 
                     onClick={() => setReplyingReview(null)}
-                    className="p-2 text-outline hover:text-on-surface hover:bg-surface-container-low rounded-xl transition-colors"
+                    className="p-2 text-outline hover:text-on-surface hover:bg-surface-container-low rounded-xl transition-colors cursor-pointer shrink-0"
                   >
                     <span className="material-symbols-outlined text-[20px]">close</span>
                   </button>
                 </div>
 
                 {/* Modal Content */}
-                <div className="p-6 overflow-y-auto space-y-5">
+                <div className="p-4 sm:p-6 overflow-y-auto space-y-5 flex-1">
                   {/* Patient Summary Card */}
                   <div className="p-4 bg-surface-container-low rounded-2xl border border-surface-container-high/60 space-y-2">
                     <div className="flex justify-between items-start">
@@ -1085,10 +1085,10 @@ export default function Reviews() {
                 </div>
 
                 {/* Modal Footer */}
-                <div className="p-6 border-t border-surface-container-low bg-surface flex justify-end gap-3">
+                <div className="p-4 sm:p-6 border-t border-surface-container-low bg-surface flex flex-col-reverse sm:flex-row justify-end gap-3 shrink-0">
                   <button 
                     onClick={() => setReplyingReview(null)}
-                    className="px-5 py-2.5 rounded-xl font-medium text-sm text-outline hover:text-on-surface hover:bg-surface-container-low transition-colors"
+                    className="px-5 py-2.5 rounded-xl font-medium text-xs text-outline hover:text-on-surface hover:bg-surface-container-low transition-colors cursor-pointer"
                   >
                     Cancel
                   </button>
@@ -1097,7 +1097,7 @@ export default function Reviews() {
                     whileTap={{ scale: 0.98 }}
                     disabled={!replyInputText.trim()}
                     onClick={handleSaveReply}
-                    className="px-5 py-2.5 bg-primary text-on-primary rounded-xl text-sm font-semibold shadow-sm hover:bg-primary-container transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-5 py-2.5 bg-primary text-on-primary rounded-xl text-xs font-semibold shadow-sm hover:bg-primary-container transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                   >
                     <span className="material-symbols-outlined text-[18px]">send</span>
                     <span>{replyingReview.hasReply ? 'Update Official Response' : 'Publish Response'}</span>
@@ -1137,23 +1137,23 @@ export default function Reviews() {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 15 }}
                 transition={{ type: "spring", damping: 25, stiffness: 300 }}
-                className="relative bg-surface-container-lowest w-full max-w-lg rounded-2xl shadow-2xl border border-surface-container-low overflow-hidden z-10 flex flex-col my-auto"
+                className="relative bg-surface-container-lowest w-full max-w-lg max-h-[90vh] sm:max-h-[92vh] rounded-2xl shadow-2xl border border-surface-container-low overflow-hidden z-10 flex flex-col my-auto"
               >
                 {/* Header */}
-                <div className="p-6 border-b border-surface-container-low flex justify-between items-center bg-surface-container-lowest">
+                <div className="p-4 sm:p-6 border-b border-surface-container-low flex justify-between items-center bg-surface-container-lowest shrink-0">
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-2xl bg-primary-fixed text-primary flex items-center justify-center shadow-sm">
-                      <span className="material-symbols-outlined text-[24px]">export_notes</span>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-primary-fixed text-primary flex items-center justify-center shadow-sm shrink-0">
+                      <span className="material-symbols-outlined text-[20px] sm:text-[24px]">export_notes</span>
                     </div>
                     <div>
-                      <h2 className="text-xl font-bold text-on-surface">Export Power BI Reports</h2>
-                      <p className="text-xs text-outline">Download clinical sentiment & verified reviews</p>
+                      <h2 className="text-lg sm:text-xl font-bold text-on-surface">Export Power BI Reports</h2>
+                      <p className="text-[11px] sm:text-xs text-outline">Download clinical sentiment & verified reviews</p>
                     </div>
                   </div>
                   {!isExporting && (
                     <button 
                       onClick={() => setIsExportModalOpen(false)}
-                      className="p-2 text-outline hover:text-on-surface hover:bg-surface-container-low rounded-xl transition-colors"
+                      className="p-2 text-outline hover:text-on-surface hover:bg-surface-container-low rounded-xl transition-colors shrink-0"
                     >
                       <span className="material-symbols-outlined text-[20px]">close</span>
                     </button>
@@ -1161,10 +1161,10 @@ export default function Reviews() {
                 </div>
 
                 {/* Body */}
-                <div className="p-6 space-y-5">
+                <div className="p-4 sm:p-6 space-y-4 sm:space-y-5 overflow-y-auto flex-1">
                   {isExporting || exportCompleted ? (
                     /* Animated Exporting State */
-                    <div className="py-8 flex flex-col items-center text-center space-y-4">
+                    <div className="py-6 sm:py-8 flex flex-col items-center text-center space-y-4">
                       {exportCompleted ? (
                         <motion.div 
                           initial={{ scale: 0 }}
@@ -1205,7 +1205,7 @@ export default function Reviews() {
                     <>
                       <div className="space-y-2">
                         <label className="text-xs font-bold uppercase tracking-wider text-outline">Select Export Format</label>
-                        <div className="grid grid-cols-2 gap-3">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
                           {[
                             { id: 'pdf', title: 'PDF Executive', desc: 'Clinical summary with graphs', icon: 'picture_as_pdf', color: 'text-error' },
                             { id: 'excel', title: 'Excel Matrix', desc: '.xlsx data sheets & metrics', icon: 'table_view', color: 'text-emerald-600' },
@@ -1250,11 +1250,11 @@ export default function Reviews() {
 
                       <div className="p-3 bg-surface-container-low rounded-xl space-y-2 text-xs text-on-surface">
                         <div className="flex items-center gap-2">
-                          <span className="material-symbols-outlined text-[16px] text-emerald-600">check</span>
+                          <span className="material-symbols-outlined text-[16px] text-emerald-600 shrink-0">check</span>
                           <span>Includes Natural Language Sentiment analysis scores</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <span className="material-symbols-outlined text-[16px] text-emerald-600">check</span>
+                          <span className="material-symbols-outlined text-[16px] text-emerald-600 shrink-0">check</span>
                           <span>Includes official Doctor response timestamps & audit log</span>
                         </div>
                       </div>
@@ -1263,11 +1263,11 @@ export default function Reviews() {
                 </div>
 
                 {/* Footer */}
-                <div className="p-6 border-t border-surface-container-low bg-surface flex justify-end gap-3">
+                <div className="p-4 sm:p-6 border-t border-surface-container-low bg-surface flex flex-col-reverse sm:flex-row justify-end gap-2.5 sm:gap-3 shrink-0">
                   {exportCompleted ? (
                     <button 
                       onClick={() => setIsExportModalOpen(false)}
-                      className="px-6 py-2.5 bg-primary text-on-primary rounded-xl text-sm font-semibold shadow-sm hover:bg-primary-container transition-all"
+                      className="w-full sm:w-auto px-6 py-2.5 bg-primary text-on-primary rounded-xl text-sm font-semibold shadow-sm hover:bg-primary-container transition-all text-center"
                     >
                       Done
                     </button>
@@ -1276,7 +1276,7 @@ export default function Reviews() {
                       <button 
                         disabled={isExporting}
                         onClick={() => setIsExportModalOpen(false)}
-                        className="px-5 py-2.5 rounded-xl font-medium text-sm text-outline hover:text-on-surface hover:bg-surface-container-low transition-colors disabled:opacity-50"
+                        className="w-full sm:w-auto px-5 py-2.5 rounded-xl font-medium text-sm text-outline hover:text-on-surface hover:bg-surface-container-low transition-colors disabled:opacity-50 text-center"
                       >
                         Cancel
                       </button>
@@ -1285,7 +1285,7 @@ export default function Reviews() {
                         whileTap={{ scale: 0.98 }}
                         disabled={isExporting}
                         onClick={handleStartExport}
-                        className="px-5 py-2.5 bg-primary text-on-primary rounded-xl text-sm font-semibold shadow-sm hover:bg-primary-container transition-all flex items-center gap-2 disabled:opacity-50"
+                        className="w-full sm:w-auto px-5 py-2.5 bg-primary text-on-primary rounded-xl text-sm font-semibold shadow-sm hover:bg-primary-container transition-all flex items-center justify-center gap-2 disabled:opacity-50"
                       >
                         <span className="material-symbols-outlined text-[18px]">file_download</span>
                         <span>Generate & Download</span>
