@@ -181,7 +181,7 @@ const getAuditDateStamp = () => new Date().toISOString().split('T')[0];
   const [emergencyAlerts, setEmergencyAlerts] = useState(true);
   const [billingDigest, setBillingDigest] = useState(false);
   const [equipmentPush, setEquipmentPush] = useState(true);
-  const [senderId, setSenderId] = useState('DENTALPRO');
+  const [senderId, setSenderId] = useState('SMILECLINIC');
   const [reminderWindow, setReminderWindow] = useState('24 Hours Prior');
 
   // Power BI State
@@ -822,7 +822,7 @@ const getAuditDateStamp = () => new Date().toISOString().split('T')[0];
                         value={senderId}
                         onChange={(e) => setSenderId(e.target.value)}
                       />
-                      <span className="text-[10px] text-outline mt-1 block">Displays on patient handsets (e.g. DENTALPRO)</span>
+                      <span className="text-[10px] text-outline mt-1 block">Displays on patient handsets (e.g. SMILECLINIC)</span>
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-on-surface-variant mb-1.5">Reminder Advance Window</label>

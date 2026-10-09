@@ -174,7 +174,7 @@ export default function Signup() {
                   </span>
                   <input 
                     className="w-full pl-9 pr-3.5 py-2 bg-surface-container-low rounded-xl text-xs sm:text-sm text-on-surface focus:ring-2 focus:ring-primary outline-none transition-all font-medium" 
-                    placeholder="doctor@clinic.org" 
+                    placeholder="doctor@smileclinic.com" 
                     required 
                     type="email"
                   />
@@ -212,7 +212,7 @@ export default function Signup() {
                 </span>
                 <input 
                   className="w-full pl-9 pr-3.5 py-2 bg-surface-container-low rounded-xl text-xs sm:text-sm text-on-surface focus:ring-2 focus:ring-primary outline-none transition-all font-medium" 
-                  placeholder="Advanced Dental Care Center" 
+                  placeholder="Smile Clinic Dental Practice" 
                   required 
                   type="text"
                 />

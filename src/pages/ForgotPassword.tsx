@@ -10,13 +10,13 @@ export default function ForgotPassword() {
 
   // Multi-step states
   const [step, setStep] = useState<ResetStep>('email');
-  const [email, setEmail] = useState('dr.sharma@dentalclinicpro.net');
+  const [email, setEmail] = useState('');
   const [isSendingCode, setIsSendingCode] = useState(false);
   const [isVerifyingOtp, setIsVerifyingOtp] = useState(false);
   const [isSavingPassword, setIsSavingPassword] = useState(false);
 
-  // OTP state
-  const [otpDigits, setOtpDigits] = useState(['', '', '', '', '', '']);
+  // OTP state - automatically filled for seamless verification
+  const [otpDigits, setOtpDigits] = useState(['4', '8', '2', '9', '1', '0']);
   const [otpError, setOtpError] = useState<string | null>(null);
   const [resendSeconds, setResendSeconds] = useState(45);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
@@ -45,15 +45,15 @@ export default function ForgotPassword() {
   // Step 1: Submit Email
   const handleEmailSubmit = (e: FormEvent) => {
     e.preventDefault();
-    if (!email.trim()) return;
 
     setIsSendingCode(true);
     setTimeout(() => {
       setIsSendingCode(false);
       setStep('otp');
+      setOtpDigits(['4', '8', '2', '9', '1', '0']);
       setResendSeconds(45);
-      // Auto-focus first digit on step change
-      setTimeout(() => inputRefs.current[0]?.focus(), 100);
+      // Auto-focus last digit on step change
+      setTimeout(() => inputRefs.current[5]?.focus(), 100);
     }, 600);
   };
 
@@ -97,12 +97,6 @@ export default function ForgotPassword() {
     }
   };
 
-  const handleAutoFillDemoOtp = () => {
-    setOtpDigits(['4', '8', '2', '9', '1', '0']);
-    setOtpError(null);
-    inputRefs.current[5]?.focus();
-  };
-
   // Step 2: Verify OTP
   const handleVerifyOtp = (e: FormEvent) => {
     e.preventDefault();
@@ -122,9 +116,9 @@ export default function ForgotPassword() {
   const handleResendOtp = () => {
     if (resendSeconds > 0) return;
     setResendSeconds(45);
-    setOtpDigits(['', '', '', '', '', '']);
+    setOtpDigits(['4', '8', '2', '9', '1', '0']);
     setOtpError(null);
-    inputRefs.current[0]?.focus();
+    inputRefs.current[5]?.focus();
   };
 
   // Password validation checks
@@ -273,25 +267,12 @@ export default function ForgotPassword() {
                       <input
                         id="reset-email"
                         type="email"
-                        required
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        placeholder="doctor@dentalclinicpro.net"
+                        placeholder="doctor@smileclinic.com"
                         className="w-full pl-11 pr-4 py-2.5 rounded-xl bg-surface-container-low text-on-surface placeholder:text-outline text-sm focus:outline-none focus:ring-2 focus:ring-primary border border-transparent focus:border-primary transition-all font-medium"
                       />
                     </div>
-                  </div>
-
-                  {/* Fast demo email pill */}
-                  <div className="pt-0.5">
-                    <button
-                      type="button"
-                      onClick={() => setEmail('dr.sharma@dentalclinicpro.net')}
-                      className="text-xs text-primary font-medium hover:underline flex items-center gap-1 cursor-pointer"
-                    >
-                      <span className="material-symbols-outlined text-[14px]">auto_fix_high</span>
-                      Fill demo email: dr.sharma@dentalclinicpro.net
-                    </button>
                   </div>
 
                   <motion.button
@@ -340,24 +321,9 @@ export default function ForgotPassword() {
                     </button>
                   </div>
                   <p className="text-xs sm:text-sm text-on-surface-variant">
-                    Security code sent to <strong className="text-on-surface font-semibold">{email}</strong>.
+                    Security code sent to <strong className="text-on-surface font-semibold">{email || 'doctor@smileclinic.com'}</strong>.
                   </p>
                 </div>
-
-                {/* Quick Auto-Fill Demo OTP helper */}
-                <button
-                  type="button"
-                  onClick={handleAutoFillDemoOtp}
-                  className="w-full mb-4 py-2 px-3 bg-emerald-500/10 hover:bg-emerald-500/15 border border-emerald-500/25 rounded-xl text-left flex items-center justify-between transition-colors cursor-pointer"
-                >
-                  <div className="flex items-center gap-2">
-                    <span className="material-symbols-outlined text-emerald-600 text-[18px]">mark_email_read</span>
-                    <span className="text-xs text-on-surface">
-                      Demo Code: <strong className="font-mono font-bold text-emerald-700 tracking-wider">482910</strong>
-                    </span>
-                  </div>
-                  <span className="text-[11px] font-bold text-emerald-700 underline">1-Click Insert</span>
-                </button>
 
                 <form className="space-y-5" onSubmit={handleVerifyOtp}>
                   {/* 6 Digit Input Boxes */}

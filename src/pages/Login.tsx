@@ -5,8 +5,8 @@ import type { FormEvent } from 'react';
 
 export default function Login() {
   const navigate = useNavigate();
-  const [email, setEmail] = useState('dr.sharma@dentalclinicpro.net');
-  const [password, setPassword] = useState('DentalPro@2026');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -20,11 +20,6 @@ export default function Login() {
     setTimeout(() => {
       navigate('/dashboard');
     }, 450);
-  };
-
-  const handleQuickDemoFill = () => {
-    setEmail('dr.sharma@dentalclinicpro.net');
-    setPassword('DentalPro@2026');
   };
 
   return (
@@ -69,21 +64,6 @@ export default function Login() {
             </p>
           </div>
 
-          {/* Quick Demo Credentials Pill */}
-          <button
-            type="button"
-            onClick={handleQuickDemoFill}
-            className="w-full mb-5 py-1.5 px-3 bg-primary/5 hover:bg-primary/10 border border-primary/20 rounded-xl text-left flex items-center justify-between transition-colors cursor-pointer group"
-          >
-            <div className="flex items-center gap-2">
-              <span className="material-symbols-outlined text-primary text-[18px]">verified_user</span>
-              <span className="text-xs text-on-surface font-medium">
-                Demo Account: <strong className="text-primary font-bold">Dr. Sarah Sharma, DDS</strong>
-              </span>
-            </div>
-            <span className="text-[11px] font-semibold text-primary group-hover:underline">Auto-fill</span>
-          </button>
-
           <form className="space-y-4" onSubmit={handleLogin}>
             {/* Doctor Email Input */}
             <div className="space-y-1.5">
@@ -97,10 +77,9 @@ export default function Login() {
                 <input
                   id="doctor-email"
                   type="email"
-                  required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="doctor@dentalclinicpro.net"
+                  placeholder="doctor@smileclinic.com"
                   className="w-full pl-11 pr-4 py-2.5 rounded-xl bg-surface-container-low text-on-surface placeholder:text-outline text-sm focus:outline-none focus:ring-2 focus:ring-primary border border-transparent focus:border-primary transition-all font-medium"
                 />
               </div>
@@ -127,7 +106,6 @@ export default function Login() {
                 <input
                   id="doctor-password"
                   type={showPassword ? 'text' : 'password'}
-                  required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••••••"
@@ -299,20 +277,15 @@ export default function Login() {
               </div>
             </div>
 
-            {/* Active Status Badge */}
+            {/* Clinical Cloud Infrastructure Status Badge */}
             <div className="p-3.5 rounded-2xl bg-white/10 border border-white/15 backdrop-blur-md flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="relative w-9 h-9 rounded-full overflow-hidden ring-2 ring-primary-fixed/40 shrink-0">
-                  <img 
-                    src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=150&auto=format&fit=crop&q=80" 
-                    alt="Dr. Sarah Sharma" 
-                    className="w-full h-full object-cover" 
-                  />
-                  <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-400 rounded-full ring-2 ring-primary"></span>
+                <div className="w-9 h-9 rounded-full bg-white/15 flex items-center justify-center text-primary-fixed shrink-0">
+                  <span className="material-symbols-outlined text-[20px]">verified_user</span>
                 </div>
                 <div>
-                  <div className="text-xs font-bold text-on-primary leading-tight">Operatory Room 01</div>
-                  <div className="text-[10px] text-primary-fixed-dim font-medium">Dr. Sarah Sharma, DDS • Active Session</div>
+                  <div className="text-xs font-bold text-on-primary leading-tight">Smile Clinic Clinical Cloud</div>
+                  <div className="text-[10px] text-primary-fixed-dim font-medium">HIPAA Tier-4 Encrypted • Network Operational</div>
                 </div>
               </div>
 
