@@ -432,10 +432,10 @@ export default function Layout() {
               {/* Doctor Name & Specialty */}
               <div className="hidden sm:flex flex-col text-left">
                 <span className="text-xs font-bold text-on-surface leading-tight flex items-center gap-1">
-                  Dr. Sarah Sharma, DDS
+                  {sessionStorage.getItem('doctor_name') || 'Dr. Priya Patel (Demo Doctor)'}
                   <span className="material-symbols-outlined text-[14px] text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>verified</span>
                 </span>
-                <span className="text-[10px] text-on-surface-variant font-medium">Chief Dental Surgeon</span>
+                <span className="text-[10px] text-on-surface-variant font-medium">Senior Dental Surgeon (Demo)</span>
               </div>
               
               <span className={`material-symbols-outlined text-[18px] text-on-surface-variant transition-transform duration-200 ${profileOpen ? 'rotate-180 text-primary' : ''}`}>
@@ -465,17 +465,17 @@ export default function Layout() {
                         <div className="relative w-12 h-12 rounded-full overflow-hidden ring-2 ring-primary/30 shrink-0">
                           <img 
                             src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=150&auto=format&fit=crop&q=80" 
-                            alt="Dr. Sarah Sharma" 
+                            alt="Dr. Priya Patel" 
                             className="w-full h-full object-cover" 
                           />
                           <span className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 rounded-full ring-2 ring-white"></span>
                         </div>
                         <div className="min-w-0 flex-1">
-                          <h4 className="text-sm font-bold text-on-surface truncate">Dr. Sarah Sharma, DDS</h4>
-                          <p className="text-xs text-on-surface-variant truncate">dr.sharma@dentalcarepro.com</p>
+                          <h4 className="text-sm font-bold text-on-surface truncate">{sessionStorage.getItem('doctor_name') || 'Dr. Priya Patel (Demo Doctor)'}</h4>
+                          <p className="text-xs text-on-surface-variant truncate">{sessionStorage.getItem('doctor_email') || 'doctor@smileclinic.com'}</p>
                           <div className="mt-1 flex items-center gap-1.5">
                             <span className="text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
-                              Chief Medical Officer
+                              Licensed Clinician (Demo)
                             </span>
                           </div>
                         </div>

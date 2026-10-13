@@ -7,7 +7,7 @@ import type { FormEvent } from 'react';
 export const OFFICIAL_DOCTOR_CREDENTIALS = {
   email: 'doctor@smileclinic.com',
   password: 'Doctor@Smile2026#',
-  name: 'Dr. Priya Patel, BDS, MDS',
+  name: 'Dr. Priya Patel (Demo Doctor)',
   license: 'NPI-9834210',
 };
 
@@ -22,12 +22,6 @@ export default function Login() {
 
   // Dynamic clinic logo from localStorage if configured
   const savedLogo = localStorage.getItem('dental_clinic_logo');
-
-  const fillOfficialCredentials = () => {
-    setEmail(OFFICIAL_DOCTOR_CREDENTIALS.email);
-    setPassword(OFFICIAL_DOCTOR_CREDENTIALS.password);
-    setLoginError(null);
-  };
 
   const handleLogin = (e: FormEvent) => {
     e.preventDefault();
@@ -55,7 +49,7 @@ export default function Login() {
       }, 450);
     } else {
       setLoginError(
-        'Invalid credentials. Please enter the designated Doctor credentials (doctor@smileclinic.com / Doctor@Smile2026#) or your registered clinical account.'
+        'Invalid credentials. Please enter authorized doctor email and password.'
       );
     }
   };
@@ -102,27 +96,6 @@ export default function Login() {
             </p>
           </div>
 
-          {/* Official Doctor Credentials Card */}
-          <div className="mb-4 p-3.5 bg-primary/5 border border-primary/20 rounded-xl flex items-center justify-between gap-3">
-            <div className="text-xs">
-              <span className="font-bold text-primary block">Official Doctor Credentials</span>
-              <div className="text-on-surface-variant font-mono text-[11px] mt-0.5">
-                <span className="font-semibold text-on-surface">{OFFICIAL_DOCTOR_CREDENTIALS.email}</span> &bull; Pass:{' '}
-                <span className="bg-surface-container-high px-1.5 py-0.5 rounded text-on-surface font-bold">
-                  {OFFICIAL_DOCTOR_CREDENTIALS.password}
-                </span>
-              </div>
-            </div>
-            <button
-              type="button"
-              onClick={fillOfficialCredentials}
-              className="px-3 py-1.5 bg-primary text-on-primary text-xs font-bold rounded-lg hover:bg-primary-container transition-all flex items-center gap-1 shrink-0 cursor-pointer"
-            >
-              <span className="material-symbols-outlined text-[14px]">auto_fix_high</span>
-              <span>Quick Fill</span>
-            </button>
-          </div>
-
           {loginError && (
             <div className="mb-4 p-3 bg-error/10 border border-error/20 rounded-xl text-error text-xs flex items-start gap-2">
               <span className="material-symbols-outlined text-[18px] shrink-0">error</span>
@@ -149,7 +122,7 @@ export default function Login() {
                     setEmail(e.target.value);
                     setLoginError(null);
                   }}
-                  placeholder="doctor@smileclinic.com"
+                  placeholder="doctor@example.com"
                   className="w-full pl-11 pr-4 py-2.5 rounded-xl bg-surface-container-low text-on-surface placeholder:text-outline text-sm focus:outline-none focus:ring-2 focus:ring-primary border border-transparent focus:border-primary transition-all font-medium"
                 />
               </div>
@@ -182,7 +155,7 @@ export default function Login() {
                     setPassword(e.target.value);
                     setLoginError(null);
                   }}
-                  placeholder="Doctor@Smile2026#"
+                  placeholder="••••••••••••"
                   className="w-full pl-11 pr-11 py-2.5 rounded-xl bg-surface-container-low text-on-surface placeholder:text-outline text-sm focus:outline-none focus:ring-2 focus:ring-primary border border-transparent focus:border-primary transition-all font-medium"
                 />
                 <button
