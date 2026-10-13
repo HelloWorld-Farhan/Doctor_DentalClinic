@@ -3,6 +3,14 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import type { FormEvent } from 'react';
 
+// Official Doctor Credentials
+export const OFFICIAL_DOCTOR_CREDENTIALS = {
+  email: 'doctor@smileclinic.com',
+  password: 'Doctor@Smile2026#',
+  name: 'Dr. Priya Patel, BDS, MDS',
+  license: 'NPI-9834210',
+};
+
 export default function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
@@ -10,16 +18,46 @@ export default function Login() {
   const [rememberMe, setRememberMe] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [loginError, setLoginError] = useState<string | null>(null);
 
   // Dynamic clinic logo from localStorage if configured
   const savedLogo = localStorage.getItem('dental_clinic_logo');
 
+  const fillOfficialCredentials = () => {
+    setEmail(OFFICIAL_DOCTOR_CREDENTIALS.email);
+    setPassword(OFFICIAL_DOCTOR_CREDENTIALS.password);
+    setLoginError(null);
+  };
+
   const handleLogin = (e: FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-    setTimeout(() => {
-      navigate('/dashboard');
-    }, 450);
+    setLoginError(null);
+
+    const inputEmail = email.trim().toLowerCase();
+    const inputPass = password;
+
+    const isOfficial =
+      inputEmail === OFFICIAL_DOCTOR_CREDENTIALS.email.toLowerCase() &&
+      inputPass === OFFICIAL_DOCTOR_CREDENTIALS.password;
+
+    const registeredDoctors = JSON.parse(localStorage.getItem('smileclinic_registered_doctors') || '[]');
+    const registered = registeredDoctors.find(
+      (d: any) => d.email.toLowerCase() === inputEmail && d.password === inputPass
+    );
+
+    if (isOfficial || registered) {
+      setIsLoading(true);
+      setTimeout(() => {
+        sessionStorage.setItem('smileclinic_doctor_auth', 'true');
+        sessionStorage.setItem('doctor_email', isOfficial ? OFFICIAL_DOCTOR_CREDENTIALS.email : registered.email);
+        sessionStorage.setItem('doctor_name', isOfficial ? OFFICIAL_DOCTOR_CREDENTIALS.name : registered.name);
+        navigate('/dashboard');
+      }, 450);
+    } else {
+      setLoginError(
+        'Invalid credentials. Please enter the designated Doctor credentials (doctor@smileclinic.com / Doctor@Smile2026#) or your registered clinical account.'
+      );
+    }
   };
 
   return (
@@ -55,7 +93,7 @@ export default function Login() {
 
         {/* Center Form Card */}
         <div className="w-full max-w-md mx-auto my-auto py-4">
-          <div className="mb-6">
+          <div className="mb-4">
             <h1 className="text-2xl sm:text-3xl font-bold text-on-surface tracking-tight mb-1.5">
               Welcome Back, Doctor
             </h1>
@@ -64,11 +102,39 @@ export default function Login() {
             </p>
           </div>
 
+          {/* Official Doctor Credentials Card */}
+          <div className="mb-4 p-3.5 bg-primary/5 border border-primary/20 rounded-xl flex items-center justify-between gap-3">
+            <div className="text-xs">
+              <span className="font-bold text-primary block">Official Doctor Credentials</span>
+              <div className="text-on-surface-variant font-mono text-[11px] mt-0.5">
+                <span className="font-semibold text-on-surface">{OFFICIAL_DOCTOR_CREDENTIALS.email}</span> &bull; Pass:{' '}
+                <span className="bg-surface-container-high px-1.5 py-0.5 rounded text-on-surface font-bold">
+                  {OFFICIAL_DOCTOR_CREDENTIALS.password}
+                </span>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={fillOfficialCredentials}
+              className="px-3 py-1.5 bg-primary text-on-primary text-xs font-bold rounded-lg hover:bg-primary-container transition-all flex items-center gap-1 shrink-0 cursor-pointer"
+            >
+              <span className="material-symbols-outlined text-[14px]">auto_fix_high</span>
+              <span>Quick Fill</span>
+            </button>
+          </div>
+
+          {loginError && (
+            <div className="mb-4 p-3 bg-error/10 border border-error/20 rounded-xl text-error text-xs flex items-start gap-2">
+              <span className="material-symbols-outlined text-[18px] shrink-0">error</span>
+              <span>{loginError}</span>
+            </div>
+          )}
+
           <form className="space-y-4" onSubmit={handleLogin}>
             {/* Doctor Email Input */}
             <div className="space-y-1.5">
               <label className="block text-xs font-bold text-on-surface-variant" htmlFor="doctor-email">
-                Professional Email Address
+                Professional Email Address *
               </label>
               <div className="relative flex items-center">
                 <span className="material-symbols-outlined absolute left-3.5 text-[20px] text-outline pointer-events-none">
@@ -77,8 +143,12 @@ export default function Login() {
                 <input
                   id="doctor-email"
                   type="email"
+                  required
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    setLoginError(null);
+                  }}
                   placeholder="doctor@smileclinic.com"
                   className="w-full pl-11 pr-4 py-2.5 rounded-xl bg-surface-container-low text-on-surface placeholder:text-outline text-sm focus:outline-none focus:ring-2 focus:ring-primary border border-transparent focus:border-primary transition-all font-medium"
                 />
@@ -89,7 +159,7 @@ export default function Login() {
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
                 <label className="block text-xs font-bold text-on-surface-variant" htmlFor="doctor-password">
-                  Password
+                  Password *
                 </label>
                 <button
                   type="button"
@@ -106,9 +176,13 @@ export default function Login() {
                 <input
                   id="doctor-password"
                   type={showPassword ? 'text' : 'password'}
+                  required
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••••••"
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    setLoginError(null);
+                  }}
+                  placeholder="Doctor@Smile2026#"
                   className="w-full pl-11 pr-11 py-2.5 rounded-xl bg-surface-container-low text-on-surface placeholder:text-outline text-sm focus:outline-none focus:ring-2 focus:ring-primary border border-transparent focus:border-primary transition-all font-medium"
                 />
                 <button
@@ -191,7 +265,7 @@ export default function Login() {
         </div>
       </motion.div>
 
-      {/* RIGHT PANEL - Informational & Clinical Telemetry (Transferred with Smooth Animation) */}
+      {/* RIGHT PANEL - Informational & Clinical Telemetry */}
       <motion.div 
         initial={{ opacity: 0, x: 24 }}
         animate={{ opacity: 1, x: 0 }}
