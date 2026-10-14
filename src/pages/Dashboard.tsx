@@ -1012,6 +1012,23 @@ export default function Dashboard() {
 
             {/* Modal Form Body */}
             <div className="p-4 sm:p-6 overflow-y-auto flex-1 space-y-4 sm:space-y-5">
+              {/* Master AI Voice Toggle */}
+              <div className="flex items-center justify-between p-3.5 bg-primary/5 rounded-xl border border-primary/20">
+                <div>
+                  <span className="text-xs font-bold text-on-surface block">Enable AI Voice-to-Text Dictation</span>
+                  <span className="text-[11px] text-on-surface-variant">Capture real-time clinical speech for periodontal soundings and EHR charting</span>
+                </div>
+                <input 
+                  type="checkbox" 
+                  checked={isVoiceEnabled} 
+                  onChange={(e) => {
+                    setIsVoiceEnabled(e.target.checked);
+                    showToast(e.target.checked ? "AI Voice Dictation enabled for this operatory." : "AI Voice Dictation paused.");
+                  }} 
+                  className="w-4 h-4 text-primary rounded focus:ring-primary accent-primary cursor-pointer" 
+                />
+              </div>
+
               {/* Hardware Selection */}
               <div className="space-y-1">
                 <label className="text-xs font-semibold uppercase tracking-wider text-outline">Operatory Microphone Source</label>

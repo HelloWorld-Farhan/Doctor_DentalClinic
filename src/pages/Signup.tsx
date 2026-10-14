@@ -35,7 +35,6 @@ export default function Signup() {
 
   // Password criteria verification
   const isMin8Chars = password.length >= 8;
-  const isRecommended12 = password.length >= 12;
   const hasCapital = /[A-Z]/.test(password);
   const numberCount = (password.match(/\d/g) || []).length;
   const hasMin2Numbers = numberCount >= 2;

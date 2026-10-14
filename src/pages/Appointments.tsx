@@ -727,11 +727,6 @@ export default function Appointments() {
     showToast(`Appointment for ${name} marked as Cancelled.`);
   };
 
-  const handleCancelAppointment = (id: string, name: string) => {
-    setAppointments(prev => prev.map(a => a.id === id ? { ...a, status: 'Cancelled', statusColor: 'bg-error-container text-on-error-container' } : a));
-    showToast(`Appointment for ${name} marked as cancelled.`);
-  };
-
   const handleApplyOptimization = () => {
     setOptEngineRunning(true);
     setTimeout(() => {
