@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import Toast from '../components/Toast';
+import { QuickNotesModal } from '../components/QuickNotesModal';
 
 export interface QuickNote {
   id: string;
@@ -242,11 +243,53 @@ export default function Dashboard() {
     showToast(`Clinical chart summary for ${patient.name} copied to clipboard!`);
   };
 
-  // Quick Notes State
-  const [notes, setNotes] = useState<QuickNote[]>(INITIAL_NOTES);
+  // Quick Notes State & LocalStorage Persistence
+  const [notes, setNotes] = useState<QuickNote[]>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem('smileclinic_doctor_notes');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        }
+      } catch (e) {
+        console.warn('Failed to load notes from localStorage', e);
+      }
+    }
+    return INITIAL_NOTES;
+  });
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('smileclinic_doctor_notes', JSON.stringify(notes));
+      } catch (e) {
+        console.warn('Failed to persist notes to localStorage', e);
+      }
+    }
+  }, [notes]);
+
   const [noteText, setNoteText] = useState("");
   const [noteTag, setNoteTag] = useState<'Urgent' | 'Clinical' | 'Rx' | 'Lab' | 'Follow-up'>('Clinical');
   const [noteTab, setNoteTab] = useState<'write' | 'list'>('write');
+
+  // Quick Notes Hub Modal State (Interactive popup requested)
+  const [isNotesModalOpen, setIsNotesModalOpen] = useState(false);
+  const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null);
+
+  const handleOpenNoteModal = (note?: QuickNote) => {
+    setSelectedNoteId(note?.id || notes[0]?.id || null);
+    setIsNotesModalOpen(true);
+  };
+
+  const handleDeleteNoteFromModal = (id: string) => {
+    const remaining = notes.filter((n) => n.id !== id);
+    setNotes(remaining);
+    if (selectedNoteId === id) {
+      setSelectedNoteId(remaining[0]?.id || null);
+    }
+    showToast('Note removed from pad.');
+  };
 
   // AI Voice Charting Feature State
   const [isVoiceEnabled, setIsVoiceEnabled] = useState(false);
@@ -718,10 +761,20 @@ export default function Dashboard() {
                   </div>
                   <h2 className="text-base sm:text-lg font-bold text-on-surface truncate">Quick Note Pad</h2>
                 </div>
-                <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-primary/10 text-primary border border-primary/20 shrink-0 flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
-                  {notes.filter(n => !n.completed).length} Active
-                </span>
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-primary/10 text-primary border border-primary/20 flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+                    {notes.filter(n => !n.completed).length} Active
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => handleOpenNoteModal()}
+                    className="p-1.5 rounded-lg text-outline hover:text-primary hover:bg-surface-container-high transition-colors flex items-center gap-1 text-[11px] font-semibold cursor-pointer"
+                    title="Open Full Notes Hub Modal"
+                  >
+                    <span className="material-symbols-outlined text-[18px]">open_in_new</span>
+                  </button>
+                </div>
               </div>
               
               {/* Tab Selector: Write vs View Saved (Responsive Segmented Control) */}
@@ -795,14 +848,19 @@ export default function Dashboard() {
                   notes.map((note) => (
                     <div 
                       key={note.id}
-                      className={`p-3 rounded-xl border transition-all flex items-start justify-between gap-2.5 ${
+                      onClick={() => handleOpenNoteModal(note)}
+                      className={`p-3 rounded-xl border transition-all flex items-start justify-between gap-2.5 cursor-pointer group hover:border-primary/60 hover:shadow-xs ${
                         note.completed 
-                          ? 'bg-surface-container-low/40 border-surface-container-high/60 opacity-60' 
+                          ? 'bg-surface-container-low/40 border-surface-container-high/60 opacity-60 hover:opacity-100' 
                           : 'bg-surface-container-lowest border-surface-container-high shadow-xs'
                       }`}
+                      title="Click to view &amp; inspect full note in popup"
                     >
                       <button 
-                        onClick={() => handleToggleNoteComplete(note.id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleToggleNoteComplete(note.id);
+                        }}
                         className={`mt-0.5 w-4 h-4 rounded border flex items-center justify-center shrink-0 cursor-pointer ${
                           note.completed ? 'bg-primary border-primary text-white' : 'border-outline hover:border-primary'
                         }`}
@@ -818,18 +876,27 @@ export default function Dashboard() {
                           </span>
                           <span className="text-[10px] text-on-surface-variant">{note.time}</span>
                         </div>
-                        <p className={`text-xs text-on-surface leading-snug break-words ${note.completed ? 'line-through text-outline' : ''}`}>
+                        <p className={`text-xs text-on-surface leading-snug break-words group-hover:text-primary transition-colors ${note.completed ? 'line-through text-outline' : ''}`}>
                           {note.text}
                         </p>
                       </div>
 
-                      <button 
-                        onClick={() => handleDeleteNote(note.id)}
-                        className="text-on-surface-variant hover:text-error transition-colors p-1 shrink-0"
-                        title="Delete note"
-                      >
-                        <span className="material-symbols-outlined text-[15px]">close</span>
-                      </button>
+                      <div className="flex items-center gap-1 shrink-0" onClick={(e) => e.stopPropagation()}>
+                        <button
+                          onClick={() => handleOpenNoteModal(note)}
+                          className="opacity-0 group-hover:opacity-100 text-on-surface-variant hover:text-primary transition-all p-1"
+                          title="Open note in popup"
+                        >
+                          <span className="material-symbols-outlined text-[15px]">open_in_new</span>
+                        </button>
+                        <button 
+                          onClick={() => handleDeleteNote(note.id)}
+                          className="text-on-surface-variant hover:text-error transition-colors p-1"
+                          title="Delete note"
+                        >
+                          <span className="material-symbols-outlined text-[15px]">close</span>
+                        </button>
+                      </div>
                     </div>
                   ))
                 )}
@@ -851,13 +918,23 @@ export default function Dashboard() {
                 <span>Save Note</span>
               </button>
             ) : (
-              <button 
-                onClick={() => setNoteTab('write')}
-                className="px-3.5 py-2 bg-surface-container-high text-on-surface rounded-xl text-xs font-semibold hover:bg-surface-container-highest transition-all flex items-center gap-1 cursor-pointer shrink-0"
-              >
-                <span className="material-symbols-outlined text-[15px]">add</span>
-                <span>New Note</span>
-              </button>
+              <div className="flex items-center gap-1.5">
+                <button 
+                  onClick={() => handleOpenNoteModal()}
+                  className="px-3 py-1.5 bg-primary/10 text-primary hover:bg-primary/20 rounded-xl text-xs font-bold transition-all flex items-center gap-1 cursor-pointer shrink-0"
+                  title="Expand to Full Notes Modal"
+                >
+                  <span className="material-symbols-outlined text-[15px]">fullscreen</span>
+                  <span>View All ({notes.length})</span>
+                </button>
+                <button 
+                  onClick={() => setNoteTab('write')}
+                  className="px-3 py-1.5 bg-surface-container-high text-on-surface rounded-xl text-xs font-semibold hover:bg-surface-container-highest transition-all flex items-center gap-1 cursor-pointer shrink-0"
+                >
+                  <span className="material-symbols-outlined text-[15px]">add</span>
+                  <span>New Note</span>
+                </button>
+              </div>
             )}
           </div>
         </div>
@@ -1646,6 +1723,38 @@ export default function Dashboard() {
         </AnimatePresence>,
         document.body
       )}
+
+      {/* ========================================================================= */}
+      {/* 5. CLINICAL QUICK NOTES HUB & INSPECTION MODAL (Portaled to body)         */}
+      {/* ========================================================================= */}
+      <QuickNotesModal
+        isOpen={isNotesModalOpen}
+        onClose={() => setIsNotesModalOpen(false)}
+        notes={notes}
+        onSaveNewNote={(text, tag) => {
+          const newNote: QuickNote = {
+            id: Date.now().toString(),
+            text,
+            tag,
+            time: 'Just now',
+            completed: false,
+          };
+          setNotes([newNote, ...notes]);
+          setSelectedNoteId(newNote.id);
+          showToast(`Quick note saved under "${tag}" tag!`);
+        }}
+        onUpdateNote={(id, text, tag) => {
+          setNotes((prev) =>
+            prev.map((n) => (n.id === id ? { ...n, text, tag } : n))
+          );
+          showToast('Quick note updated successfully.');
+        }}
+        onToggleComplete={handleToggleNoteComplete}
+        onDeleteNote={handleDeleteNoteFromModal}
+        initialSelectedNoteId={selectedNoteId}
+        getTagBadgeStyle={getTagBadgeStyle}
+        showToast={showToast}
+      />
     </motion.div>
   );
 }
