@@ -3,6 +3,8 @@ import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import Toast from '../components/Toast';
 import { QuickNotesModal } from '../components/QuickNotesModal';
+import { ScheduleAppointmentModal, ScheduleAppointmentData } from '../components/ScheduleAppointmentModal';
+import { NewPatientModal, NewPatientData } from '../components/NewPatientModal';
 
 export interface QuickNote {
   id: string;
@@ -208,9 +210,251 @@ export default function Dashboard() {
   const [isVoiceConfigOpen, setIsVoiceConfigOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  // Today's Patient Schedule State & Detailed Popup
-  const [todaySchedule, setTodaySchedule] = useState<TodayScheduleItem[]>(INITIAL_TODAY_SCHEDULE);
+  // Today's Patient Schedule State & LocalStorage Persistence
+  const [todaySchedule, setTodaySchedule] = useState<TodayScheduleItem[]>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem('smileclinic_doctor_today_schedule');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        }
+      } catch (e) {
+        console.warn('Failed to load todaySchedule from localStorage', e);
+      }
+    }
+    return INITIAL_TODAY_SCHEDULE;
+  });
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('smileclinic_doctor_today_schedule', JSON.stringify(todaySchedule));
+      } catch (e) {
+        console.warn('Failed to persist todaySchedule to localStorage', e);
+      }
+    }
+  }, [todaySchedule]);
+
+  // Registered Patient Count State & LocalStorage Persistence
+  const [registeredPatientsCount, setRegisteredPatientsCount] = useState<number>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem('smileclinic_doctor_registered_patients_count');
+        if (saved) {
+          const parsed = parseInt(saved, 10);
+          if (!isNaN(parsed) && parsed > 0) return parsed;
+        }
+      } catch (e) {
+        console.warn('Failed to load registeredPatientsCount from localStorage', e);
+      }
+    }
+    return 2482;
+  });
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('smileclinic_doctor_registered_patients_count', registeredPatientsCount.toString());
+      } catch (e) {
+        console.warn('Failed to persist registeredPatientsCount to localStorage', e);
+      }
+    }
+  }, [registeredPatientsCount]);
+
+  // Registered Patients Directory for Quick Select
+  const [registeredPatientsList, setRegisteredPatientsList] = useState<{ name: string; id: string; phone?: string; insurance?: string }[]>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem('smileclinic_doctor_patient_directory');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        }
+      } catch (e) {
+        console.warn('Failed to load patient directory', e);
+      }
+    }
+    return [
+      { name: "Neha Gupta", id: "#40921", phone: "+1 (555) 382-4910", insurance: "Delta Dental Premier" },
+      { name: "Mark Singh", id: "#40922", phone: "+1 (555) 791-3042", insurance: "MetLife Dental PPO" },
+      { name: "Alice Ross", id: "#40925", phone: "+1 (555) 843-1992", insurance: "Cigna Dental Care" },
+      { name: "Robert King", id: "#40930", phone: "+1 (555) 629-8401", insurance: "Self-Pay / Cash" },
+      { name: "Anjali Lane", id: "#40935", phone: "+1 (555) 914-7260", insurance: "Guardian Dental Gold" },
+      { name: "David Miller", id: "#40941", phone: "+1 (555) 432-8899", insurance: "Delta Dental Premier" },
+      { name: "Priya Sharma", id: "#40945", phone: "+1 (555) 901-2384", insurance: "Aetna Dental Network" },
+    ];
+  });
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('smileclinic_doctor_patient_directory', JSON.stringify(registeredPatientsList));
+      } catch (e) {
+        console.warn('Failed to persist patient directory', e);
+      }
+    }
+  }, [registeredPatientsList]);
+
+  // Inspection & Detailed Popup State
   const [selectedSchedulePatient, setSelectedSchedulePatient] = useState<TodayScheduleItem | null>(null);
+  const [isEditingAppointment, setIsEditingAppointment] = useState(false);
+  const [appointmentEditForm, setAppointmentEditForm] = useState<{
+    proc: string;
+    tooth: string;
+    operatory: string;
+    timeSlot: string;
+    clinicalNotes: string;
+  }>({
+    proc: '',
+    tooth: '',
+    operatory: '',
+    timeSlot: '',
+    clinicalNotes: '',
+  });
+
+  const handleStartEditAppointment = (patient: TodayScheduleItem) => {
+    setAppointmentEditForm({
+      proc: patient.proc,
+      tooth: patient.tooth,
+      operatory: patient.operatory,
+      timeSlot: patient.timeSlot,
+      clinicalNotes: patient.clinicalNotes,
+    });
+    setIsEditingAppointment(true);
+  };
+
+  const handleSaveAppointmentEdits = () => {
+    if (!selectedSchedulePatient) return;
+    const timeMatch = appointmentEditForm.timeSlot.match(/^(\d{1,2}:\d{2}\s*(?:AM|PM))/i);
+    const updatedTime = timeMatch ? timeMatch[1] : selectedSchedulePatient.time;
+
+    const updatedPatient: TodayScheduleItem = {
+      ...selectedSchedulePatient,
+      proc: appointmentEditForm.proc,
+      tooth: appointmentEditForm.tooth,
+      operatory: appointmentEditForm.operatory,
+      timeSlot: appointmentEditForm.timeSlot,
+      time: updatedTime,
+      clinicalNotes: appointmentEditForm.clinicalNotes,
+    };
+
+    setTodaySchedule(prev => prev.map(item => item.id === selectedSchedulePatient.id ? updatedPatient : item));
+    setSelectedSchedulePatient(updatedPatient);
+    setIsEditingAppointment(false);
+    showToast(`Appointment details for ${selectedSchedulePatient.name} updated successfully!`);
+  };
+
+  const handleConfirmSchedule = (data: ScheduleAppointmentData) => {
+    const initials = data.name
+      .split(' ')
+      .filter(Boolean)
+      .map(part => part[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2) || 'PT';
+
+    const colors = [
+      'bg-primary/10 text-primary',
+      'bg-emerald-100 text-emerald-800',
+      'bg-purple-100 text-purple-700',
+      'bg-amber-100 text-amber-800',
+      'bg-cyan-100 text-cyan-800',
+    ];
+    const avatarColor = colors[Math.floor(Math.random() * colors.length)];
+    const timeMatch = data.timeSlot.match(/^(\d{1,2}:\d{2}\s*(?:AM|PM))/i);
+    const time = timeMatch ? timeMatch[1] : '02:30 PM';
+    const patientId = data.id || `#${Math.floor(40000 + Math.random() * 9999)}`;
+
+    const newItem: TodayScheduleItem = {
+      time,
+      timeSlot: data.timeSlot,
+      name: data.name,
+      id: patientId,
+      initials,
+      proc: data.proc,
+      tooth: data.tooth || 'Full Dentition Evaluation',
+      operatory: data.operatory,
+      doctor: data.doctor || 'Dr. Sarah Sharma, DDS',
+      anesthesia: data.anesthesia || '2% Lidocaine with 1:100k Epinephrine (1.7 ml)',
+      status: data.status,
+      statusColor: data.status === 'In Progress' ? 'bg-primary text-on-primary' : 'bg-surface-container-high text-on-surface',
+      avatarColor,
+      ageGender: 'Adult Patient',
+      phone: '+1 (555) 234-8900',
+      email: `${data.name.toLowerCase().replace(/\s+/g, '.')}@patientmail.com`,
+      medicalAlert: data.medicalAlert || 'No Known Drug Allergies (NKDA)',
+      alertLevel: data.medicalAlert && data.medicalAlert.toLowerCase().includes('allerg') ? 'medium' : 'normal',
+      insurance: data.insurance || 'Delta Dental Premier',
+      vitals: { bp: '120/80 mmHg', pulse: '72 bpm', spo2: '99%', painLevel: '1 / 10' },
+      clinicalNotes: `Scheduled appointment for ${data.proc}. Patient checked in for chair time in ${data.operatory}.`,
+      nextAction: 'Post-procedure follow-up and clinical recall visit.',
+      prescriptions: 'Standard analgesic or antibiotic protocol if indicated post-procedure.',
+    };
+
+    setTodaySchedule(prev => [newItem, ...prev]);
+    showToast(`Appointment confirmed for ${data.name} at ${data.timeSlot}!`);
+  };
+
+  const handleRegisterPatient = (data: NewPatientData) => {
+    const patientId = `#${Math.floor(40000 + Math.random() * 9999)}`;
+
+    // Add to directory
+    setRegisteredPatientsList(prev => [
+      { name: data.name, id: patientId, phone: data.phone, insurance: data.insurance },
+      ...prev
+    ]);
+
+    // Increment count
+    setRegisteredPatientsCount(prev => prev + 1);
+
+    // If scheduleToday is checked, add to todaySchedule
+    if (data.scheduleToday) {
+      const initials = data.name
+        .split(' ')
+        .filter(Boolean)
+        .map(part => part[0])
+        .join('')
+        .toUpperCase()
+        .slice(0, 2) || 'NP';
+
+      const timeSlot = data.timeSlot || '03:30 PM - 04:15 PM';
+      const timeMatch = timeSlot.match(/^(\d{1,2}:\d{2}\s*(?:AM|PM))/i);
+      const time = timeMatch ? timeMatch[1] : '03:30 PM';
+      const status = data.initialStatus || 'Confirmed';
+
+      const newItem: TodayScheduleItem = {
+        time,
+        timeSlot,
+        name: data.name,
+        id: patientId,
+        initials,
+        proc: data.chiefComplaint,
+        tooth: 'Full Arch Comprehensive Examination',
+        operatory: data.operatory || 'Operatory 01 — Dental Chair A',
+        doctor: 'Dr. Sarah Sharma, DDS',
+        anesthesia: 'None required for initial diagnostic workup',
+        status,
+        statusColor: status === 'In Progress' ? 'bg-primary text-on-primary' : 'bg-surface-container-high text-on-surface',
+        avatarColor: 'bg-teal-100 text-teal-800',
+        ageGender: `${data.gender} • DOB ${data.dob}`,
+        phone: data.phone,
+        email: data.email,
+        medicalAlert: data.medicalAlert,
+        alertLevel: data.medicalAlert.toLowerCase().includes('allerg') || data.medicalAlert.toLowerCase().includes('hypertens') ? 'medium' : 'normal',
+        insurance: data.insurance,
+        vitals: { bp: '118/76 mmHg', pulse: '70 bpm', spo2: '99%', painLevel: '0 / 10' },
+        clinicalNotes: `New patient registration. Reason for visit: ${data.chiefComplaint}. Full comprehensive periodontal charting and diagnostic radiographs required.`,
+        nextAction: 'Complete dental treatment plan consultation.',
+        prescriptions: 'None currently prescribed.',
+      };
+
+      setTodaySchedule(prev => [newItem, ...prev]);
+      showToast(`Patient ${data.name} registered & added to today’s schedule!`);
+    } else {
+      showToast(`New patient ${data.name} successfully registered in clinic records!`);
+    }
+  };
 
   const handleUpdateScheduleStatus = (patientId: string, newStatus: 'In Progress' | 'Confirmed' | 'Completed') => {
     const statusColorMap = {
@@ -242,6 +486,7 @@ export default function Dashboard() {
     navigator.clipboard.writeText(summary);
     showToast(`Clinical chart summary for ${patient.name} copied to clipboard!`);
   };
+
 
   // Quick Notes State & LocalStorage Persistence
   const [notes, setNotes] = useState<QuickNote[]>(() => {
@@ -626,10 +871,10 @@ export default function Dashboard() {
       {/* KPI Bento Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { label: "Today's Appointments", value: "24", sub: "+12% from yesterday", icon: "calendar_today", color: "text-primary", bg: "bg-primary-container/10 border-primary-container/20" },
+          { label: "Today's Appointments", value: todaySchedule.length.toString(), sub: `${todaySchedule.filter(s => s.status !== 'Completed').length} in active queue`, icon: "calendar_today", color: "text-primary", bg: "bg-primary-container/10 border-primary-container/20" },
           { label: "Pending Reviews", value: "7", sub: "3 urgent responses", icon: "rate_review", color: "text-secondary", bg: "bg-secondary-container/10 border-secondary-container/20" },
           { label: "Clinical Satisfaction", value: "98.4%", sub: "Top 5% in district", icon: "sentiment_very_satisfied", color: "text-tertiary", bg: "bg-tertiary-container/10 border-tertiary-container/20" },
-          { label: "Active Patients", value: "2,482", sub: "Live database sync", icon: "group", color: "text-primary", bg: "bg-primary-fixed/10 border-primary-fixed/20" },
+          { label: "Active Patients", value: registeredPatientsCount.toLocaleString(), sub: "Live database sync", icon: "group", color: "text-primary", bg: "bg-primary-fixed/10 border-primary-fixed/20" },
         ].map((item, i) => (
           <div key={i} className={`p-5 rounded-2xl bg-surface-container-lowest border ${item.bg} shadow-xs flex flex-col justify-between hover:shadow-md transition-shadow`}>
             <div className="flex justify-between items-start mb-4">
@@ -660,7 +905,7 @@ export default function Dashboard() {
                 <p className="text-xs text-on-surface-variant mt-0.5">Operatory queues & procedure timeline</p>
               </div>
               <span className="text-xs font-bold text-primary bg-primary/10 px-3 py-1 rounded-full">
-                5 Active Today
+                {todaySchedule.filter(s => s.status !== 'Completed').length} Active Today
               </span>
             </div>
             
@@ -1278,183 +1523,26 @@ export default function Dashboard() {
       )}
 
       {/* ========================================================================= */}
-      {/* 2. SCHEDULE APPOINTMENT MODAL (Portaled to document.body)                 */}
+      {/* 2. FUNCTIONAL SCHEDULE APPOINTMENT MODAL (Live Dashboard & Storage Sync) */}
       {/* ========================================================================= */}
-      {typeof document !== 'undefined' && createPortal(
-        <AnimatePresence>
-          {isScheduleOpen && (
-            <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
-              <motion.div 
-                initial={{ opacity: 0 }} 
-                animate={{ opacity: 1 }} 
-                exit={{ opacity: 0 }} 
-                className="fixed inset-0 bg-black/60 backdrop-blur-md"
-                onClick={() => setIsScheduleOpen(false)}
-              />
-              <motion.div 
-                initial={{ opacity: 0, scale: 0.95, y: 15 }} 
-                animate={{ opacity: 1, scale: 1, y: 0 }} 
-                exit={{ opacity: 0, scale: 0.95, y: 0 }} 
-                transition={{ type: "spring", damping: 25, stiffness: 300 }}
-                className="relative bg-surface-container-lowest w-full max-w-lg max-h-[90vh] sm:max-h-[92vh] rounded-2xl shadow-2xl border border-surface-container-high overflow-hidden flex flex-col z-10 my-auto"
-              >
-                <div className="p-4 sm:p-6 border-b border-surface-container-low flex justify-between items-center bg-surface-container-lowest shrink-0">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shadow-xs shrink-0">
-                      <span className="material-symbols-outlined text-[20px] sm:text-[24px]">calendar_add_on</span>
-                    </div>
-                    <div>
-                      <h2 className="text-lg sm:text-xl font-bold text-on-surface">Schedule Appointment</h2>
-                      <p className="text-[11px] sm:text-xs text-outline">Select patient, chair operatory and procedure slot.</p>
-                    </div>
-                  </div>
-                  <button onClick={() => setIsScheduleOpen(false)} className="p-2 text-outline hover:text-on-surface hover:bg-surface-container-low rounded-xl transition-colors cursor-pointer shrink-0">
-                    <span className="material-symbols-outlined text-[20px]">close</span>
-                  </button>
-                </div>
-                <div className="p-4 sm:p-6 space-y-4 overflow-y-auto flex-1">
-                  <div className="space-y-1">
-                    <label className="text-xs font-semibold uppercase tracking-wider text-outline">Patient Name</label>
-                    <div className="relative">
-                      <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[18px] text-outline pointer-events-none">person_search</span>
-                      <input type="text" placeholder="Search patient name or ID..." className="w-full pl-10 pr-3 py-2.5 bg-surface-container-low rounded-xl border border-surface-container-high focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-xs font-medium" />
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                    <div className="space-y-1">
-                      <label className="text-xs font-semibold uppercase tracking-wider text-outline">Date</label>
-                      <div className="relative">
-                        <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[18px] text-outline pointer-events-none">calendar_today</span>
-                        <input type="date" defaultValue="2023-10-24" className="w-full pl-10 pr-3 py-2.5 bg-surface-container-low rounded-xl border border-surface-container-high focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-xs font-medium" />
-                      </div>
-                    </div>
-                    <div className="space-y-1">
-                      <label className="text-xs font-semibold uppercase tracking-wider text-outline">Time Slot</label>
-                      <div className="relative">
-                        <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[18px] text-outline pointer-events-none">schedule</span>
-                        <input type="time" defaultValue="10:30" className="w-full pl-10 pr-3 py-2.5 bg-surface-container-low rounded-xl border border-surface-container-high focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-xs font-medium" />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-xs font-semibold uppercase tracking-wider text-outline">Procedure Type</label>
-                    <div className="relative">
-                      <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[18px] text-outline pointer-events-none">dentistry</span>
-                      <select className="w-full pl-10 pr-8 py-2.5 bg-surface-container-low rounded-xl border border-surface-container-high focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all appearance-none cursor-pointer text-xs font-medium">
-                        <option>Routine Checkup & Cleaning</option>
-                        <option>Root Canal Therapy</option>
-                        <option>Orthodontic Adjustment</option>
-                        <option>Teeth Whitening</option>
-                        <option>Dental Implants</option>
-                      </select>
-                      <span className="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-[18px] text-outline pointer-events-none">expand_more</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="p-4 sm:p-6 border-t border-surface-container-low bg-surface-container-lowest flex flex-col-reverse sm:flex-row justify-end gap-2.5 sm:gap-3 shrink-0">
-                  <button onClick={() => setIsScheduleOpen(false)} className="w-full sm:w-auto px-5 py-2.5 rounded-xl font-medium text-xs text-outline hover:text-on-surface hover:bg-surface-container-low transition-colors cursor-pointer text-center">Cancel</button>
-                  <button 
-                    onClick={() => { 
-                      setIsScheduleOpen(false); 
-                      showToast("Appointment scheduled successfully!"); 
-                    }} 
-                    className="w-full sm:w-auto px-5 py-2.5 rounded-xl font-semibold text-xs bg-primary text-on-primary shadow-xs hover:bg-primary-container transition-colors cursor-pointer text-center"
-                  >
-                    Confirm Schedule
-                  </button>
-                </div>
-              </motion.div>
-            </div>
-          )}
-        </AnimatePresence>,
-        document.body
-      )}
+      <ScheduleAppointmentModal
+        isOpen={isScheduleOpen}
+        onClose={() => setIsScheduleOpen(false)}
+        existingPatients={registeredPatientsList}
+        onConfirmSchedule={handleConfirmSchedule}
+        showToast={showToast}
+      />
 
       {/* ========================================================================= */}
-      {/* 3. REGISTER NEW PATIENT MODAL (Portaled to document.body)                 */}
+      {/* 3. FUNCTIONAL REGISTER NEW PATIENT MODAL (Live Dashboard & Storage Sync)  */}
       {/* ========================================================================= */}
-      {typeof document !== 'undefined' && createPortal(
-        <AnimatePresence>
-          {isNewPatientOpen && (
-            <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
-              <motion.div 
-                initial={{ opacity: 0 }} 
-                animate={{ opacity: 1 }} 
-                exit={{ opacity: 0 }} 
-                className="fixed inset-0 bg-black/60 backdrop-blur-md"
-                onClick={() => setIsNewPatientOpen(false)}
-              />
-              <motion.div 
-                initial={{ opacity: 0, scale: 0.95, y: 15 }} 
-                animate={{ opacity: 1, scale: 1, y: 0 }} 
-                exit={{ opacity: 0, scale: 0.95, y: 0 }} 
-                transition={{ type: "spring", damping: 25, stiffness: 300 }}
-                className="relative bg-surface-container-lowest w-full max-w-lg max-h-[90vh] sm:max-h-[92vh] rounded-2xl shadow-2xl border border-surface-container-high overflow-hidden flex flex-col z-10 my-auto"
-              >
-                <div className="p-4 sm:p-6 border-b border-surface-container-low flex justify-between items-center bg-surface-container-lowest shrink-0">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shadow-xs shrink-0">
-                      <span className="material-symbols-outlined text-[20px] sm:text-[24px]">person_add</span>
-                    </div>
-                    <div>
-                      <h2 className="text-lg sm:text-xl font-bold text-on-surface">Register New Patient</h2>
-                      <p className="text-[11px] sm:text-xs text-outline">Enter patient demographics & contact details.</p>
-                    </div>
-                  </div>
-                  <button onClick={() => setIsNewPatientOpen(false)} className="p-2 text-outline hover:text-on-surface hover:bg-surface-container-low rounded-lg transition-colors cursor-pointer shrink-0">
-                    <span className="material-symbols-outlined text-[20px]">close</span>
-                  </button>
-                </div>
-                <div className="p-4 sm:p-6 space-y-4 overflow-y-auto flex-1">
-                  <div className="space-y-1">
-                    <label className="text-xs font-semibold uppercase tracking-wider text-outline">Full Name</label>
-                    <div className="relative">
-                      <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[18px] text-outline pointer-events-none">person</span>
-                      <input type="text" placeholder="e.g. John Doe" className="w-full pl-10 pr-3 py-2.5 bg-surface-container-low rounded-xl border border-surface-container-high focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-xs font-medium" />
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                    <div className="space-y-1">
-                      <label className="text-xs font-semibold uppercase tracking-wider text-outline">Phone Number</label>
-                      <div className="relative">
-                        <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[18px] text-outline pointer-events-none">call</span>
-                        <input type="tel" placeholder="+1 (555) 000-0000" className="w-full pl-10 pr-3 py-2.5 bg-surface-container-low rounded-xl border border-surface-container-high focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-xs font-medium" />
-                      </div>
-                    </div>
-                    <div className="space-y-1">
-                      <label className="text-xs font-semibold uppercase tracking-wider text-outline">Date of Birth</label>
-                      <div className="relative">
-                        <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[18px] text-outline pointer-events-none">calendar_today</span>
-                        <input type="date" className="w-full pl-10 pr-3 py-2.5 bg-surface-container-low rounded-xl border border-surface-container-high focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-xs font-medium" />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-xs font-semibold uppercase tracking-wider text-outline">Email Address</label>
-                    <div className="relative">
-                      <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[18px] text-outline pointer-events-none">mail</span>
-                      <input type="email" placeholder="john.doe@example.com" className="w-full pl-10 pr-3 py-2.5 bg-surface-container-low rounded-xl border border-surface-container-high focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-xs font-medium" />
-                    </div>
-                  </div>
-                </div>
-                <div className="p-4 sm:p-6 border-t border-surface-container-low bg-surface-container-lowest flex flex-col-reverse sm:flex-row justify-end gap-2.5 sm:gap-3 shrink-0">
-                  <button onClick={() => setIsNewPatientOpen(false)} className="w-full sm:w-auto px-5 py-2.5 rounded-xl font-medium text-xs text-outline hover:text-on-surface hover:bg-surface-container-low transition-colors cursor-pointer text-center">Cancel</button>
-                  <button 
-                    onClick={() => { 
-                      setIsNewPatientOpen(false); 
-                      showToast("New patient record created successfully!"); 
-                    }} 
-                    className="w-full sm:w-auto px-5 py-2.5 rounded-xl font-semibold text-xs bg-primary text-on-primary shadow-xs hover:bg-primary-container transition-colors cursor-pointer text-center"
-                  >
-                    Create Record
-                  </button>
-                </div>
-              </motion.div>
-            </div>
-          )}
-        </AnimatePresence>,
-        document.body
-      )}
+      <NewPatientModal
+        isOpen={isNewPatientOpen}
+        onClose={() => setIsNewPatientOpen(false)}
+        onRegisterPatient={handleRegisterPatient}
+        showToast={showToast}
+      />
+
 
       {/* ========================================================================= */}
       {/* 4. PATIENT SCHEDULE DETAIL & CONFIGURATION MODAL (Portaled to body)       */}
@@ -1504,17 +1592,131 @@ export default function Dashboard() {
                     </div>
                   </div>
 
-                  <button 
-                    onClick={() => setSelectedSchedulePatient(null)} 
-                    className="p-2 text-outline hover:text-on-surface hover:bg-surface-container-low rounded-xl transition-colors cursor-pointer shrink-0"
-                    title="Close modal"
-                  >
-                    <span className="material-symbols-outlined text-[20px]">close</span>
-                  </button>
+                  <div className="flex items-center gap-1.5">
+                    <button 
+                      type="button"
+                      onClick={() => {
+                        if (isEditingAppointment) {
+                          setIsEditingAppointment(false);
+                        } else {
+                          handleStartEditAppointment(selectedSchedulePatient);
+                        }
+                      }} 
+                      className={`px-3 py-1.5 rounded-xl font-bold text-xs transition-colors flex items-center gap-1.5 cursor-pointer ${
+                        isEditingAppointment 
+                          ? 'bg-amber-100 text-amber-900 border border-amber-300' 
+                          : 'bg-surface-container-high hover:bg-surface-container-highest text-on-surface border border-surface-container-high'
+                      }`}
+                      title={isEditingAppointment ? "Cancel editing" : "Edit appointment details"}
+                    >
+                      <span className="material-symbols-outlined text-[16px]">{isEditingAppointment ? 'close' : 'edit'}</span>
+                      <span>{isEditingAppointment ? 'Cancel Edit' : 'Edit Details'}</span>
+                    </button>
+
+                    <button 
+                      onClick={() => {
+                        setSelectedSchedulePatient(null);
+                        setIsEditingAppointment(false);
+                      }} 
+                      className="p-2 text-outline hover:text-on-surface hover:bg-surface-container-low rounded-xl transition-colors cursor-pointer shrink-0"
+                      title="Close modal"
+                    >
+                      <span className="material-symbols-outlined text-[20px]">close</span>
+                    </button>
+                  </div>
                 </div>
 
                 {/* Modal Scrollable Body */}
                 <div className="p-5 sm:p-6 overflow-y-auto space-y-4 text-xs">
+                  {/* Inline Live Editor if Active */}
+                  {isEditingAppointment && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="p-4 bg-teal-50/80 rounded-2xl border border-teal-200 shadow-sm space-y-3.5"
+                    >
+                      <div className="flex items-center justify-between border-b border-teal-200/60 pb-2">
+                        <div className="font-bold text-teal-950 text-xs flex items-center gap-1.5">
+                          <span className="material-symbols-outlined text-teal-700 text-[18px]">edit_calendar</span>
+                          Edit Appointment Parameters & Clinical Plan
+                        </div>
+                        <span className="text-[10px] bg-teal-700 text-white px-2 py-0.5 rounded-full font-bold">
+                          Live Sync
+                        </span>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                          <label className="block text-[11px] font-bold text-teal-900 mb-1">Time Slot</label>
+                          <input
+                            type="text"
+                            value={appointmentEditForm.timeSlot}
+                            onChange={(e) => setAppointmentEditForm(prev => ({ ...prev, timeSlot: e.target.value }))}
+                            className="w-full px-3 py-1.5 text-xs bg-white border border-teal-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-600 font-medium"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-[11px] font-bold text-teal-900 mb-1">Operatory Location</label>
+                          <input
+                            type="text"
+                            value={appointmentEditForm.operatory}
+                            onChange={(e) => setAppointmentEditForm(prev => ({ ...prev, operatory: e.target.value }))}
+                            className="w-full px-3 py-1.5 text-xs bg-white border border-teal-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-600"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-[11px] font-bold text-teal-900 mb-1">Clinical Procedure</label>
+                          <input
+                            type="text"
+                            value={appointmentEditForm.proc}
+                            onChange={(e) => setAppointmentEditForm(prev => ({ ...prev, proc: e.target.value }))}
+                            className="w-full px-3 py-1.5 text-xs bg-white border border-teal-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-600 font-medium"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-[11px] font-bold text-teal-900 mb-1">Target Tooth / Arch</label>
+                          <input
+                            type="text"
+                            value={appointmentEditForm.tooth}
+                            onChange={(e) => setAppointmentEditForm(prev => ({ ...prev, tooth: e.target.value }))}
+                            className="w-full px-3 py-1.5 text-xs bg-white border border-teal-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-600"
+                          />
+                        </div>
+
+                        <div className="sm:col-span-2">
+                          <label className="block text-[11px] font-bold text-teal-900 mb-1">Operative Chart Notes</label>
+                          <textarea
+                            rows={3}
+                            value={appointmentEditForm.clinicalNotes}
+                            onChange={(e) => setAppointmentEditForm(prev => ({ ...prev, clinicalNotes: e.target.value }))}
+                            className="w-full p-2.5 text-xs bg-white border border-teal-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-600 font-sans"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-end gap-2 pt-1 border-t border-teal-200/60">
+                        <button
+                          type="button"
+                          onClick={() => setIsEditingAppointment(false)}
+                          className="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-200/60 transition-colors"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handleSaveAppointmentEdits}
+                          className="px-4 py-1.5 rounded-lg text-xs font-bold text-white bg-teal-700 hover:bg-teal-800 shadow-sm flex items-center gap-1.5 cursor-pointer transition-all"
+                        >
+                          <span className="material-symbols-outlined text-[16px]">check_circle</span>
+                          Save Changes to Dashboard
+                        </button>
+                      </div>
+                    </motion.div>
+                  )}
+
                   {/* Quick Overview Strip */}
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                     <div className="p-3 bg-surface-container-low rounded-xl border border-surface-container-high/60">
@@ -1710,7 +1912,10 @@ export default function Dashboard() {
                     </button>
                     <button 
                       type="button"
-                      onClick={() => setSelectedSchedulePatient(null)} 
+                      onClick={() => {
+                        setSelectedSchedulePatient(null);
+                        setIsEditingAppointment(false);
+                      }} 
                       className="px-5 py-2 rounded-xl font-semibold text-xs bg-primary text-on-primary shadow-xs hover:bg-primary-container transition-colors cursor-pointer"
                     >
                       Close
